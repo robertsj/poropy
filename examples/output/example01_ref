@@ -1,0 +1,169 @@
+ poropy - diagnostic output 
+
+REACTOR:
+    thermal power : 1000 MWth
+   electric power :  300 MWel
+    CORE:           
+        pattern:     [12  0  6  1 15  8  2  9 13  4 10  5 16 11  3  7 14 17]
+        ASSEMBLIES: 
+             assembly:  0
+                model:  IFBA
+           enrichment:  4.25
+               burnup:  0.0
+            constants:  1.4493 0.3807 0.0099 0.1042 0.0079 0.1692 0.0151 0.025
+                 kinf:  1.29677543186
+             assembly:  1
+                model:  IFBA
+           enrichment:  4.25
+               burnup:  0.0
+            constants:  1.4493 0.3807 0.0099 0.1042 0.0079 0.1692 0.0151 0.025
+                 kinf:  1.29677543186
+             assembly:  2
+                model:  IFBA
+           enrichment:  4.25
+               burnup:  0.0
+            constants:  1.4493 0.3807 0.0099 0.1042 0.0079 0.1692 0.0151 0.025
+                 kinf:  1.29677543186
+             assembly:  3
+                model:  IFBA
+           enrichment:  4.25
+               burnup:  0.0
+            constants:  1.4493 0.3807 0.0099 0.1042 0.0079 0.1692 0.0151 0.025
+                 kinf:  1.29677543186
+             assembly:  4
+                model:  IFBA
+           enrichment:  4.25
+               burnup:  0.0
+            constants:  1.4493 0.3807 0.0099 0.1042 0.0079 0.1692 0.0151 0.025
+                 kinf:  1.29677543186
+             assembly:  5
+                model:  IFBA
+           enrichment:  4.25
+               burnup:  0.0
+            constants:  1.4493 0.3807 0.0099 0.1042 0.0079 0.1692 0.0151 0.025
+                 kinf:  1.29677543186
+             assembly:  6
+                model:  IFBA
+           enrichment:  4.25
+               burnup:  15.0
+            constants:  1.4479 0.3708 0.011 0.12 0.0069 0.1745 0.0148 0.0258
+                 kinf:  1.10161498708
+             assembly:  7
+                model:  IFBA
+           enrichment:  4.25
+               burnup:  15.0
+            constants:  1.4479 0.3708 0.011 0.12 0.0069 0.1745 0.0148 0.0258
+                 kinf:  1.10161498708
+             assembly:  8
+                model:  IFBA
+           enrichment:  4.25
+               burnup:  15.0
+            constants:  1.4479 0.3708 0.011 0.12 0.0069 0.1745 0.0148 0.0258
+                 kinf:  1.10161498708
+             assembly:  9
+                model:  IFBA
+           enrichment:  4.25
+               burnup:  15.0
+            constants:  1.4479 0.3708 0.011 0.12 0.0069 0.1745 0.0148 0.0258
+                 kinf:  1.10161498708
+             assembly:  10
+                model:  IFBA
+           enrichment:  4.25
+               burnup:  15.0
+            constants:  1.4479 0.3708 0.011 0.12 0.0069 0.1745 0.0148 0.0258
+                 kinf:  1.10161498708
+             assembly:  11
+                model:  IFBA
+           enrichment:  4.25
+               burnup:  15.0
+            constants:  1.4479 0.3708 0.011 0.12 0.0069 0.1745 0.0148 0.0258
+                 kinf:  1.10161498708
+             assembly:  12
+                model:  IFBA
+           enrichment:  4.25
+               burnup:  30.0
+            constants:  1.4494 0.3676 0.0115 0.1191 0.006 0.1625 0.0147 0.0262
+                 kinf:  0.994529582556
+             assembly:  13
+                model:  IFBA
+           enrichment:  4.25
+               burnup:  30.0
+            constants:  1.4494 0.3676 0.0115 0.1191 0.006 0.1625 0.0147 0.0262
+                 kinf:  0.994529582556
+             assembly:  14
+                model:  IFBA
+           enrichment:  4.25
+               burnup:  30.0
+            constants:  1.4494 0.3676 0.0115 0.1191 0.006 0.1625 0.0147 0.0262
+                 kinf:  0.994529582556
+             assembly:  15
+                model:  IFBA
+           enrichment:  4.25
+               burnup:  30.0
+            constants:  1.4494 0.3676 0.0115 0.1191 0.006 0.1625 0.0147 0.0262
+                 kinf:  0.994529582556
+             assembly:  16
+                model:  IFBA
+           enrichment:  4.25
+               burnup:  30.0
+            constants:  1.4494 0.3676 0.0115 0.1191 0.006 0.1625 0.0147 0.0262
+                 kinf:  0.994529582556
+             assembly:  17
+                model:  IFBA
+           enrichment:  4.25
+               burnup:  30.0
+            constants:  1.4494 0.3676 0.0115 0.1191 0.006 0.1625 0.0147 0.0262
+                 kinf:  0.994529582556
+        REFLECTOR: 
+                model:  biblis
+            constants:  1.32 0.2772 0.0026562 0.071596 0.0 0.0 0.023106 0.0257622
+    EVALUATOR:  LABAN-PEL
+        input:  laban0.inp
+       output:  laban0.out
+k =  1.137119  p =  2.0687
+
+ optimization parameters 
+ ----------------------- 
+    keff   =  1.137119
+ maxpeak   =  2.0687
+
+[[ 1.64865  2.0687   1.53543  1.18246  0.40744  0.     ]
+ [ 2.0687   1.7359   1.69436  0.94983  0.34894  0.     ]
+ [ 1.53543  1.69436  1.19476  0.8788   0.26544  0.     ]
+ [ 1.18246  0.94983  0.8788   0.43841  0.       0.     ]
+ [ 0.40744  0.34894  0.26544  0.       0.       0.     ]
+ [ 0.       0.       0.       0.       0.       0.     ]]
+
+ current loading pattern 
+ ----------------------- 
+       0   1   2   3   4
+  ----------------------
+ 0|   12   0   6   1  15
+ 1|   rs   8   2   9  13
+ 2|   rs   4  10   5  16
+ 3|   rs  11   3   7 ref
+ 4|   rs  14  17 ref ref
+
+
+ current loading pattern 
+ ----------------------- 
+       0   1   2   3   4
+  ----------------------
+ 0|   12   6   0   1  15
+ 1|   rs   8   2   9  13
+ 2|   rs   4  10   5  16
+ 3|   rs  11   3   7 ref
+ 4|   rs  14  17 ref ref
+
+
+ optimization parameters 
+ ----------------------- 
+    keff   =  1.135264
+ maxpeak   =  1.85174
+
+[[ 1.22885  1.47989  1.85174  1.31604  0.4458   0.     ]
+ [ 1.47989  1.53051  1.73407  1.0157   0.37678  0.     ]
+ [ 1.85174  1.73407  1.21558  0.91612  0.2809   0.     ]
+ [ 1.31604  1.0157   0.91612  0.45609  0.       0.     ]
+ [ 0.4458   0.37678  0.2809   0.       0.       0.     ]
+ [ 0.       0.       0.       0.       0.       0.     ]]

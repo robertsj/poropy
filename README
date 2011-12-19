@@ -1,0 +1,32 @@
+Physics of Reactors Optimization in PYthon
+==========================================
+
+CONTENTS
+
+./README
+  That's this file.
+
+./LICENSE
+  The license and such.
+
+./setup.py
+  Sets up and installs poropy.
+
+doc/
+  Contains documentation for using poropy.  Note that poropy
+  uses pypgapack, documentation of which is important for poropy, too.
+pypgapack/
+  Contains the packages coretools and bundletools.
+examples/
+  Contains a few illustrative examples.
+
+INSTALLATION
+
+Get pypgapack (github.com/robertsj/pypgapack).
+
+
+
+It's simple; run
+  >> python setup.py install
+
+
