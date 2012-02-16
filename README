@@ -1,6 +1,10 @@
 Physics of Reactors Optimization in PYthon
 ==========================================
 
+POROPY is a simple tool for reactor analysis, with
+a particular focus on in-core fuel management 
+optimization.
+
 CONTENTS
 
 ./README
@@ -10,13 +14,17 @@ CONTENTS
   The license and such.
 
 ./setup.py
-  Sets up and installs poropy.
+  Sets up and installs poropy.  NOT DONE YET.
 
 doc/
   Contains documentation for using poropy.  Note that poropy
   uses pypgapack, documentation of which is important for poropy, too.
+
 pypgapack/
-  Contains the packages coretools and bundletools.
+
+  Contains the packages coretools, bundletools, and nucleardata, though 
+  only coretools and nucleardata have undergone development.
+
 examples/
   Contains a few illustrative examples.
 
@@ -24,7 +32,7 @@ INSTALLATION
 
 Get pypgapack (github.com/robertsj/pypgapack).
 
-
+Get flare (github.com/robertsj/flare).
 
 It's simple; run
   >> python setup.py install

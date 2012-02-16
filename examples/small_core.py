@@ -2,9 +2,9 @@
 
 import numpy as np
 
-from poropy.coretools import Reactor, Assembly, Reflector, Laban
+from poropy.coretools import Reactor, Assembly, Reflector, Laban, Flare
 
-def make_small_core() :
+def make_small_core(rank=0) :
     """ This returns a Reactor object for the small benchmark.
     """
     
@@ -12,7 +12,7 @@ def make_small_core() :
     # =======
     
     # This is a small 69 assembly core modeled as a quarter
-    # core.  It has three equal batches composed of fresh,
+    # core.  It has three roughly equal batches composed of fresh,
     # once-, and twice-burned fuel.  The materials actually
     # correspond a 17x17, 4.25 w/o, 92 IFBA PWR assembly at 
     # 0, 15, and 30 MWd/kg.  The assembly pitch is 20.5036, 
@@ -25,19 +25,17 @@ def make_small_core() :
     # First, define the stencil.  Fuel regions are positive
     # integers, where each value corresponds to a "region". 
     # In an optimization sequence, the user can exclude regions
-    # from the search space completely.  Here, the central 
-    # bundle is given a special value so that we can keep it fixed.
-    # Note the whole map must be specified, even if certain locations
-    # are to be fixed by rotational symmetry.  This makes it easier
-    # for the user visually (and me w/r to implementation.
-    stencil = np.array([[2, 1, 1, 1, 1, 0], \
-                        [1, 1, 1, 1, 1, 0], \
-                        [1, 1, 1, 1, 1, 0], \
-                        [1, 1, 1, 1, 0, 0], \
-                        [1, 1, 1, 0, 0, 0], \
-                        [0, 0, 0, 0, 0, 0]] )
-    # Note that 0 indicates reflector.  -1's can be placed as void,
-    # but we skip that here.
+    # from the search space completely.  Currently, this isn't
+    # used, but there is an option to fixed the central bundle 
+    # directly.  Note, -1's are placed where assemblies are
+    # defined by rotational symmetry and 0's where reflector 
+    # exists.
+    stencil = np.array([[ 2, 1, 1, 1, 1, 0], \
+                        [ 0, 1, 1, 1, 1, 0], \
+                        [0, 1, 1, 1, 1, 0], \
+                        [0, 1, 1, 1, 0, 0], \
+                        [0, 1, 1, 0, 0, 0], \
+                        [ 0, 0, 0, 0, 0, 0]] )
     
     # Also, the regions are to be indexed in a more natural way than
     # is standard.  The stencil is indexed as would be any matrix.
@@ -58,9 +56,9 @@ def make_small_core() :
                             1, 0, 1, 2,      \
                             0, 1, 0, 2,      \
                             1, 0, 1,         \
-                            2, 2            ], dtype='i')
+                            2, 2             ], dtype='i')
     
-    
+
     # Assembly Definitions
     # ====================
     
@@ -85,24 +83,29 @@ def make_small_core() :
     #   ('type', enrichment, burnup, array([D1,D2,A1,A2,F1,F2,S12]))
  
     # Fresh
-    unique_assemblies.append(Assembly('IFBA', 4.25, 0.0,  \
-                                      np.array([1.4493e+00, 3.8070e-01, \
-                                                9.9000e-03, 1.0420e-01, \
-                                                7.9000e-03, 1.6920e-01, \
-                                                1.5100e-02])))
+    unique_assemblies.append(Assembly('IFBA', 4.25, 0.0))
     # Once burned                  
-    unique_assemblies.append(Assembly('IFBA', 4.25, 15.0, \
-                                      np.array([1.4479e+00, 3.7080e-01, \
-                                                1.1000e-02, 1.2000e-01, \
-                                                6.9000e-03, 1.7450e-01, \
-                                                1.4800e-02])))
+    unique_assemblies.append(Assembly('IFBA', 4.25, 15.0))
     # Twice burned                  
-    unique_assemblies.append(Assembly('IFBA', 4.25, 30.0, \
-                                      np.array([1.4494e+00, 3.6760e-01, \
-                                                1.1500e-02, 1.1910e-01, \
-                                                6.0000e-03, 1.6250e-01, \
-                                                1.4700e-02])))
+    unique_assemblies.append(Assembly('IFBA', 4.25, 30.0))
 
+#    unique_assemblies.append(Assembly('IFBA', 4.25, 0.0,  \
+#                                      np.array([1.4493e+00, 3.8070e-01, \
+#                                                9.9000e-03, 1.0420e-01, \
+#                                                7.9000e-03, 1.6920e-01, \
+#                                                1.5100e-02])))
+#    # Once burned                  
+#    unique_assemblies.append(Assembly('IFBA', 4.25, 15.0, \
+#                                      np.array([1.4479e+00, 3.7080e-01, \
+#                                                1.1000e-02, 1.2000e-01, \
+#                                                6.9000e-03, 1.7450e-01, \
+#                                                1.4800e-02])))
+#    # Twice burned                  
+#    unique_assemblies.append(Assembly('IFBA', 4.25, 30.0, \
+#                                      np.array([1.4494e+00, 3.6760e-01, \
+#                                                1.1500e-02, 1.1910e-01, \
+#                                                6.0000e-03, 1.6250e-01, \
+#                                                1.4700e-02])))
     # Loop through and assign assemblies to each fuel location in the pattern.
     for i in range(0, len(pattern)) :
         assemblies.append(unique_assemblies[pattern[i]])
@@ -116,4 +119,4 @@ def make_small_core() :
     # Build the Reactor
     # =================
     
-    return Reactor(stencil, pattern, assemblies, reflector, width, Laban())
+    return Reactor(stencil, pattern, assemblies, reflector, width, Laban(rank))

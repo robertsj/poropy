@@ -185,7 +185,7 @@ class Optimizer(PGA) :
         #print " it = ", it, " best = ", self.GetEvaluation(best, PGA.NEWPOP), " k p = ",k,p,bestpattern
         #print " *** ", self.GetEvaluation(best, PGA.OLDPOP)  
         if self.track_best :
-            self.best_eval[it-1] = self.GetEvaluation(best, PGA.NEWPOP)                                                
+            self.best_eval[it-1] = self.GetEvaluation(best, PGA.OLDPOP)                                                
             self.best_k[it-1] = k
             self.best_p[it-1] = p
             self.best_pattern[it-1,:] = bestpattern

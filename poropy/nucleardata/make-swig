@@ -1,0 +1,8 @@
+#!/bin/sh
+
+swig -python nucleardata.i
+gcc -fPIC -O3 -c nucleardata.c nucleardata_wrap.c -I/usr/include/python2.7/
+gcc -fPIC -O3 -c nucleardata_IFBA.c
+gcc -fPIC -O3 -c nucleardata_WABA.c
+gcc -fPIC -O3 -c nucleardata_GAD.c
+ld -shared nucleardata.o nucleardata_wrap.o nucleardata_IFBA.o nucleardata_WABA.o nucleardata_GAD.o -o _nucleardata.so

@@ -1,4 +1,4 @@
-#       poropy/coretools/__init__.py
+#       poropy/nucleardata/__init__.py
 #
 #       Copyright 2011 Jeremy Roberts <j.alyn.roberts@gmail.com>
 #
@@ -16,9 +16,4 @@
 #       along with this program; if not, write to the Free Software
 #       Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 #       MA 02110-1301, USA.
-from reactor import *
-from assembly import *
-from evaluator import *
-from flare import *
-from laban import *
-from optimizer import *
+from nucleardata import *

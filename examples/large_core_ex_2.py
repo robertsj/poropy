@@ -1,6 +1,6 @@
-# examples/coretools/small_core_ex_1.py
+# examples/coretools/large_core_ex_2.py
 
-import small_core
+import large_core
 
 from poropy.coretools import Optimizer
 from pypgapack import PGA
@@ -22,15 +22,13 @@ rc('font', family='serif')
 # we need special initialization and mutation
 # functions.
 
-class OptimizeSmallCore(Optimizer) :
+class OptimizeLargeCore(Optimizer) :
     """  Derive our own class from PGA.
     """
-    def small_core_objective(self, p, pop) :
+    def large_core_objective(self, p, pop) :
         """ Minimize peaking and maximize keff using weighted objective.
         
-        Here, we seek to minimize p for k >= 1.135. Note that p=1.85 is
-        about what we found manually, albeit with just one swap from the
-        default pattern.
+        Here, we seek to maximize keff for p < 1.50
         """
         pattern = self.GetIntegerChromosome(p, pop)
         self.reactor.shuffle(pattern) 
@@ -42,10 +40,15 @@ class OptimizeSmallCore(Optimizer) :
         return val
     
     def fun(self,k,p):
+        """  Delta is *negative* when p exceeds the maximum.  
+
+        A k less than 1.13 also produces a negative value, but by a 
+        much smaller amount. 
+        """
         delta = 0
-        if k < 1.1 :
-            delta = k - 1.1
-        return 1.0 * (1.5 - p) + 50.0 * delta
+        if p > 1.50 :
+            delta = 1.50 - p
+        return (k - 1.13) + 50.0 * delta
         
 
     def swap(self, p, pop, pm) :
@@ -78,10 +81,10 @@ class OptimizeSmallCore(Optimizer) :
         n = self.GetStringLength()
         pattern = self.GetIntegerChromosome(p, pop)
         # perm is a random permutation of [0,1,... numberbundles-2]
-        #   i.e. 17 is excluded.  The 17th bundle is by definition
+        #   i.e. 48 is excluded.  The 49th bundle is by definition
         #   the least reactive, and so that be the default central.
         perm = np.random.permutation(n-1)
-        pattern[0] = 17
+        pattern[0] = 48
         for i in range(1, n) :
             pattern[i] = perm[i-1]
         #print " pattern=", pattern   
@@ -94,10 +97,11 @@ class OptimizeSmallCore(Optimizer) :
 # a serial version of pypgapack is used.
 comm = MPI.COMM_WORLD   # Get the communicator.
 rank = comm.Get_rank()  # Get my rank.  
+size = comm.Get_size()  # Get number of processes
 time = MPI.Wtime()      # Start the clock.  
 
-# Get the small reactor.  Pass rank for Laban initialization.
-reactor = small_core.make_small_core(rank)
+# Get the large reactor.  Pass rank for Laban initialization.
+reactor = large_core.make_large_core(rank)
 
 
 number_runs = 1
@@ -108,18 +112,19 @@ evas = np.zeros(number_runs)
 
 for i in range(0, number_runs) :
     # Create an optimizer.
-    opt = OptimizeSmallCore(sys.argv, reactor)
+    opt = OptimizeLargeCore(sys.argv, reactor)
     
     # Set initialization and swapping functions.
     opt.SetInitString(opt.init)
     opt.SetMutation(opt.swap)
-    
+    opt.SetNoDuplicatesFlag(PGA.TRUE) # Keep no duplicate patterns.
     # Set various PGA parameters 2
-    opt.SetNumReplaceValue(40)
-    opt.SetRandomSeed(i+1)       # Set random seed for verification.  
-    np.random.seed(i+1)          # Do the same with Numpy.
-    opt.SetPopSize(50)           # Large enough to see some success.
-    opt.SetMaxGAIterValue(500)   # Small number for output.
+    opt.SetNumReplaceValue(190)
+    opt.SetRandomSeed(i+11234)    # Set random seed for verification.  
+    np.random.seed(i+2391)        # Do the same with Numpy.
+    opt.SetPopSize(200)            # Large enough to see some success.
+    num_iter = 200
+    opt.SetMaxGAIterValue(num_iter)  # Small number for output.
 
     # Set various Optimizer parameters
     opt.set_track_best(True)     # Track best everything each generation
@@ -127,7 +132,7 @@ for i in range(0, number_runs) :
     
     # Run the optimization.  This implicitly performs both SetUp 
     #   and Run of PGA. 
-    opt.run(opt.small_core_objective)
+    opt.run(opt.large_core_objective)
 
     if rank == 0 :
         best = opt.GetBestIndex(PGA.OLDPOP)     # Get the best string
@@ -142,12 +147,31 @@ for i in range(0, number_runs) :
         kefs[i]=reactor.evaluator.keff
         peks[i]=reactor.evaluator.maxpeak
         evas[i]=opt.evals
+        #reactor.plot_pattern('burnup')
+if rank > 0:
+    evals = np.array([opt.evals],dtype='i')
+    comm.Send([evals,MPI.INT], dest=0, tag=13)
+else :
+    evals = np.array([1],dtype='i')
+    for i in range(1, size) :
+        comm.Recv([evals,MPI.INT], source=i, tag=13)
+        opt.evals += evals[0]
+
 if rank == 0 :
     print np.mean(vals), np.std(vals)
     print np.mean(kefs), np.std(kefs)
     print np.mean(peks), np.std(peks)
     print np.mean(evas), np.std(evas)
-    print " ELAPSED TIME: ", MPI.Wtime() - time
-
+    print " ELAPSED TIME: ", MPI.Wtime() - time, " EVALS = ", opt.evals
+    #reactor.plot_pattern('burnup')
+    #print opt.best_eval
+    plt.plot( np.arange(0,num_iter+1), opt.best_eval, 'b',\
+              lw=2) # Plot the objective as a function of generations
+                    #   against the reference solution.
+    plt.title('Convergence of Objective')
+    plt.xlabel(' generation')
+    plt.ylabel(' objective ')
+    plt.grid(True)
+    plt.show()
 
 opt.Destroy()  # Clean up PGAPack internals.

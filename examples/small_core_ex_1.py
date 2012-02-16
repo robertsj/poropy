@@ -1,4 +1,4 @@
-# examples/small_core_ex_1.py
+# examples/coretools/small_core_ex_1.py
 
 import small_core
 
@@ -13,6 +13,7 @@ reactor.display()
 # and peaking as return values.
 k, p = reactor.evaluate()
 print "k = ",k," p = ",p
+
 # Alternatively, we can use print_params to display current
 # values of all optimization parameters.  Currently only
 # keff and the max peaking are retained.
@@ -31,6 +32,7 @@ reactor.print_pattern()
 reactor.evaluate()
 reactor.print_params()
 reactor.print_peaking()
+reactor.print_pattern('burnup')
 
 # That's a significant peaking reduction with just a slight decrease
 # in keff.  However, there is a better pattern.  For this keff, 

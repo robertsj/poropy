@@ -48,11 +48,24 @@ class Reactor(object):
         
     def swap(self, x, y) :
         """  Swap two bundles.
+        
+        Parameters
+        ----------
+        
+        x : integer tuple
+            Pair of integer indices for first bundle. 
+        y : integer tuple
+            Pair of integer indices for first bundle. 
         """
         self.core.swap(x, y)
         
     def evaluate(self) :  
         """ Evaluate the current core.  Pattern must be up-to-date.
+        
+        Returns
+        -------
+        val : float
+            Value of objection function for current solution.
         """
         # currently returns only keff and maxpeaking
         return self.evaluator.evaluate()
@@ -88,7 +101,72 @@ class Reactor(object):
         print " current loading pattern "
         print " ----------------------- "
         self.core.print_pattern()   
+
+    def plot_peaking(self) :
+        """  Plot the peaking factor matrix.
+        """
+        # TODO(robertsj): Add some nice formatting.
+        print ""
+        print self.evaluator.plot_peaking()
         
+    def plot_pattern(self, param='burnup') :
+        """  Plot the peaking factor matrix.
+        
+        Parameters
+        ----------
+        param : str
+            Designates which metric to plot.  Currently, the 
+            options are 'burnup' and 'enrichment'.        
+        """
+        plot_map = self.core.get_plot_map(param)
+        print plot_map
+        plt.imshow(plot_map, interpolation='nearest', cmap=plt.cm.hot)  
+        plt.title(param)
+        plt.colorbar()
+        plt.show()
+        #self.core.plot_pattern()           
+        
+    def print_pattern(self, param='burnup') :
+        """  Plot the peaking factor matrix.
+        
+        Parameters
+        ----------
+        param : str
+            Designates which metric to plot.  Currently, the 
+            options are 'burnup' and 'enrichment'.        
+        """
+        plot_map = self.core.get_plot_map(param)
+        print plot_map
+
+        N = len(self.core.stencil[0,:]) 
+        out = "   "
+        for i in range(0, N-1) :
+            out += '%7i' % (i)
+        out += '\n' + "  ----"
+        for i in range(1, N) :
+            out += "-------"
+        out += '\n' 
+        for i in range(0, N-1) :
+            out += '%4i' % (i)
+            out += '| '
+            if i == 0 :
+                jj = 0
+            else :
+                jj = 1
+                out+="  rs   "
+            for j in range(jj, N-1) :
+                if self.core.fuelmap[i, j] >= 0 :
+                    if param == 'burnup' :
+                        out += '%6.2f ' % (self.core.assemblies[self.core.fuelmap[i, j]].burnup)
+                    else :
+                        out += '%6.2f ' % (self.core.assemblies[self.core.fuelmap[i, j]].enrichment)
+                elif self.core.stencil[i, j] == 0  :
+                    out += '  ref  '
+                else :
+                    out += '    '
+            out += '\n'
+        print out        
+                
     def print_params(self) :
         """  Print out optimization parameters.
         """
@@ -241,6 +319,38 @@ class Core(object):
                     out += '    '
             out += '\n'
         print out
+       
+    def update_assembly_peaking(self) :
+        """  Give each assembly its current power peaking factor.
+
+        This should be called following evaluate for the GUI output.
+
+        Finish me.
+        """
+        for i in range(0, len(self.assemblies)) :
+            self.assemblies[i].set_peak(0.0)
+ 
+    def get_plot_map(self, param) :
+        """  Return a 2-d array of pattern parameters.
+        """
+        length = len(self.fuelmap[:,0])
+        plot_map = np.zeros((length,length), dtype='f')+1.0
+        print "fuelmap="
+        print self.fuelmap
+        for i in range(0, length) :
+            for j in range(0, length) :
+                if self.fuelmap[i, j] >= 0 :
+                    # get the assembly
+                    a = self.assemblies[self.fuelmap[i, j]]
+                    if param == 'burnup' :
+                        val = a.burnup
+                    else :
+                        val = a.enrichment
+                else :
+                    val = -10
+                    pass # nothing else needed for now.
+                plot_map[i, j] = val
+        return plot_map  
         
     def display(self) :
         """  Print my information.

@@ -3,24 +3,29 @@ Created on Dec 11, 2011
 
 @author: robertsj
 '''
+from evaluator import Evaluator
 import numpy as np
 import os
-import matplotlib.pyplot as plt
-from matplotlib import rc
-rc('text', usetex=True)
-rc('font', family='serif')
 
-class Laban(object):
+
+class Laban(Evaluator):
     """ Uses the LABAN-PEL code to evaluate loading patterns.
     """
 
-    def __init__(self, rank=0, order=0, tolerance=0.001) :
+    # Public Interface
+
+    def __init__(self, rank=0) :
         """ Constructor
+            
+        Parameters
+        ----------
+        rank : integer
+            MPI process rank.  
         """
         
         # LABAN options of potential interest
-        self.order     = order
-        self.tolerance = tolerance
+        self.order     = 4
+        self.tolerance = 0.0001
         
         # Rank is needed for MPI runs.  This differentiates the inputs. 
         self.rank      = rank
@@ -50,16 +55,57 @@ class Laban(object):
         # Create the static top part of the LABAN-PEL input
         self.make_input_top()
 
+    def evaluate(self) :
+        """  Evaluate the current core.
+        """
+        # The core is a member variable, and so the updated
+        #   one is always available once shuffle is called
+        #   in Reactor.
+        
+        # Open the input file
+        f = open(self.input, 'w')
+        
+        # Write
+        f.write(self.input_top)
+        self.make_input_map()
+        f.write(self.input_map)
+        
+        self.make_input_materials()
+        f.write(self.input_materials)
+        
+        # Close
+        f.close()
+        
+        # Run LABAN-PEL
+        self.run()
+        
+        # Read the output
+        self.read()
+        
+        # Return the evaluation parameters
+        return self.keff, self.maxpeak
+    
+    def display(self) :
+        """  Introduce myself.
+        """
+        print "    EVALUATOR:  LABAN-PEL"
+        print "        input: ", self.input
+        print "       output: ", self.output
+
+    
+    # Implementation
+
     def make_input_top(self) :
         """  Create the string for the top invariant part of the input.
         """
+        stencil_length = str(len(self.core.stencil[0,:]))
         self.input_top = \
-                "LABANPEL -- poropy driver \n"                                              +\
-                "  2    6    6  " + str(len(self.core.pattern)+1) + " 0    0    2  1.0\n"   +\
-                " "+str(self.order)+" 0    0    0    0    0    0    0     0\n"              +\
-                "  1    0. 0.     0   100   10 "                                          +\
-                   str(self.tolerance)+" "+str(self.tolerance)+" "+str(self.tolerance)     +\
-                       "   1.0\n"     
+                "LABANPEL -- poropy driver \n"                                +\
+                "  2 " + stencil_length  + " " + stencil_length               +\
+                " " + str(len(self.core.pattern)+1) + " 0    0    2  1.0\n"   +\
+                " "+str(self.order)+" 0    0    0    0    0    0    0     0\n"+\
+                "  1    0. 0.     0   100   10 " + str(self.tolerance)+" "    +\
+                str(self.tolerance)+" "+str(self.tolerance) + "   1.0\n"      
         # horizontal subdivisions                                                      
         for i in range(0, self.dimension) :
             self.input_top += "  "+str(self.subdivisions[i])
@@ -154,35 +200,7 @@ class Laban(object):
             self.input_materials += '\n'
         self.input_materials += "WHITE\n" + "BLACK\n" + "END\n"
         
-    def evaluate(self) :
-        """  Evaluate the current core.
-        """
-        # The core is a member variable, and so the updated
-        #   one is always available once shuffle is called
-        #   in Reactor.
-        
-        # Open the input file
-        f = open(self.input, 'w')
-        
-        # Write
-        f.write(self.input_top)
-        self.make_input_map()
-        f.write(self.input_map)
-        
-        self.make_input_materials()
-        f.write(self.input_materials)
-        
-        # Close
-        f.close()
-        
-        # Run LABAN-PEL
-        self.run()
-        
-        # Read the output
-        self.read()
-        
-        # Return the evaluation parameters
-        return self.keff, self.maxpeak
+ 
    
     def read(self) : 
         """  Read a LABAN-PEL output file and load various data.
@@ -225,17 +243,3 @@ class Laban(object):
         # currently, labanx reads from a preset file
         os.system('labanx '+str(self.rank)+" "+self.input+" "+self.output)     
         
-    def plot_peak(self) :
-        """  Plot the power peaking factors.
-        """
-        plt.imshow(self.peaking, interpolation='nearest', cmap=plt.cm.hot)  
-        plt.title('power peaking')
-        plt.colorbar()
-        plt.show()
-        
-    def display(self) :
-        """  Introduce myself.
-        """
-        print "    EVALUATOR:  LABAN-PEL"
-        print "        input: ", self.input
-        print "       output: ", self.output
