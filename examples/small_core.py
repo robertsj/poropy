@@ -31,11 +31,11 @@ def make_small_core(rank=0) :
     # defined by rotational symmetry and 0's where reflector 
     # exists.
     stencil = np.array([[ 2, 1, 1, 1, 1, 0], \
-                        [ 0, 1, 1, 1, 1, 0], \
-                        [0, 1, 1, 1, 1, 0], \
-                        [0, 1, 1, 1, 0, 0], \
-                        [0, 1, 1, 0, 0, 0], \
-                        [ 0, 0, 0, 0, 0, 0]] )
+                        [-1, 1, 1, 1, 1, 0], \
+                        [-1, 1, 1, 1, 1, 0], \
+                        [-1, 1, 1, 1, 0, 0], \
+                        [-1, 1, 1, 0, 0, 0], \
+                        [-1, 0, 0, 0, 0, 0]] )
     
     # Also, the regions are to be indexed in a more natural way than
     # is standard.  The stencil is indexed as would be any matrix.
@@ -89,23 +89,6 @@ def make_small_core(rank=0) :
     # Twice burned                  
     unique_assemblies.append(Assembly('IFBA', 4.25, 30.0))
 
-#    unique_assemblies.append(Assembly('IFBA', 4.25, 0.0,  \
-#                                      np.array([1.4493e+00, 3.8070e-01, \
-#                                                9.9000e-03, 1.0420e-01, \
-#                                                7.9000e-03, 1.6920e-01, \
-#                                                1.5100e-02])))
-#    # Once burned                  
-#    unique_assemblies.append(Assembly('IFBA', 4.25, 15.0, \
-#                                      np.array([1.4479e+00, 3.7080e-01, \
-#                                                1.1000e-02, 1.2000e-01, \
-#                                                6.9000e-03, 1.7450e-01, \
-#                                                1.4800e-02])))
-#    # Twice burned                  
-#    unique_assemblies.append(Assembly('IFBA', 4.25, 30.0, \
-#                                      np.array([1.4494e+00, 3.6760e-01, \
-#                                                1.1500e-02, 1.1910e-01, \
-#                                                6.0000e-03, 1.6250e-01, \
-#                                                1.4700e-02])))
     # Loop through and assign assemblies to each fuel location in the pattern.
     for i in range(0, len(pattern)) :
         assemblies.append(unique_assemblies[pattern[i]])
@@ -115,8 +98,11 @@ def make_small_core(rank=0) :
     
     # Assembly dimension.
     width = 23.1226
+
+    # Choose a physics model (Laban or Flare).  Note, Laban must be called 
+    # with "rank" as a parameter.
+    physics = Flare()
     
     # Build the Reactor
     # =================
-    
-    return Reactor(stencil, pattern, assemblies, reflector, width, Laban(rank))
+    return Reactor(stencil, pattern, assemblies, reflector, width, physics)

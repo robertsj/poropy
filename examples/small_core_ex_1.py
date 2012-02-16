@@ -1,4 +1,4 @@
-# examples/coretools/small_core_ex_1.py
+# examples/coretools/small_core_ex_1.py -- demo of basic functionality
 
 import small_core
 
