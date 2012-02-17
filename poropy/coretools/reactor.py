@@ -10,18 +10,29 @@ import os
 import matplotlib.pyplot as plt
 from matplotlib import rc
 
+try:
+    from PyQt4.QtCore import *
+    from PyQt4.QtGui import *
+    PYQT4 = True
+    OBJECTBASE = QObject
+except ImportError:
+    PYQT4 = False
+    OBJECTBASE = object
+
 
 # Allows LaTeX in labels and uses nicer serif font.
 rc('text', usetex=True)
 rc('font', family='serif')
 
-class Reactor(object):
+class Reactor(OBJECTBASE):
     """ Represents the reactor
     """
     
-    def __init__(self, stencil, pattern, assemblies, reflector, width, evaluator) :
+    def __init__(self, stencil, pattern, assemblies, reflector, width, evaluator, parent=None) :
         """ Constructor
         """
+        if PYQT4:
+            QWidget.__init__(self,parent)
   
         # Create the core.
         self.core = Core(stencil, pattern, assemblies, reflector, width)  
@@ -175,14 +186,24 @@ class Reactor(object):
         print " ----------------------- "
         print "    keff   = ", self.evaluator.keff    
         print " maxpeak   = ", self.evaluator.maxpeak  
+
+    def fire_eval_signal(self,k,p):
+        # we do this here so optimizers that evaluate the reactor a zillion times don't
+        # trigger a billion repaints.  Should be called explicitly, e.g. at the end of
+        # generations
+        if PYQT4:
+            self.emit(SIGNAL("reactorEvaluated(float,float)"),k,p)
         
-class Core(object):
+class Core(OBJECTBASE):
     """ Represents the core.
     """
     
-    def __init__(self, stencil, pattern, assemblies, reflector, width):
+    def __init__(self, stencil, pattern, assemblies, reflector, width, parent=None):
         """ Constructor
         """
+        if PYQT4:
+            QWidget.__init__(self,parent)
+
         # Validate input.
         assert(len(pattern) == len(assemblies))
         assert(len(assemblies) > 0)
@@ -263,6 +284,8 @@ class Core(object):
         # and then update the map
         self.make_fuel_map()
         #TODO(robertsj): There should be checking.
+        if PYQT4:
+            self.emit(SIGNAL("patternUpdated()"))
      
     def swap(self, x, y) :
         """ Swap two bundles.

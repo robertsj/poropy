@@ -4,6 +4,14 @@ from pypgapack import PGA
 from mpi4py import MPI
 import numpy as np
 
+try:
+    from PyQt4.QtCore import *
+    from PyQt4.QtGui import *
+    PYQT4 = True
+except ImportError:
+    PYQT4 = False
+
+
 class Optimizer(PGA) :
     """  Derive our own class from PGA.
     """
@@ -181,6 +189,10 @@ class Optimizer(PGA) :
         #   to the bestpattern.
         self.reactor.shuffle(bestpattern) 
         k, p = self.reactor.evaluate()
+
+        if PYQT4:
+            self.reactor.fire_eval_signal(k,p)
+
         #print "iter = ",iter
         #print " it = ", it, " best = ", self.GetEvaluation(best, PGA.NEWPOP), " k p = ",k,p,bestpattern
         #print " *** ", self.GetEvaluation(best, PGA.OLDPOP)  
