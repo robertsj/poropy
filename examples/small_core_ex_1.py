@@ -33,7 +33,7 @@ reactor.evaluate()
 reactor.print_params()
 reactor.print_peaking()
 reactor.print_pattern('burnup')
-
+reactor.plot_peaking()
 # That's a significant peaking reduction with just a slight decrease
 # in keff.  However, there is a better pattern.  For this keff, 
 # the tradeoff curve in the theory document suggests a peaking 

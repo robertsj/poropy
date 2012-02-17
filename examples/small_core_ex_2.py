@@ -1,8 +1,8 @@
-# examples/coretools/small_core_ex_1.py
+# examples/coretools/small_core_ex_2.py
 
 import small_core
 
-from poropy.coretools import Optimizer
+from poropy.coretools import OptimizerGA
 from pypgapack import PGA
 from mpi4py import MPI
 import numpy as np
@@ -22,7 +22,7 @@ rc('font', family='serif')
 # we need special initialization and mutation
 # functions.
 
-class OptimizeSmallCore(Optimizer) :
+class OptimizeSmallCore(OptimizerGA) :
     """  Derive our own class from PGA.
     """
     def small_core_objective(self, p, pop) :
@@ -142,6 +142,7 @@ for i in range(0, number_runs) :
         kefs[i]=reactor.evaluator.keff
         peks[i]=reactor.evaluator.maxpeak
         evas[i]=opt.evals
+        
 if rank == 0 :
     print np.mean(vals), np.std(vals)
     print np.mean(kefs), np.std(kefs)

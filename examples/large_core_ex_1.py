@@ -14,14 +14,14 @@ reactor = large_core.make_large_core()
 #                                 46,44,43,42,39,47,36]))
 
 # FLARE best
-reactor.shuffle(np.array([48,46,35,30,34,25,12,42,7,32,3,43,11,38,33,1,39,24,13,44,8,27,19,31,21,29,4,16,23,47,10,41,22,17,14,20,15,40,2,37,36,5,18,28,6,45,0,9,26]))
+#reactor.shuffle(np.array([48,46,35,30,34,25,12,42,7,32,3,43,11,38,33,1,39,24,13,44,8,27,19,31,21,29,4,16,23,47,10,41,22,17,14,20,15,40,2,37,36,5,18,28,6,45,0,9,26]))
 
 # LABAN, order 4, best
 #reactor.shuffle(np.array([48,27,24,28,18,0,6,41,30,11,46,34,9,43,37,25,20,12,21,15,4,45,16,17,19,26,13,31,38,33,29,32,3,22,47,44,7,1,8,2,39,14,10,23,5,36,42,35,40]))
 
 # View all the diagnostics down the chain.
-#reactor.display()
-#print "len sten", len(reactor.core.stencil[1,:]), len(reactor.core.stencil[:,1])
+reactor.display()
+print "len sten", len(reactor.core.stencil[1,:]), len(reactor.core.stencil[:,1])
 # Evaluate the default pattern.  We can grab the eigenvalue
 # and peaking as return values.
 num = 1
@@ -36,8 +36,8 @@ print "k = ",k," p = ",p
 # Alternatively, we can use print_params to display current
 # values of all optimization parameters.  Currently only
 # keff and the max peaking are retained.
-#reactor.print_params()
-#
+reactor.print_params()
+reactor.print_peaking()
 ## We can also print the power peaking.
 #reactor.print_peaking()
 #
@@ -46,9 +46,9 @@ print "k = ",k," p = ",p
 #reactor.print_pattern()
 
 # Do a swap and evaluate.
-#reactor.swap([0,1],[0,2])
+reactor.swap([0,1],[0,2])
 reactor.print_pattern()
-#reactor.evaluate()
+reactor.evaluate()
 reactor.print_params()
 reactor.print_peaking()
 reactor.plot_peaking()

@@ -65,7 +65,8 @@ class Flare(Evaluator):
         # Core size per dimension.
         self.dimension = len(self.core.stencil[0,:])
         # Peaking factor map
-        self.peaking  = np.zeros((self.dimension, self.dimension))
+        self.peaking = np.zeros(geometry.number_bundles)
+        self.peaking_map = np.zeros((self.dimension, self.dimension))
         
     def evaluate(self) :
         """  Evaluate the current core.
@@ -82,7 +83,11 @@ class Flare(Evaluator):
         self.keff = state.get_keff()
         self.maxpeak = state.get_mppf()
         state.make_peaking_map()
-        self.peaking = state.peaking_map
+        # Get the peaking map and a 1-d array of peaking
+        self.peaking_map = state.peaking_map
+        self.peaking_map[:, 0] = self.peaking_map[0, :]
+        self.peaking = state.assembly_peaking
+
         # Return the evaluation parameters
         return self.keff, self.maxpeak
         
