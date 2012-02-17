@@ -26,6 +26,7 @@ from functions import *
 import weakref
 import numpy as np
 #import debug
+import os
 
 try:
     from WidgetGroup import *

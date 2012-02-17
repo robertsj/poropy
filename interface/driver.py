@@ -44,10 +44,10 @@ class PGAOpt(QThread):
             opt.SetMutation(opt.swap)
             
             # Set various PGA parameters 2
-            opt.SetNumReplaceValue(10)
+            opt.SetNumReplaceValue(290)
             opt.SetRandomSeed(i+1)       # Set random seed for verification.  
             np.random.seed(i+1)          # Do the same with Numpy.
-            opt.SetPopSize(50)           # Large enough to see some success.
+            opt.SetPopSize(300)           # Large enough to see some success.
             opt.SetMaxGAIterValue(500)   # Small number for output.
 
             # Set various Optimizer parameters
@@ -81,6 +81,7 @@ class PGAOpt(QThread):
         opt.Destroy()  # Clean up PGAPack internals. 
 
         os.chdir(cwd)
+        self.emit(SIGNAL("progressChanged(int)"),100)
 
 class OptimizeSmallCore(Optimizer) :
     """  Derive our own class from PGA.
@@ -96,9 +97,6 @@ class OptimizeSmallCore(Optimizer) :
         self.reactor.shuffle(pattern) 
         keff, peak = self.reactor.evaluate()
         val = self.fun(keff,peak)
-        #print "val, keff, peak, pattern"
-        #print val, keff, peak, pattern
-        #print
         self.evals += 1
         del pattern
         return val

@@ -16,7 +16,9 @@ class LogWatcher(QWidget):
 
         timer = QTimer(self)
         QObject.connect(timer, SIGNAL("timeout()"), self.update_display)
-        timer.start(500)
+        timer.start(50)
+
+        self.mutex = QMutex()
 
         self.fh = open(logfile,'r')
         self.lines = self.fh.readlines()
@@ -24,9 +26,11 @@ class LogWatcher(QWidget):
             self.display.append(line)
 
     def update_display(self):
+        self.mutex.lock()
         newlines = self.fh.readlines()
         newTextLines = newlines[len(newlines)-len(self.lines)-1:]
         for line in newTextLines:
             self.display.append(line)
         self.display.update()
         self.lines = newlines
+        self.mutex.unlock()

@@ -10,7 +10,9 @@ class CoreDisplay(QGraphicsView):
         QGraphicsView.__init__(self,parent)
         
         self.core = core
-        self.previousSelection = None
+        self.needsRefresh = True
+
+        self.mutex = QMutex()
 
         self.scene = QGraphicsScene(self)
         self.scene.maxZ = 0
@@ -21,9 +23,16 @@ class CoreDisplay(QGraphicsView):
         self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
 
         self.draw_core()
-        self.connect(self.core,SIGNAL("patternUpdated()"),self.draw_core)
+
+        timer = QTimer(self)
+        QObject.connect(timer, SIGNAL("timeout()"), self.draw_core)
+        timer.start(50)
 
 
+
+
+    def pattern_updated(self):
+        self.needsRefresh = True
 
     def resizeEvent(self, event):
         self.fitInView(self.scene.sceneRect(),Qt.KeepAspectRatio)
@@ -35,7 +44,15 @@ class CoreDisplay(QGraphicsView):
                     item.refresh()
         except RuntimeError: pass
 
+
     def draw_core(self):
+        if not self.needsRefresh: return
+        
+        self.mutex.lock()
+
+        self.needsRefresh = False
+
+        
 
         self.scene.clear()
 
@@ -44,7 +61,7 @@ class CoreDisplay(QGraphicsView):
         i = 0
         for r,row in enumerate(self.core.stencil):
             for c,assType in enumerate(row):
-                if r != 0 and c == 0 and assType != 0: # if on reflected surface
+                if r != 0 and c == 0: # if on reflected surface
                     mapped_pattern_ids[r,c] = mapped_pattern_ids[0,r]
                 else:
                     if assType != 0:
@@ -60,10 +77,16 @@ class CoreDisplay(QGraphicsView):
         for r,row in enumerate(self.core.stencil):
             for c,assType in enumerate(row):
                 patt_id = mapped_pattern_ids[r,c]
-                if r != 0 and c == 0 and assType != 0:    # if on reflected surface
+                if r != 0 and c == 0:    # if on reflected surface
                     a = self.core.assemblies[patt_id]
-                    a.name = i
-                    ass = AssemblyDisplay(r,c,a,"reflected surface",self,scene=self.scene)
+                    if patt_id == -1:
+                        a.name = "R"
+                        type_ = "reflector"
+                    else:
+                        a.name = patt_id
+                        type_ = "reflected surface"
+                    ass = AssemblyDisplay(r,c,a,type_,self,scene=self.scene)
+
                 else:
 
                     if patt_id == -1:
@@ -80,6 +103,8 @@ class CoreDisplay(QGraphicsView):
 
         m = 20 # pixel margin
         self.scene.setSceneRect(-m,-m,numCols*L+2*m,numRows*L+2*m)
+
+        self.mutex.unlock()
 
 
     def assembly_swap(self,toFrom):

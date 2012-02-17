@@ -12,7 +12,7 @@ from PyQt4.QtGui import *
 import widgets
 from driver import PGAOpt
 import small_core
-
+import large_core
 
 
 
@@ -27,7 +27,8 @@ class MainWindow(QMainWindow):
 
         self.setWindowTitle("Poropy PWR Core Optimization Interface")
 
-        defaultReactor = small_core.make_small_core(0)
+        #defaultReactor = small_core.make_small_core(0)
+        defaultReactor = large_core.make_large_core(0)
         self.reactor = defaultReactor
 
 
@@ -115,26 +116,32 @@ class MainWindow(QMainWindow):
         # connections
 
         self.connect(self.coreDisplay,SIGNAL("assemblySwap"),self.assembly_swap)
+
         self.connect(self.reactor,SIGNAL("reactorEvaluated(float,float)"),self.reactor_evaluated)
+        self.connect(self.reactor,SIGNAL("patternUpdated()"),self.coreDisplay.pattern_updated)
+
         self.connect(self.allPatterns,SIGNAL("patternChanged(QVariant)"),self.change_pattern)
         self.connect(self.savedPatterns,SIGNAL("patternChanged(QVariant)"),self.change_pattern)
         #self.connect(self.allPatterns,SIGNAL("saveItem(QTreeWidgetItem*)"),self.savedPatterns.add_item)
         #self.connect(self.allPatterns,SIGNAL("unsaveItem(QTreeWidgetItem*)"),self.savedPatterns.remove_item)
 
         keff,maxpeak = self.evaluate_reactor()
+        self.allPatterns.add_pattern(self.reactor.core.pattern,keff,maxpeak)
         self.savedPatterns.add_pattern(self.reactor.core.pattern,keff,maxpeak)
         self.allPatterns.resize()
         self.savedPatterns.resize()
 
 
     def change_pattern(self, pattern):
+        """slot for when you click on pattern list item"""
+    
         if isinstance(pattern,QVariant):
             pattern = pattern.toPyObject()
         if str(pattern) != str(self.reactor.core.pattern):
             self.reactor.shuffle(pattern)
             keff,maxpeak = self.evaluate_reactor()
             self.update_plots(keff,maxpeak)
-            self.coreDisplay.draw_core()
+            self.coreDisplay.pattern_updated()
 
 
     def evaluate_reactor(self):
@@ -142,7 +149,6 @@ class MainWindow(QMainWindow):
         os.chdir(os.path.join(sys.path[0],"tmpdir"))
         keff,maxpeak = self.reactor.evaluate()
         os.chdir(cwd)
-        self.allPatterns.add_pattern(self.reactor.core.pattern,keff,maxpeak)
         self.update_plots(keff,maxpeak)
         return keff,maxpeak
 
@@ -154,9 +160,11 @@ class MainWindow(QMainWindow):
 
 
     def assembly_swap(self,toFrom):
+        """called on manual swap"""
         self.reactor.swap(toFrom[0],toFrom[1])
         keff,maxpeak = self.evaluate_reactor()
-        self.coreDisplay.draw_core()
+        self.coreDisplay.pattern_updated()
+        self.allPatterns.add_pattern(self.reactor.core.pattern,keff,maxpeak)
 
 
     def update_plots(self,keff,maxpeak):

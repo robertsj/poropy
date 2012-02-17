@@ -12,13 +12,15 @@ except ImportError:
     PYQT4 = False
 
 
-class Optimizer(PGA) :
+class Optimizer(PGA,QObject) :
     """  Derive our own class from PGA.
     """
     
-    def __init__(self, argv, reactor) :
+    def __init__(self, argv, reactor, parent=None) :
         """ Constructor.
         """
+        QObject.__init__(self,parent)
+
         self.reactor = reactor
         self.evals = 0 # counter for evaluations on each process
         PGA.__init__(self, argv, PGA.DATATYPE_INTEGER, self.reactor.number_bundles(), PGA.MAXIMIZE)
@@ -192,6 +194,9 @@ class Optimizer(PGA) :
 
         if PYQT4:
             self.reactor.fire_eval_signal(k,p)
+            self.reactor.fire_pattupdate_signal()
+            self.emit(SIGNAL("test"))
+            
 
         #print "iter = ",iter
         #print " it = ", it, " best = ", self.GetEvaluation(best, PGA.NEWPOP), " k p = ",k,p,bestpattern

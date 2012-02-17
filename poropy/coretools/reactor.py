@@ -193,16 +193,21 @@ class Reactor(OBJECTBASE):
         # generations
         if PYQT4:
             self.emit(SIGNAL("reactorEvaluated(float,float)"),k,p)
+
+    def fire_pattupdate_signal(self):
+        # we do this here so optimizers that evaluate the reactor a zillion times don't
+        # trigger a billion repaints.  Should be called explicitly, e.g. at the end of
+        # generations
+        if PYQT4:
+            self.emit(SIGNAL("patternUpdated()"))
         
-class Core(OBJECTBASE):
+class Core:
     """ Represents the core.
     """
     
     def __init__(self, stencil, pattern, assemblies, reflector, width, parent=None):
         """ Constructor
         """
-        if PYQT4:
-            QWidget.__init__(self,parent)
 
         # Validate input.
         assert(len(pattern) == len(assemblies))
@@ -284,8 +289,6 @@ class Core(OBJECTBASE):
         # and then update the map
         self.make_fuel_map()
         #TODO(robertsj): There should be checking.
-        if PYQT4:
-            self.emit(SIGNAL("patternUpdated()"))
      
     def swap(self, x, y) :
         """ Swap two bundles.
