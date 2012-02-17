@@ -44,6 +44,8 @@ class Optimizer(OBJECTBASE):
         This *must* be called at the end of each inherited optimizer's
         end_of_iteration class.
         """
+        # Have reactor update anything needed for displays.
+        self.reactor.core.update_assembly_peaking()
         if PYQT4:
             self.emit(SIGNAL("reactorEvaluated(float,float)"),self.k, self.p)
             self.emit(SIGNAL("patternUpdated()"))            

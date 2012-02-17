@@ -6,9 +6,3 @@ laban*out
 fort.*
 labanx
 doc/build
-*.bzr
-*.cix
-*.iix
-*.rix
-*.six
-*.tix

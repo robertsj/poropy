@@ -103,7 +103,7 @@ class Reactor(object) :
         """
         # TODO(robertsj): Add some nice formatting.
         print ""
-        print self.evaluator.peaking
+        print self.evaluator.peaking_map
         
     def print_pattern(self) :
         """  Print out the peaking factor matrix.
@@ -353,8 +353,8 @@ class Core:
 
         Finish me.
         """
-        for i in range(0, len(self.assemblies)) :
-            self.assemblies[i].set_peak(0.0)
+        for i in range(0, len(self.assemblies)):
+            self.assemblies[i].set_peak(self.evaluator.peaking[i])
  
     def get_plot_map(self, param) :
         """  Return a 2-d array of pattern parameters.
