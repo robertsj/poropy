@@ -40,12 +40,13 @@ collaborations in all areas, including:
   in Ubuntu.  We'd love to drag and drop assemblies on
   an iPad.
 * Educational materials; a primary motivator for continued 
-  development is to produce a tool viable for classroom
+  development is to produce a tool viable for classroom use
+* Multi-cycle optimization 
 
 People
 ------
 
-Jeremy Roberts
-Nick Horelik
-Nathan Gibson
-you?
+* Jeremy Roberts
+* Nick Horelik
+* Nathan Gibson
+* you?

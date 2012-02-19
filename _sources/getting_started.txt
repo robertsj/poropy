@@ -7,7 +7,7 @@ Background
 ----------
 
 :mod:`poropy` is a set of simple tools related to optimization of
-incore fuel management.  This includes loading pattern optimization,
+in-core fuel management.  This includes loading pattern optimization,
 for which :mod:`poropy.coretools` provides several tools.  For 
 optimizing bundles (enrichment, gad content, etc.), :mod:`poropy.bundletools`
 will provide utilities.
@@ -15,8 +15,15 @@ will provide utilities.
 Building poropy
 ---------------
 
-For now, it's simple enough to set ``PYTHONPATH`` correctly.  In the future,
-a ``setup.py`` script will be included.
+Currently, a build system is not in place, but the brave user will need to
+
+* get `pypgapack <http://github.com/robertsj/pypgapack/>`_ (if optimization is desired)
+* get `flare <http://github.com/robertsj/flare/>`_ (for neutronics)
+* (and/or) build labanx (ifort -o labanx labanpel.f90) and put it in the PATH
+* get python-qt4 and python-qt4-gl for the gui
+
+All our work is done in Ubuntu; if someone want to write a setup.py for us,
+we'd be thrilled!
 
 Next Steps
 ----------

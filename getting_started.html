@@ -58,15 +58,22 @@
 <div class="section" id="background">
 <h2>Background<a class="headerlink" href="#background" title="Permalink to this headline">¶</a></h2>
 <p><tt class="xref py py-mod docutils literal"><span class="pre">poropy</span></tt> is a set of simple tools related to optimization of
-incore fuel management.  This includes loading pattern optimization,
+in-core fuel management.  This includes loading pattern optimization,
 for which <tt class="xref py py-mod docutils literal"><span class="pre">poropy.coretools</span></tt> provides several tools.  For
 optimizing bundles (enrichment, gad content, etc.), <tt class="xref py py-mod docutils literal"><span class="pre">poropy.bundletools</span></tt>
 will provide utilities.</p>
 </div>
 <div class="section" id="building-poropy">
 <h2>Building poropy<a class="headerlink" href="#building-poropy" title="Permalink to this headline">¶</a></h2>
-<p>For now, it&#8217;s simple enough to set <tt class="docutils literal"><span class="pre">PYTHONPATH</span></tt> correctly.  In the future,
-a <tt class="docutils literal"><span class="pre">setup.py</span></tt> script will be included.</p>
+<p>Currently, a build system is not in place, but the brave user will need to</p>
+<ul class="simple">
+<li>get <a class="reference external" href="http://github.com/robertsj/pypgapack/">pypgapack</a> (if optimization is desired)</li>
+<li>get <a class="reference external" href="http://github.com/robertsj/flare/">flare</a> (for neutronics)</li>
+<li>(and/or) build labanx (ifort -o labanx labanpel.f90) and put it in the PATH</li>
+<li>get python-qt4 and python-qt4-gl for the gui</li>
+</ul>
+<p>All our work is done in Ubuntu; if someone want to write a setup.py for us,
+we&#8217;d be thrilled!</p>
 </div>
 <div class="section" id="next-steps">
 <h2>Next Steps<a class="headerlink" href="#next-steps" title="Permalink to this headline">¶</a></h2>
