@@ -1,0 +1,344 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>laban &mdash; poropy 0.1.0 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/proBlue_mod.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="poropy 0.1.0 documentation" href="../index.html" />
+    <link rel="up" title="Module code" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../index.html">poropy 0.1.0 documentation</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for laban</h1><div class="highlight"><pre>
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">Created on Dec 11, 2011</span>
+
+<span class="sd">@author: robertsj</span>
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="kn">from</span> <span class="nn">evaluator</span> <span class="kn">import</span> <span class="n">Evaluator</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+
+<div class="viewcode-block" id="Laban"><a class="viewcode-back" href="../api_reference.html#laban.Laban">[docs]</a><span class="k">class</span> <span class="nc">Laban</span><span class="p">(</span><span class="n">Evaluator</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Uses the LABAN-PEL code to evaluate loading patterns.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c"># Public Interface</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rank</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot; Constructor</span>
+<span class="sd">            </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        rank : integer</span>
+<span class="sd">            MPI process rank.  </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="c"># LABAN options of potential interest</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">order</span>     <span class="o">=</span> <span class="mi">4</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tolerance</span> <span class="o">=</span> <span class="mf">0.0001</span>
+        
+        <span class="c"># Rank is needed for MPI runs.  This differentiates the inputs. </span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rank</span>      <span class="o">=</span> <span class="n">rank</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">input</span>     <span class="o">=</span> <span class="s">&quot;laban&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">rank</span><span class="p">)</span><span class="o">+</span><span class="s">&quot;.inp&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output</span>    <span class="o">=</span> <span class="s">&quot;laban&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">rank</span><span class="p">)</span><span class="o">+</span><span class="s">&quot;.out&quot;</span>    
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">keff</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">maxpeak</span> <span class="o">=</span> <span class="mi">0</span>
+        
+<div class="viewcode-block" id="Laban.setup"><a class="viewcode-back" href="../api_reference.html#laban.Laban.setup">[docs]</a>    <span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">core</span><span class="p">)</span> <span class="p">:</span>     
+        <span class="sd">&quot;&quot;&quot;  Set up some structures needed before solving.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c"># We need direct access to the core</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">core</span> <span class="o">=</span> <span class="n">core</span>
+        <span class="c"># Validate a square quarter core. (Not applicable to 1/2 or 1/8)</span>
+        <span class="k">assert</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">stencil</span><span class="p">[</span><span class="mi">0</span><span class="p">,:])</span><span class="o">==</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">stencil</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]))</span>
+        <span class="c"># Core size per dimension.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dimension</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">stencil</span><span class="p">[</span><span class="mi">0</span><span class="p">,:])</span>
+        <span class="c"># Assembly boundaries</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widths</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dimension</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widths</span><span class="p">[:]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">width</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widths</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">width</span>
+        <span class="c"># Subdivisions.  Not really used.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">subdivisions</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dimension</span><span class="p">,</span><span class="n">dtype</span><span class="o">=</span><span class="s">&#39;i&#39;</span><span class="p">)</span>
+        <span class="c"># Peaking factor map</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">peaking_map</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">dimension</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dimension</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">peaking</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">assemblies</span><span class="p">))</span>
+        <span class="c"># Create the static top part of the LABAN-PEL input</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">make_input_top</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="Laban.evaluate"><a class="viewcode-back" href="../api_reference.html#laban.Laban.evaluate">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;  Evaluate the current core.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c"># The core is a member variable, and so the updated</span>
+        <span class="c">#   one is always available once shuffle is called</span>
+        <span class="c">#   in Reactor.</span>
+        
+        <span class="c"># Open the input file</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input</span><span class="p">,</span> <span class="s">&#39;w&#39;</span><span class="p">)</span>
+        
+        <span class="c"># Write</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_top</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">make_input_map</span><span class="p">()</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_map</span><span class="p">)</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">make_input_materials</span><span class="p">()</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_materials</span><span class="p">)</span>
+        
+        <span class="c"># Close</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        
+        <span class="c"># Run LABAN-PEL</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+        
+        <span class="c"># Read the output</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        
+        <span class="c"># Return the evaluation parameters</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">keff</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">maxpeak</span>
+    </div>
+<div class="viewcode-block" id="Laban.display"><a class="viewcode-back" href="../api_reference.html#laban.Laban.display">[docs]</a>    <span class="k">def</span> <span class="nf">display</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;  Introduce myself.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">print</span> <span class="s">&quot;    EVALUATOR:  LABAN-PEL&quot;</span>
+        <span class="k">print</span> <span class="s">&quot;        input: &quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">input</span>
+        <span class="k">print</span> <span class="s">&quot;       output: &quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">output</span>
+
+    
+    <span class="c"># Implementation</span>
+</div>
+<div class="viewcode-block" id="Laban.make_input_top"><a class="viewcode-back" href="../api_reference.html#laban.Laban.make_input_top">[docs]</a>    <span class="k">def</span> <span class="nf">make_input_top</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;  Create the string for the top invariant part of the input.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">stencil_length</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">stencil</span><span class="p">[</span><span class="mi">0</span><span class="p">,:]))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">input_top</span> <span class="o">=</span> \
+                <span class="s">&quot;LABANPEL -- poropy driver </span><span class="se">\n</span><span class="s">&quot;</span>                                <span class="o">+</span>\
+                <span class="s">&quot;  2 &quot;</span> <span class="o">+</span> <span class="n">stencil_length</span>  <span class="o">+</span> <span class="s">&quot; &quot;</span> <span class="o">+</span> <span class="n">stencil_length</span>               <span class="o">+</span>\
+                <span class="s">&quot; &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">pattern</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot; 0    0    2  1.0</span><span class="se">\n</span><span class="s">&quot;</span>   <span class="o">+</span>\
+                <span class="s">&quot; &quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">order</span><span class="p">)</span><span class="o">+</span><span class="s">&quot; 0    0    0    0    0    0    0     0</span><span class="se">\n</span><span class="s">&quot;</span><span class="o">+</span>\
+                <span class="s">&quot;  1    0. 0.     0   100   10 &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tolerance</span><span class="p">)</span><span class="o">+</span><span class="s">&quot; &quot;</span>    <span class="o">+</span>\
+                <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tolerance</span><span class="p">)</span><span class="o">+</span><span class="s">&quot; &quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tolerance</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot;   1.0</span><span class="se">\n</span><span class="s">&quot;</span>      
+        <span class="c"># horizontal subdivisions                                                      </span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dimension</span><span class="p">)</span> <span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">input_top</span> <span class="o">+=</span> <span class="s">&quot;  &quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">subdivisions</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">input_top</span> <span class="o">+=</span> <span class="s">&quot; </span><span class="se">\n</span><span class="s">&quot;</span>
+        <span class="c"># vertical subdivisions</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dimension</span><span class="p">)</span> <span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">input_top</span> <span class="o">+=</span> <span class="s">&quot;  &quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">subdivisions</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">input_top</span> <span class="o">+=</span> <span class="s">&quot; </span><span class="se">\n</span><span class="s">&quot;</span>            
+        <span class="c"># horizontal mesh widths</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dimension</span><span class="p">)</span> <span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">input_top</span> <span class="o">+=</span> <span class="s">&quot;  &quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">widths</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">input_top</span> <span class="o">+=</span> <span class="s">&quot; </span><span class="se">\n</span><span class="s">&quot;</span>            
+        <span class="c"># vertical mesh widths</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dimension</span><span class="p">)</span> <span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">input_top</span> <span class="o">+=</span> <span class="s">&quot;  &quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">widths</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">input_top</span> <span class="o">+=</span> <span class="s">&quot; </span><span class="se">\n</span><span class="s">&quot;</span>                        
+ </div>
+<div class="viewcode-block" id="Laban.make_input_map"><a class="viewcode-back" href="../api_reference.html#laban.Laban.make_input_map">[docs]</a>    <span class="k">def</span> <span class="nf">make_input_map</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;  Print the map of assemblies.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">input_map</span> <span class="o">=</span> <span class="s">&quot;&quot;</span>
+        <span class="n">stencil</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">stencil</span>
+        <span class="n">pattern</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">pattern</span>
+        <span class="n">reflect</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">pattern</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span> <span class="c"># reflector id, last material</span>
+        <span class="n">N</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dimension</span>
+        <span class="n">coremap</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">N</span><span class="o">+</span><span class="mi">2</span><span class="p">,</span><span class="n">N</span><span class="o">+</span><span class="mi">2</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="s">&#39;i&#39;</span><span class="p">)</span>
+        
+        <span class="c"># reflections and vacuum</span>
+        <span class="n">coremap</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span>     <span class="mi">1</span><span class="p">:</span><span class="n">N</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> 
+        <span class="n">coremap</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="n">N</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span>     <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="n">coremap</span><span class="p">[</span><span class="n">N</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span>   <span class="mi">1</span><span class="p">:</span><span class="n">N</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">2</span>
+        <span class="n">coremap</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="n">N</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span>   <span class="n">N</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">2</span>
+        
+        <span class="n">fuelindex</span> <span class="o">=</span> <span class="mi">0</span>
+        
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">N</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="p">:</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">N</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="p">:</span>
+                <span class="k">if</span> <span class="n">j</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">i</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="p">:</span>
+                    <span class="k">pass</span>
+                <span class="k">else</span> <span class="p">:</span>
+                    <span class="k">if</span> <span class="n">stencil</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">j</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="p">:</span>    <span class="c"># a fuel</span>
+                        <span class="n">coremap</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">pattern</span><span class="p">[</span><span class="n">fuelindex</span><span class="p">]</span><span class="o">+</span><span class="mi">1</span>
+                        <span class="n">fuelindex</span> <span class="o">+=</span> <span class="mi">1</span>
+                    <span class="k">elif</span> <span class="n">stencil</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">j</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">:</span> <span class="c"># a reflector</span>
+                        <span class="n">coremap</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">reflect</span>
+                    <span class="k">else</span> <span class="p">:</span>                    <span class="c"># a void</span>
+                        <span class="k">pass</span>  
+        <span class="c"># Copy elements such that rotational symmetry is enforced. </span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">N</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="p">:</span>
+            <span class="n">coremap</span><span class="p">[</span><span class="n">j</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">coremap</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">N</span><span class="o">+</span><span class="mi">2</span><span class="p">)</span> <span class="p">:</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">N</span><span class="o">+</span><span class="mi">2</span><span class="p">)</span> <span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">input_map</span> <span class="o">+=</span><span class="s">&#39;</span><span class="si">%4i</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">coremap</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">input_map</span> <span class="o">+=</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span>
+        
+        </div>
+<div class="viewcode-block" id="Laban.make_input_materials"><a class="viewcode-back" href="../api_reference.html#laban.Laban.make_input_materials">[docs]</a>    <span class="k">def</span> <span class="nf">make_input_materials</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;  Print the materials definitions.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c">#       1    5    1  MATERIAL 1   (arbitrary line, i think)                                         </span>
+        <span class="c">#    1.4493e+00   9.9000e-03   7.9000e-03  1.  0.         0. 7.9000e-03  1.</span>
+        <span class="c">#    3.8070e-01   1.0420e-01   1.6920e-01  0   1.5100e-02 0. 1.6920e-01  1.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">input_materials</span> <span class="o">=</span> <span class="s">&quot;&quot;</span>
+        <span class="n">number_mats</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">pattern</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">assemblies</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">number_mats</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">:</span>
+            <span class="c"># Row 1: description.</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">input_materials</span> <span class="o">+=</span> <span class="s">&quot;   &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot;    5    1  MATERIAL &quot;</span>   <span class="o">+</span> \
+               <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot;  (&quot;</span>   <span class="o">+</span> \
+               <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">model</span>   <span class="o">+</span> <span class="s">&quot;,  &quot;</span>                            <span class="o">+</span> \
+               <span class="nb">str</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">enrichment</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot; w/o,  &quot;</span>                        <span class="o">+</span> \
+               <span class="nb">str</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">burnup</span><span class="p">)</span>     <span class="o">+</span> <span class="s">&quot; MWd/kg)</span><span class="se">\n</span><span class="s">&quot;</span>  
+            <span class="c"># Rows 2 and 3.</span>
+            <span class="n">D1</span><span class="p">,</span><span class="n">D2</span><span class="p">,</span><span class="n">A1</span><span class="p">,</span><span class="n">A2</span><span class="p">,</span><span class="n">F1</span><span class="p">,</span><span class="n">F2</span><span class="p">,</span><span class="n">S12</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">get_constants</span><span class="p">()</span>
+            <span class="n">d</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">D1</span><span class="p">,</span><span class="n">A1</span><span class="p">,</span><span class="n">F1</span><span class="p">,</span><span class="mf">1.0</span><span class="p">,</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">0.0</span><span class="p">,</span><span class="n">F1</span><span class="p">,</span><span class="mf">1.0</span><span class="p">],[</span><span class="n">D2</span><span class="p">,</span><span class="n">A2</span><span class="p">,</span><span class="n">F2</span><span class="p">,</span><span class="mf">0.0</span><span class="p">,</span><span class="n">S12</span><span class="p">,</span><span class="mf">0.0</span><span class="p">,</span><span class="n">F2</span><span class="p">,</span><span class="mf">1.0</span><span class="p">]])</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="p">:</span>
+                <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span> <span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">input_materials</span> <span class="o">+=</span><span class="s">&#39;</span><span class="si">%12.4e</span><span class="s">&#39;</span> <span class="o">%</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="n">j</span><span class="p">,</span><span class="n">k</span><span class="p">])</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">input_materials</span> <span class="o">+=</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span>
+            
+        <span class="n">a</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">reflector</span>
+        <span class="c"># Row 1: description.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">input_materials</span> <span class="o">+=</span> <span class="s">&quot;   &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">number_mats</span><span class="p">)</span>  <span class="o">+</span> <span class="s">&quot;    5    1  MATERIAL &quot;</span>   <span class="o">+</span> \
+            <span class="nb">str</span><span class="p">(</span><span class="n">number_mats</span><span class="p">)</span> <span class="o">+</span>  <span class="s">&quot;  (REFLECTOR) </span><span class="se">\n</span><span class="s">&quot;</span>  
+        <span class="c"># Rows 2 and 3.</span>
+        <span class="n">D1</span><span class="p">,</span><span class="n">D2</span><span class="p">,</span><span class="n">A1</span><span class="p">,</span><span class="n">A2</span><span class="p">,</span><span class="n">F1</span><span class="p">,</span><span class="n">F2</span><span class="p">,</span><span class="n">S12</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">get_constants</span><span class="p">()</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">D1</span><span class="p">,</span><span class="n">A1</span><span class="p">,</span><span class="n">F1</span><span class="p">,</span><span class="mf">1.0</span><span class="p">,</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">0.0</span><span class="p">,</span><span class="n">F1</span><span class="p">,</span><span class="mf">1.0</span><span class="p">],[</span><span class="n">D2</span><span class="p">,</span><span class="n">A2</span><span class="p">,</span><span class="n">F2</span><span class="p">,</span><span class="mf">0.0</span><span class="p">,</span><span class="n">S12</span><span class="p">,</span><span class="mf">0.0</span><span class="p">,</span><span class="n">F2</span><span class="p">,</span><span class="mf">1.0</span><span class="p">]])</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="p">:</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span> <span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">input_materials</span> <span class="o">+=</span><span class="s">&#39;</span><span class="si">%12.4e</span><span class="s">&#39;</span> <span class="o">%</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">input_materials</span> <span class="o">+=</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">input_materials</span> <span class="o">+=</span> <span class="s">&quot;WHITE</span><span class="se">\n</span><span class="s">&quot;</span> <span class="o">+</span> <span class="s">&quot;BLACK</span><span class="se">\n</span><span class="s">&quot;</span> <span class="o">+</span> <span class="s">&quot;END</span><span class="se">\n</span><span class="s">&quot;</span>
+        
+ 
+   </div>
+<div class="viewcode-block" id="Laban.read"><a class="viewcode-back" href="../api_reference.html#laban.Laban.read">[docs]</a>    <span class="k">def</span> <span class="nf">read</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="p">:</span> 
+        <span class="sd">&quot;&quot;&quot;  Read a LABAN-PEL output file and load various data.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c"># Open the file.</span>
+        <span class="n">f</span>     <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">,</span> <span class="s">&#39;r&#39;</span><span class="p">)</span>
+        <span class="n">lines</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
+        
+        <span class="c"># Find the eigenvalue.</span>
+        <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">while</span> <span class="bp">True</span> <span class="p">:</span>
+            <span class="n">words</span> <span class="o">=</span> <span class="n">lines</span><span class="p">[</span><span class="n">count</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">words</span><span class="p">)</span> <span class="o">==</span> <span class="mi">5</span> <span class="p">:</span>
+                <span class="k">if</span> <span class="n">words</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;*&quot;</span> <span class="ow">and</span> <span class="n">words</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;K-EFF&quot;</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">keff</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">words</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
+                    <span class="k">break</span>
+            <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
+        
+        <span class="c"># Find the peaking.</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="mi">0</span> <span class="c"># Assembly index</span>
+        
+        <span class="k">while</span> <span class="bp">True</span> <span class="p">:</span>
+            <span class="n">words</span> <span class="o">=</span> <span class="n">lines</span><span class="p">[</span><span class="n">count</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">words</span><span class="p">)</span> <span class="o">==</span> <span class="mi">8</span> <span class="p">:</span>
+                <span class="k">if</span> <span class="n">words</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;NODE&quot;</span> <span class="ow">and</span> <span class="n">words</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;AVERAGE&quot;</span> <span class="ow">and</span> <span class="n">words</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;POWERS&quot;</span> <span class="p">:</span>
+                    <span class="n">count</span> <span class="o">+=</span> <span class="mi">5</span> <span class="c"># Powers start 5 lines below title</span>
+                    <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dimension</span><span class="p">)</span> <span class="p">:</span>
+                        <span class="n">words</span> <span class="o">=</span> <span class="n">lines</span><span class="p">[</span><span class="n">count</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+                        <span class="k">assert</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">words</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dimension</span><span class="p">)</span>
+                        <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dimension</span><span class="p">)</span> <span class="p">:</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">peaking_map</span><span class="p">[</span><span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">words</span><span class="p">[</span><span class="n">col</span><span class="o">+</span><span class="mi">1</span><span class="p">])</span>
+                            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">stencil</span><span class="p">[</span><span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                                <span class="c">#print &quot; a=&quot;, a, &quot; row=&quot;, row, &quot; col=&quot;, col, len(self.peaking)</span>
+                                <span class="bp">self</span><span class="o">.</span><span class="n">peaking</span><span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">peaking_map</span><span class="p">[</span><span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">]</span>
+                                <span class="n">a</span> <span class="o">+=</span> <span class="mi">1</span>
+                        <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
+                    <span class="k">break</span>
+            <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>             
+        <span class="c"># Maximum peaking.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">maxpeak</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">peaking</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Laban.run"><a class="viewcode-back" href="../api_reference.html#laban.Laban.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;  Run LABAN-PEL (must set input first)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c"># currently, labanx reads from a preset file</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s">&#39;labanx &#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rank</span><span class="p">)</span><span class="o">+</span><span class="s">&quot; &quot;</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">input</span><span class="o">+</span><span class="s">&quot; &quot;</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">)</span>     
+        </div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../index.html">poropy 0.1.0 documentation</a> &raquo;</li>
+          <li><a href="index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Jeremy Roberts.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.
+    </div>
+  </body>
+</html>

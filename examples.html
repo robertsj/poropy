@@ -1,0 +1,1060 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Examples &mdash; poropy 0.1.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/proBlue_mod.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="poropy 0.1.0 documentation" href="index.html" />
+    <link rel="next" title="Methods" href="methods.html" />
+    <link rel="prev" title="Getting Started With poropy" href="getting_started.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="methods.html" title="Methods"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="getting_started.html" title="Getting Started With poropy"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">poropy 0.1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="examples">
+<span id="sec-examples"></span><h1>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h1>
+<p>All examples are located in the <tt class="docutils literal"><span class="pre">poropy/examples</span></tt> and the
+reference output for all examples is in <tt class="docutils literal"><span class="pre">poropy/examples/output</span></tt>.</p>
+<div class="section" id="small-core-examples">
+<span id="sec-smallcoreexamples"></span><h2>Small Core Examples<a class="headerlink" href="#small-core-examples" title="Permalink to this headline">¶</a></h2>
+<p>The first two examples use a small benchmark core to demonstrate
+basic capabilities of <tt class="xref py py-mod docutils literal"><span class="pre">poropy.coretools</span></tt>.  The core is
+described in the theory documentation.  A helper script is
+included to build the reactor in <tt class="docutils literal"><span class="pre">poropy</span></tt> and is listed
+here.</p>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>  1
+  2
+  3
+  4
+  5
+  6
+  7
+  8
+  9
+ 10
+ 11
+ 12
+ 13
+ 14
+ 15
+ 16
+ 17
+ 18
+ 19
+ 20
+ 21
+ 22
+ 23
+ 24
+ 25
+ 26
+ 27
+ 28
+ 29
+ 30
+ 31
+ 32
+ 33
+ 34
+ 35
+ 36
+ 37
+ 38
+ 39
+ 40
+ 41
+ 42
+ 43
+ 44
+ 45
+ 46
+ 47
+ 48
+ 49
+ 50
+ 51
+ 52
+ 53
+ 54
+ 55
+ 56
+ 57
+ 58
+ 59
+ 60
+ 61
+ 62
+ 63
+ 64
+ 65
+ 66
+ 67
+ 68
+ 69
+ 70
+ 71
+ 72
+ 73
+ 74
+ 75
+ 76
+ 77
+ 78
+ 79
+ 80
+ 81
+ 82
+ 83
+ 84
+ 85
+ 86
+ 87
+ 88
+ 89
+ 90
+ 91
+ 92
+ 93
+ 94
+ 95
+ 96
+ 97
+ 98
+ 99
+100
+101
+102
+103
+104
+105
+106
+107
+108</pre></div></td><td class="code"><div class="highlight"><pre><span class="c"># examples/small_core.py -- small benchmark reactor</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">poropy.coretools</span> <span class="kn">import</span> <span class="n">Reactor</span><span class="p">,</span> <span class="n">Assembly</span><span class="p">,</span> <span class="n">Reflector</span><span class="p">,</span> <span class="n">Laban</span><span class="p">,</span> <span class="n">Flare</span>
+
+<span class="k">def</span> <span class="nf">make_small_core</span><span class="p">(</span><span class="n">rank</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot; This returns a Reactor object for the small benchmark.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="c"># Problem</span>
+    <span class="c"># =======</span>
+    
+    <span class="c"># This is a small 69 assembly core modeled as a quarter</span>
+    <span class="c"># core.  It has three roughly equal batches composed of fresh,</span>
+    <span class="c"># once-, and twice-burned fuel.  The materials actually</span>
+    <span class="c"># correspond a 17x17, 4.25 w/o, 92 IFBA PWR assembly at </span>
+    <span class="c"># 0, 15, and 30 MWd/kg.  The assembly pitch is 20.5036, </span>
+    <span class="c"># so this benchmark is not using the data realistically.</span>
+    <span class="c"># The default pattern is a</span>
+    
+    <span class="c"># Stencil</span>
+    <span class="c"># =======</span>
+    
+    <span class="c"># First, define the stencil.  Fuel regions are positive</span>
+    <span class="c"># integers, where each value corresponds to a &quot;region&quot;. </span>
+    <span class="c"># In an optimization sequence, the user can exclude regions</span>
+    <span class="c"># from the search space completely.  Currently, this isn&#39;t</span>
+    <span class="c"># used, but there is an option to fixed the central bundle </span>
+    <span class="c"># directly.  Note, -1&#39;s are placed where assemblies are</span>
+    <span class="c"># defined by rotational symmetry and 0&#39;s where reflector </span>
+    <span class="c"># exists.</span>
+    <span class="n">stencil</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> \
+                        <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> \
+                        <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> \
+                        <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> \
+                        <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> \
+                        <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]]</span> <span class="p">)</span>
+    
+    <span class="c"># Also, the regions are to be indexed in a more natural way than</span>
+    <span class="c"># is standard.  The stencil is indexed as would be any matrix.</span>
+    <span class="c"># Hence a fuel location [i,j] corresponds to the [i,j]th location</span>
+    <span class="c"># in the pattern (using 0-based indexing)  In other words, there is </span>
+    <span class="c"># no alpha-numeric scheme.</span>
+    
+    <span class="c"># Initial Loading Pattern</span>
+    <span class="c"># =======================</span>
+    
+    <span class="c"># The pattern is a 1-D array of fuel identifiers.  These </span>
+    <span class="c"># identifiers correspond to assemblies to be defined below.</span>
+    <span class="c"># Unlike above, fuel is not specified if it is constrained by</span>
+    <span class="c"># rotation symmetry.  The fuel indices as </span>
+    <span class="c"># listed correspond to the their location in stencil using</span>
+    <span class="c"># a row-major storage.  We work with 1-D data for simplicity.</span>
+    <span class="n">pattern</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span>      \
+                            <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span>      \
+                            <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span>      \
+                            <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span>         \
+                            <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span>             <span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="s">&#39;i&#39;</span><span class="p">)</span>
+    
+
+    <span class="c"># Assembly Definitions</span>
+    <span class="c"># ====================</span>
+    
+    <span class="c"># Define the assemblies.  The pattern above has three unique</span>
+    <span class="c"># values, so we need to define 3 unique assemblies. </span>
+    
+    <span class="c"># For simple BOC cycle analysis, it would</span>
+    <span class="c"># be sufficient to keep only unique assemblies and then map them to </span>
+    <span class="c"># core locations.  Once burnup is accounted for, assemblies become</span>
+    <span class="c"># unique, and having an individual assembly object for each physical</span>
+    <span class="c"># assembly makes more sense; that&#39;s what we do.  Note, the construction</span>
+    <span class="c"># used below assumes the unique assemblies are defined in an order</span>
+    <span class="c"># corresponding to their index in pattern.</span>
+    
+    <span class="c"># Physical assemblies, as it were.</span>
+    <span class="n">assemblies</span> <span class="o">=</span> <span class="p">[]</span>
+    
+    <span class="c"># The unique types we have available.</span>
+    <span class="n">unique_assemblies</span> <span class="o">=</span> <span class="p">[]</span>
+ 
+    <span class="c"># Assemblies are built with the following signature:</span>
+    <span class="c">#   (&#39;type&#39;, enrichment, burnup, array([D1,D2,A1,A2,F1,F2,S12]))</span>
+ 
+    <span class="c"># Fresh</span>
+    <span class="n">unique_assemblies</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Assembly</span><span class="p">(</span><span class="s">&#39;IFBA&#39;</span><span class="p">,</span> <span class="mf">4.25</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">))</span>
+    <span class="c"># Once burned                  </span>
+    <span class="n">unique_assemblies</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Assembly</span><span class="p">(</span><span class="s">&#39;IFBA&#39;</span><span class="p">,</span> <span class="mf">4.25</span><span class="p">,</span> <span class="mf">15.0</span><span class="p">))</span>
+    <span class="c"># Twice burned                  </span>
+    <span class="n">unique_assemblies</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Assembly</span><span class="p">(</span><span class="s">&#39;IFBA&#39;</span><span class="p">,</span> <span class="mf">4.25</span><span class="p">,</span> <span class="mf">30.0</span><span class="p">))</span>
+
+    <span class="c"># Loop through and assign assemblies to each fuel location in the pattern.</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">pattern</span><span class="p">))</span> <span class="p">:</span>
+        <span class="n">assemblies</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">unique_assemblies</span><span class="p">[</span><span class="n">pattern</span><span class="p">[</span><span class="n">i</span><span class="p">]])</span>
+
+    <span class="c"># Use the Biblis reflector material (the only one for now)</span>
+    <span class="n">reflector</span> <span class="o">=</span> <span class="n">Reflector</span><span class="p">(</span><span class="s">&#39;biblis&#39;</span><span class="p">)</span>
+    
+    <span class="c"># Assembly dimension.</span>
+    <span class="n">width</span> <span class="o">=</span> <span class="mf">23.1226</span>
+
+    <span class="c"># Choose a physics model (Laban or Flare).  Note, Laban must be called </span>
+    <span class="c"># with &quot;rank&quot; as a parameter.</span>
+    <span class="n">physics</span> <span class="o">=</span> <span class="n">Flare</span><span class="p">()</span>
+    
+    <span class="c"># Build the Reactor</span>
+    <span class="c"># =================</span>
+    <span class="k">return</span> <span class="n">Reactor</span><span class="p">(</span><span class="n">stencil</span><span class="p">,</span> <span class="n">pattern</span><span class="p">,</span> <span class="n">assemblies</span><span class="p">,</span> <span class="n">reflector</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">physics</span><span class="p">)</span>
+</pre></div>
+</td></tr></table></div>
+<div class="section" id="example-1-manual-scoping">
+<span id="sec-smallcoremanual"></span><h3>Example 1: Manual Scoping<a class="headerlink" href="#example-1-manual-scoping" title="Permalink to this headline">¶</a></h3>
+<p><tt class="xref py py-mod docutils literal"><span class="pre">poropy.coretools</span></tt> has several function to aid scoping
+loading patterns by manually.  This shows a few.</p>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39</pre></div></td><td class="code"><div class="highlight"><pre><span class="c"># examples/example01.py</span>
+
+<span class="kn">import</span> <span class="nn">small_core</span>
+
+<span class="c"># Here, we&#39;ll investigate the small benchmark core.  First,</span>
+<span class="c"># build it using the premade script.</span>
+<span class="n">reactor</span> <span class="o">=</span> <span class="n">small_core</span><span class="o">.</span><span class="n">make_small_core</span><span class="p">()</span>
+
+<span class="c"># View all the diagnostics down the chain.</span>
+<span class="n">reactor</span><span class="o">.</span><span class="n">display</span><span class="p">()</span>
+
+<span class="c"># Evaluate the default pattern.  We can grab the eigenvalue</span>
+<span class="c"># and peaking as return values.</span>
+<span class="n">k</span><span class="p">,</span> <span class="n">p</span> <span class="o">=</span> <span class="n">reactor</span><span class="o">.</span><span class="n">evaluate</span><span class="p">()</span>
+<span class="k">print</span> <span class="s">&quot;k = &quot;</span><span class="p">,</span><span class="n">k</span><span class="p">,</span><span class="s">&quot; p = &quot;</span><span class="p">,</span><span class="n">p</span>
+<span class="c"># Alternatively, we can use print_params to display current</span>
+<span class="c"># values of all optimization parameters.  Currently only</span>
+<span class="c"># keff and the max peaking are retained.</span>
+<span class="n">reactor</span><span class="o">.</span><span class="n">print_params</span><span class="p">()</span>
+
+<span class="c"># We can also print the power peaking.</span>
+<span class="n">reactor</span><span class="o">.</span><span class="n">print_peaking</span><span class="p">()</span>
+
+<span class="c"># With this, we can try optimizing by hand a bit.  Peaking</span>
+<span class="c"># occurs at (0, 1).  Printing the pattern helps visualize this.</span>
+<span class="n">reactor</span><span class="o">.</span><span class="n">print_pattern</span><span class="p">()</span>
+
+<span class="c"># Do a swap and evaluate.</span>
+<span class="n">reactor</span><span class="o">.</span><span class="n">swap</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">])</span>
+<span class="n">reactor</span><span class="o">.</span><span class="n">print_pattern</span><span class="p">()</span>
+<span class="n">reactor</span><span class="o">.</span><span class="n">evaluate</span><span class="p">()</span>
+<span class="n">reactor</span><span class="o">.</span><span class="n">print_params</span><span class="p">()</span>
+<span class="n">reactor</span><span class="o">.</span><span class="n">print_peaking</span><span class="p">()</span>
+
+<span class="c"># That&#39;s a significant peaking reduction with just a slight decrease</span>
+<span class="c"># in keff.  However, there is a better pattern.  For this keff, </span>
+<span class="c"># the tradeoff curve in the theory document suggests a peaking </span>
+<span class="c"># on the order of 1.75 or maybe less.  But we won&#39;t find out</span>
+<span class="c"># by hand...</span>
+</pre></div>
+</td></tr></table></div>
+<p>Running it yields the following output:</p>
+<div class="highlight-python"><pre> poropy - diagnostic output 
+
+REACTOR:
+    thermal power : 1000 MWth
+   electric power :  300 MWel
+    CORE:           
+        pattern:     [12  0  6  1 15  8  2  9 13  4 10  5 16 11  3  7 14 17]
+        ASSEMBLIES: 
+             assembly:  0
+                model:  IFBA
+           enrichment:  4.25
+               burnup:  0.0
+            constants:  1.4493 0.3807 0.0099 0.1042 0.0079 0.1692 0.0151 0.025
+                 kinf:  1.29677543186
+             assembly:  1
+                model:  IFBA
+           enrichment:  4.25
+               burnup:  0.0
+            constants:  1.4493 0.3807 0.0099 0.1042 0.0079 0.1692 0.0151 0.025
+                 kinf:  1.29677543186
+             assembly:  2
+                model:  IFBA
+           enrichment:  4.25
+               burnup:  0.0
+            constants:  1.4493 0.3807 0.0099 0.1042 0.0079 0.1692 0.0151 0.025
+                 kinf:  1.29677543186
+             assembly:  3
+                model:  IFBA
+           enrichment:  4.25
+               burnup:  0.0
+            constants:  1.4493 0.3807 0.0099 0.1042 0.0079 0.1692 0.0151 0.025
+                 kinf:  1.29677543186
+             assembly:  4
+                model:  IFBA
+           enrichment:  4.25
+               burnup:  0.0
+            constants:  1.4493 0.3807 0.0099 0.1042 0.0079 0.1692 0.0151 0.025
+                 kinf:  1.29677543186
+             assembly:  5
+                model:  IFBA
+           enrichment:  4.25
+               burnup:  0.0
+            constants:  1.4493 0.3807 0.0099 0.1042 0.0079 0.1692 0.0151 0.025
+                 kinf:  1.29677543186
+             assembly:  6
+                model:  IFBA
+           enrichment:  4.25
+               burnup:  15.0
+            constants:  1.4479 0.3708 0.011 0.12 0.0069 0.1745 0.0148 0.0258
+                 kinf:  1.10161498708
+             assembly:  7
+                model:  IFBA
+           enrichment:  4.25
+               burnup:  15.0
+            constants:  1.4479 0.3708 0.011 0.12 0.0069 0.1745 0.0148 0.0258
+                 kinf:  1.10161498708
+             assembly:  8
+                model:  IFBA
+           enrichment:  4.25
+               burnup:  15.0
+            constants:  1.4479 0.3708 0.011 0.12 0.0069 0.1745 0.0148 0.0258
+                 kinf:  1.10161498708
+             assembly:  9
+                model:  IFBA
+           enrichment:  4.25
+               burnup:  15.0
+            constants:  1.4479 0.3708 0.011 0.12 0.0069 0.1745 0.0148 0.0258
+                 kinf:  1.10161498708
+             assembly:  10
+                model:  IFBA
+           enrichment:  4.25
+               burnup:  15.0
+            constants:  1.4479 0.3708 0.011 0.12 0.0069 0.1745 0.0148 0.0258
+                 kinf:  1.10161498708
+             assembly:  11
+                model:  IFBA
+           enrichment:  4.25
+               burnup:  15.0
+            constants:  1.4479 0.3708 0.011 0.12 0.0069 0.1745 0.0148 0.0258
+                 kinf:  1.10161498708
+             assembly:  12
+                model:  IFBA
+           enrichment:  4.25
+               burnup:  30.0
+            constants:  1.4494 0.3676 0.0115 0.1191 0.006 0.1625 0.0147 0.0262
+                 kinf:  0.994529582556
+             assembly:  13
+                model:  IFBA
+           enrichment:  4.25
+               burnup:  30.0
+            constants:  1.4494 0.3676 0.0115 0.1191 0.006 0.1625 0.0147 0.0262
+                 kinf:  0.994529582556
+             assembly:  14
+                model:  IFBA
+           enrichment:  4.25
+               burnup:  30.0
+            constants:  1.4494 0.3676 0.0115 0.1191 0.006 0.1625 0.0147 0.0262
+                 kinf:  0.994529582556
+             assembly:  15
+                model:  IFBA
+           enrichment:  4.25
+               burnup:  30.0
+            constants:  1.4494 0.3676 0.0115 0.1191 0.006 0.1625 0.0147 0.0262
+                 kinf:  0.994529582556
+             assembly:  16
+                model:  IFBA
+           enrichment:  4.25
+               burnup:  30.0
+            constants:  1.4494 0.3676 0.0115 0.1191 0.006 0.1625 0.0147 0.0262
+                 kinf:  0.994529582556
+             assembly:  17
+                model:  IFBA
+           enrichment:  4.25
+               burnup:  30.0
+            constants:  1.4494 0.3676 0.0115 0.1191 0.006 0.1625 0.0147 0.0262
+                 kinf:  0.994529582556
+        REFLECTOR: 
+                model:  biblis
+            constants:  1.32 0.2772 0.0026562 0.071596 0.0 0.0 0.023106 0.0257622
+    EVALUATOR:  LABAN-PEL
+        input:  laban0.inp
+       output:  laban0.out
+k =  1.137119  p =  2.0687
+
+ optimization parameters 
+ ----------------------- 
+    keff   =  1.137119
+ maxpeak   =  2.0687
+
+[[ 1.64865  2.0687   1.53543  1.18246  0.40744  0.     ]
+ [ 2.0687   1.7359   1.69436  0.94983  0.34894  0.     ]
+ [ 1.53543  1.69436  1.19476  0.8788   0.26544  0.     ]
+ [ 1.18246  0.94983  0.8788   0.43841  0.       0.     ]
+ [ 0.40744  0.34894  0.26544  0.       0.       0.     ]
+ [ 0.       0.       0.       0.       0.       0.     ]]
+
+ current loading pattern 
+ ----------------------- 
+       0   1   2   3   4
+  ----------------------
+ 0|   12   0   6   1  15
+ 1|   rs   8   2   9  13
+ 2|   rs   4  10   5  16
+ 3|   rs  11   3   7 ref
+ 4|   rs  14  17 ref ref
+
+
+ current loading pattern 
+ ----------------------- 
+       0   1   2   3   4
+  ----------------------
+ 0|   12   6   0   1  15
+ 1|   rs   8   2   9  13
+ 2|   rs   4  10   5  16
+ 3|   rs  11   3   7 ref
+ 4|   rs  14  17 ref ref
+
+
+ optimization parameters 
+ ----------------------- 
+    keff   =  1.135264
+ maxpeak   =  1.85174
+
+[[ 1.22885  1.47989  1.85174  1.31604  0.4458   0.     ]
+ [ 1.47989  1.53051  1.73407  1.0157   0.37678  0.     ]
+ [ 1.85174  1.73407  1.21558  0.91612  0.2809   0.     ]
+ [ 1.31604  1.0157   0.91612  0.45609  0.       0.     ]
+ [ 0.4458   0.37678  0.2809   0.       0.       0.     ]
+ [ 0.       0.       0.       0.       0.       0.     ]]
+</pre>
+</div>
+</div>
+<div class="section" id="example-2-optimizing-a-core">
+<span id="sec-smallcoreoptimize"></span><h3>Example 2: Optimizing a Core<a class="headerlink" href="#example-2-optimizing-a-core" title="Permalink to this headline">¶</a></h3>
+<p>For this example, the optimization tools in <tt class="xref py py-mod docutils literal"><span class="pre">poropy.coretools.optimizer</span></tt>
+are demonstrated.  Many parameters are specific to
+<a class="reference external" href="http://robertsj.github.com/pypgapack">pypgapack</a>.</p>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>  1
+  2
+  3
+  4
+  5
+  6
+  7
+  8
+  9
+ 10
+ 11
+ 12
+ 13
+ 14
+ 15
+ 16
+ 17
+ 18
+ 19
+ 20
+ 21
+ 22
+ 23
+ 24
+ 25
+ 26
+ 27
+ 28
+ 29
+ 30
+ 31
+ 32
+ 33
+ 34
+ 35
+ 36
+ 37
+ 38
+ 39
+ 40
+ 41
+ 42
+ 43
+ 44
+ 45
+ 46
+ 47
+ 48
+ 49
+ 50
+ 51
+ 52
+ 53
+ 54
+ 55
+ 56
+ 57
+ 58
+ 59
+ 60
+ 61
+ 62
+ 63
+ 64
+ 65
+ 66
+ 67
+ 68
+ 69
+ 70
+ 71
+ 72
+ 73
+ 74
+ 75
+ 76
+ 77
+ 78
+ 79
+ 80
+ 81
+ 82
+ 83
+ 84
+ 85
+ 86
+ 87
+ 88
+ 89
+ 90
+ 91
+ 92
+ 93
+ 94
+ 95
+ 96
+ 97
+ 98
+ 99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151</pre></div></td><td class="code"><div class="highlight"><pre><span class="c"># examples/example02.py</span>
+
+<span class="kn">import</span> <span class="nn">small_core</span>
+
+<span class="kn">from</span> <span class="nn">poropy.coretools</span> <span class="kn">import</span> <span class="n">Optimizer</span>
+<span class="kn">from</span> <span class="nn">pypgapack</span> <span class="kn">import</span> <span class="n">PGA</span>
+<span class="kn">from</span> <span class="nn">mpi4py</span> <span class="kn">import</span> <span class="n">MPI</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
+<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">rc</span>
+<span class="n">rc</span><span class="p">(</span><span class="s">&#39;text&#39;</span><span class="p">,</span> <span class="n">usetex</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="n">rc</span><span class="p">(</span><span class="s">&#39;font&#39;</span><span class="p">,</span> <span class="n">family</span><span class="o">=</span><span class="s">&#39;serif&#39;</span><span class="p">)</span>
+
+<span class="c"># Optimizer</span>
+<span class="c"># =========</span>
+<span class="c">#</span>
+<span class="c"># While Optimizer has some default definitions,</span>
+<span class="c"># we make an inherited class to set our own</span>
+<span class="c"># objective function.  Moreover, because we are</span>
+<span class="c"># fixing the central bundle to be twice burned,</span>
+<span class="c"># we need special initialization and mutation</span>
+<span class="c"># functions.</span>
+
+<span class="k">class</span> <span class="nc">OptimizeSmallCore</span><span class="p">(</span><span class="n">Optimizer</span><span class="p">)</span> <span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;  Derive our own class from PGA.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">small_core_objective</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">pop</span><span class="p">)</span> <span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot; Minimize peaking and maximize keff using weighted objective.</span>
+<span class="sd">        </span>
+<span class="sd">        Here, we seek to minimize p for k &gt;= 1.135. Note that p=1.85 is</span>
+<span class="sd">        about what we found manually, albeit with just one swap from the</span>
+<span class="sd">        default pattern.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">pattern</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">GetIntegerChromosome</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">pop</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reactor</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">pattern</span><span class="p">)</span> 
+        <span class="n">keff</span><span class="p">,</span> <span class="n">peak</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">reactor</span><span class="o">.</span><span class="n">evaluate</span><span class="p">()</span>
+        <span class="n">val</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fun</span><span class="p">(</span><span class="n">keff</span><span class="p">,</span><span class="n">peak</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">evals</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="c">#print val, keff, peak, pattern</span>
+        <span class="k">del</span> <span class="n">pattern</span>
+        <span class="k">return</span> <span class="n">val</span>
+    
+    <span class="k">def</span> <span class="nf">fun</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">k</span><span class="p">,</span><span class="n">p</span><span class="p">):</span>
+        <span class="n">delta</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">if</span> <span class="n">k</span> <span class="o">&lt;</span> <span class="mf">1.135</span> <span class="p">:</span>
+            <span class="n">delta</span> <span class="o">=</span> <span class="n">k</span> <span class="o">-</span> <span class="mf">1.135</span>
+        <span class="k">return</span> <span class="mf">1.0</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.85</span> <span class="o">-</span> <span class="n">p</span><span class="p">)</span> <span class="o">+</span> <span class="mf">50.0</span> <span class="o">*</span> <span class="n">delta</span>
+        
+
+    <span class="k">def</span> <span class="nf">swap</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">pop</span><span class="p">,</span> <span class="n">pm</span><span class="p">)</span> <span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;  Random swap of bundles.</span>
+<span class="sd">        </span>
+<span class="sd">        This example allows swapping for all but the central</span>
+<span class="sd">        element.  Moreover, no checking is done to ensure swaps</span>
+<span class="sd">        are not done between identical or forbidden bundles.  In</span>
+<span class="sd">        those cases, a swap simply doesn&#39;t happen.  This is one</span>
+<span class="sd">        area where a lot more work can be done w/r to implementation.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c">#pass</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">GetStringLength</span><span class="p">()</span>
+        <span class="n">pattern</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">GetIntegerChromosome</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">pop</span><span class="p">)</span>
+        <span class="c"># index is a random permutation of [1,2,... numberbundles-1]</span>
+        <span class="c">#   i.e. zero is excluded (and zero is the central bundle)</span>
+        <span class="n">index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">permutation</span><span class="p">(</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span> 
+        <span class="n">i1</span> <span class="o">=</span> <span class="n">index</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">i2</span> <span class="o">=</span> <span class="n">index</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">tmp1</span> <span class="o">=</span> <span class="n">pattern</span><span class="p">[</span><span class="n">i1</span><span class="p">]</span>
+        <span class="n">tmp2</span> <span class="o">=</span> <span class="n">pattern</span><span class="p">[</span><span class="n">i2</span><span class="p">]</span>
+        <span class="n">pattern</span><span class="p">[</span><span class="n">i1</span><span class="p">]</span> <span class="o">=</span> <span class="n">tmp2</span>  
+        <span class="n">pattern</span><span class="p">[</span><span class="n">i2</span><span class="p">]</span> <span class="o">=</span> <span class="n">tmp1</span>
+        <span class="k">del</span> <span class="n">pattern</span> 
+        <span class="k">return</span> <span class="mi">1</span> <span class="c"># A positive value means something swapped.</span>
+            
+    <span class="k">def</span> <span class="nf">init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">pop</span><span class="p">)</span> <span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;  Random initial states.  </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">GetStringLength</span><span class="p">()</span>
+        <span class="n">pattern</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">GetIntegerChromosome</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">pop</span><span class="p">)</span>
+        <span class="c"># perm is a random permutation of [0,1,... numberbundles-2]</span>
+        <span class="c">#   i.e. 17 is excluded.  The 17th bundle is by definition</span>
+        <span class="c">#   the least reactive, and so that be the default central.</span>
+        <span class="n">perm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">permutation</span><span class="p">(</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">pattern</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">17</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span> <span class="p">:</span>
+            <span class="n">pattern</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">perm</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="c">#print &quot; pattern=&quot;, pattern   </span>
+        <span class="k">del</span> <span class="n">pattern</span>
+
+<span class="c"># Begin Optimization</span>
+<span class="c"># ==================</span>
+    
+<span class="c"># MPI things.  These should be commented out if </span>
+<span class="c"># a serial version of pypgapack is used.</span>
+<span class="n">comm</span> <span class="o">=</span> <span class="n">MPI</span><span class="o">.</span><span class="n">COMM_WORLD</span>   <span class="c"># Get the communicator.</span>
+<span class="n">rank</span> <span class="o">=</span> <span class="n">comm</span><span class="o">.</span><span class="n">Get_rank</span><span class="p">()</span>  <span class="c"># Get my rank.  </span>
+<span class="n">time</span> <span class="o">=</span> <span class="n">MPI</span><span class="o">.</span><span class="n">Wtime</span><span class="p">()</span>      <span class="c"># Start the clock.  </span>
+
+<span class="c"># Get the small reactor.                                          </span>
+<span class="n">reactor</span> <span class="o">=</span> <span class="n">small_core</span><span class="o">.</span><span class="n">make_small_core</span><span class="p">()</span>
+
+<span class="n">vals</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">kefs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">peks</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">evas</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="p">:</span> <span class="c"># just one run for example output</span>
+    <span class="c"># Create an optimizer.</span>
+    <span class="n">opt</span> <span class="o">=</span> <span class="n">OptimizeSmallCore</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">,</span> <span class="n">reactor</span><span class="p">)</span>
+    
+    <span class="c"># Set initialization and swapping functions.</span>
+    <span class="n">opt</span><span class="o">.</span><span class="n">SetInitString</span><span class="p">(</span><span class="n">opt</span><span class="o">.</span><span class="n">init</span><span class="p">)</span>
+    <span class="n">opt</span><span class="o">.</span><span class="n">SetMutation</span><span class="p">(</span><span class="n">opt</span><span class="o">.</span><span class="n">swap</span><span class="p">)</span>
+    
+    <span class="c"># Set various PGA parameters 2</span>
+    <span class="n">opt</span><span class="o">.</span><span class="n">SetNumReplaceValue</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+
+    <span class="n">opt</span><span class="o">.</span><span class="n">SetRandomSeed</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>    <span class="c"># Set random seed for verification.  # VERIFY, seed=80,1 pop=100, iter=20</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>       <span class="c"># Do the same with Numpy.</span>
+    <span class="n">opt</span><span class="o">.</span><span class="n">SetPopSize</span><span class="p">(</span><span class="mi">50</span><span class="p">)</span>           <span class="c"># Large enough to see some success.</span>
+    <span class="n">opt</span><span class="o">.</span><span class="n">SetMaxGAIterValue</span><span class="p">(</span><span class="mi">500</span><span class="p">)</span>   <span class="c"># Small number for output.</span>
+
+    <span class="c"># Set various Optimizer parameters</span>
+    <span class="n">opt</span><span class="o">.</span><span class="n">set_track_best</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>     <span class="c"># Track best everything each generation</span>
+    <span class="n">opt</span><span class="o">.</span><span class="n">set_fixed_central</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>  <span class="c"># Fix the central bundle.</span>
+    
+    <span class="c"># Run the optimization.  This implicitly performs both SetUp </span>
+    <span class="c">#   and Run of PGA. </span>
+    <span class="n">opt</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">opt</span><span class="o">.</span><span class="n">small_core_objective</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">rank</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">:</span>
+        <span class="n">best</span> <span class="o">=</span> <span class="n">opt</span><span class="o">.</span><span class="n">GetBestIndex</span><span class="p">(</span><span class="n">PGA</span><span class="o">.</span><span class="n">OLDPOP</span><span class="p">)</span>     <span class="c"># Get the best string</span>
+        <span class="n">bestpattern</span> <span class="o">=</span> <span class="n">opt</span><span class="o">.</span><span class="n">GetIntegerChromosome</span><span class="p">(</span><span class="n">best</span><span class="p">,</span> <span class="n">PGA</span><span class="o">.</span><span class="n">OLDPOP</span><span class="p">)</span>
+        <span class="k">print</span> <span class="s">&quot; best pattern &quot;</span><span class="p">,</span> <span class="n">bestpattern</span>
+        <span class="n">reactor</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">bestpattern</span><span class="p">)</span>  
+        <span class="n">reactor</span><span class="o">.</span><span class="n">evaluate</span><span class="p">()</span>
+        <span class="n">reactor</span><span class="o">.</span><span class="n">print_params</span><span class="p">()</span>
+        <span class="n">reactor</span><span class="o">.</span><span class="n">print_pattern</span><span class="p">()</span>
+        <span class="n">reactor</span><span class="o">.</span><span class="n">print_peaking</span><span class="p">()</span>
+        <span class="n">vals</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">=</span><span class="n">opt</span><span class="o">.</span><span class="n">fun</span><span class="p">(</span><span class="n">reactor</span><span class="o">.</span><span class="n">evaluator</span><span class="o">.</span><span class="n">keff</span><span class="p">,</span> <span class="n">reactor</span><span class="o">.</span><span class="n">evaluator</span><span class="o">.</span><span class="n">maxpeak</span><span class="p">)</span>
+        <span class="n">kefs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">=</span><span class="n">reactor</span><span class="o">.</span><span class="n">evaluator</span><span class="o">.</span><span class="n">keff</span>
+        <span class="n">peks</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">=</span><span class="n">reactor</span><span class="o">.</span><span class="n">evaluator</span><span class="o">.</span><span class="n">maxpeak</span>
+        <span class="n">evas</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">=</span><span class="n">opt</span><span class="o">.</span><span class="n">evals</span>
+<span class="k">if</span> <span class="n">rank</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">:</span>
+    <span class="k">print</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">vals</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">vals</span><span class="p">)</span>
+    <span class="k">print</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">kefs</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">kefs</span><span class="p">)</span>
+    <span class="k">print</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">peks</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">peks</span><span class="p">)</span>
+    <span class="k">print</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">evas</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">evas</span><span class="p">)</span>
+
+
+<span class="n">opt</span><span class="o">.</span><span class="n">Destroy</span><span class="p">()</span>  <span class="c"># Clean up PGAPack internals.</span>
+</pre></div>
+</td></tr></table></div>
+<p>Running it yields the following output:</p>
+<div class="highlight-python"><pre>***Constructing PGA***
+Iter #     Field      Value
+10         Best       -1.600000e-01
+Iter #     Field      Value
+20         Best       -1.253100e-01
+Iter #     Field      Value
+30         Best       -1.253100e-01
+Iter #     Field      Value
+40         Best       -1.253100e-01
+Iter #     Field      Value
+50         Best       -1.145000e-01
+Iter #     Field      Value
+60         Best       -1.135300e-01
+Iter #     Field      Value
+70         Best       -7.820000e-03
+Iter #     Field      Value
+80         Best       2.336000e-02
+Iter #     Field      Value
+90         Best       2.336000e-02
+Iter #     Field      Value
+100        Best       2.336000e-02
+Iter #     Field      Value
+110        Best       2.336000e-02
+Iter #     Field      Value
+120        Best       4.128000e-02
+Iter #     Field      Value
+130        Best       4.128000e-02
+Iter #     Field      Value
+140        Best       4.128000e-02
+Iter #     Field      Value
+150        Best       4.128000e-02
+Iter #     Field      Value
+160        Best       4.128000e-02
+Iter #     Field      Value
+170        Best       4.128000e-02
+Iter #     Field      Value
+180        Best       4.128000e-02
+Iter #     Field      Value
+190        Best       4.128000e-02
+Iter #     Field      Value
+200        Best       4.128000e-02
+Iter #     Field      Value
+210        Best       4.128000e-02
+Iter #     Field      Value
+220        Best       4.128000e-02
+Iter #     Field      Value
+230        Best       4.128000e-02
+Iter #     Field      Value
+240        Best       4.128000e-02
+Iter #     Field      Value
+250        Best       4.128000e-02
+Iter #     Field      Value
+260        Best       4.128000e-02
+Iter #     Field      Value
+270        Best       5.823000e-02
+Iter #     Field      Value
+280        Best       5.823000e-02
+Iter #     Field      Value
+290        Best       5.823000e-02
+Iter #     Field      Value
+300        Best       5.823000e-02
+Iter #     Field      Value
+310        Best       5.823000e-02
+Iter #     Field      Value
+320        Best       5.823000e-02
+Iter #     Field      Value
+330        Best       5.823000e-02
+Iter #     Field      Value
+340        Best       5.823000e-02
+Iter #     Field      Value
+350        Best       5.823000e-02
+Iter #     Field      Value
+360        Best       5.823000e-02
+Iter #     Field      Value
+370        Best       5.823000e-02
+Iter #     Field      Value
+380        Best       5.823000e-02
+Iter #     Field      Value
+390        Best       5.823000e-02
+Iter #     Field      Value
+400        Best       5.823000e-02
+Iter #     Field      Value
+410        Best       5.823000e-02
+Iter #     Field      Value
+420        Best       5.823000e-02
+Iter #     Field      Value
+430        Best       1.027200e-01
+Iter #     Field      Value
+440        Best       1.027200e-01
+Iter #     Field      Value
+450        Best       1.106000e-01
+Iter #     Field      Value
+460        Best       1.174900e-01
+Iter #     Field      Value
+470        Best       1.174900e-01
+Iter #     Field      Value
+480        Best       1.174900e-01
+Iter #     Field      Value
+490        Best       1.174900e-01
+Iter #     Field      Value
+500        Best       1.174900e-01
+The Best Evaluation: 1.174900e-01.
+The Best String:
+#    0: [      17], [      11], [       6], [       5], [      10], [       7]
+#    6: [       2], [       4], [      13], [       3], [       1], [       8]
+#   12: [      14], [       0], [       9], [      12], [      15], [      16]
+
+ best pattern  [17 11  6  5 10  7  2  4 13  3  1  8 14  0  9 12 15 16]
+
+ optimization parameters 
+ ----------------------- 
+    keff   =  1.140122
+ maxpeak   =  1.73251
+
+ current loading pattern 
+ ----------------------- 
+       0   1   2   3   4
+  ----------------------
+ 0|   17  11   6   5  10
+ 1|   rs   7   2   4  13
+ 2|   rs   3   1   8  14
+ 3|   rs   0   9  12 ref
+ 4|   rs  15  16 ref ref
+
+
+[[ 1.07658  1.28113  1.4042   1.37252  0.58032  0.     ]
+ [ 1.28113  1.4031   1.73251  1.30587  0.43526  0.     ]
+ [ 1.4042   1.73251  1.53302  0.78678  0.27084  0.     ]
+ [ 1.37252  1.30587  0.78678  0.34406  0.       0.     ]
+ [ 0.58032  0.43526  0.27084  0.       0.       0.     ]
+ [ 0.       0.       0.       0.       0.       0.     ]]
+0.011749 0.035247
+0.1140122 0.3420366
+0.173251 0.519753
+506.0 1518.0
+***Destroying PGA context***
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Examples</a><ul>
+<li><a class="reference internal" href="#small-core-examples">Small Core Examples</a><ul>
+<li><a class="reference internal" href="#example-1-manual-scoping">Example 1: Manual Scoping</a></li>
+<li><a class="reference internal" href="#example-2-optimizing-a-core">Example 2: Optimizing a Core</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="getting_started.html"
+                        title="previous chapter">Getting Started With poropy</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="methods.html"
+                        title="next chapter">Methods</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/examples.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="methods.html" title="Methods"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="getting_started.html" title="Getting Started With poropy"
+             >previous</a> |</li>
+        <li><a href="index.html">poropy 0.1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Jeremy Roberts.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.
+    </div>
+  </body>
+</html>

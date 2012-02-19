@@ -1,0 +1,156 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Methods &mdash; poropy 0.1.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/proBlue_mod.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="poropy 0.1.0 documentation" href="index.html" />
+    <link rel="next" title="API Reference Manual" href="api_reference.html" />
+    <link rel="prev" title="Examples" href="examples.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="api_reference.html" title="API Reference Manual"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="examples.html" title="Examples"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">poropy 0.1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="methods">
+<span id="sec-methods"></span><h1>Methods<a class="headerlink" href="#methods" title="Permalink to this headline">¶</a></h1>
+<p>This chapter briefly describes some of the methods used in
+<tt class="docutils literal"><span class="pre">poropy</span></tt>.  Original documentation is attached where
+applicable.</p>
+<div class="section" id="nuclear-data">
+<h2>Nuclear Data<a class="headerlink" href="#nuclear-data" title="Permalink to this headline">¶</a></h2>
+<p>See <a class="reference download internal" href="_downloads/datatheory.pdf"><tt class="xref download docutils literal"><span class="pre">nuclear</span> <span class="pre">data</span> <span class="pre">report</span></tt></a>.</p>
+</div>
+<div class="section" id="neutronics">
+<h2>Neutronics<a class="headerlink" href="#neutronics" title="Permalink to this headline">¶</a></h2>
+<p>Currently, <tt class="docutils literal"><span class="pre">poropy</span></tt> has two neutronics options, one based
+on a crude python wrapper around an old Fortran code LABAN-PEL,
+and the other based on a simple FLARE implementation.</p>
+<p>Details
+on LABAN-PEL are best left to original documentation; see,
+for example to be continued.</p>
+<p>The FLARE model is quite simple.  To be continued.</p>
+</div>
+<div class="section" id="optimization">
+<h2>Optimization<a class="headerlink" href="#optimization" title="Permalink to this headline">¶</a></h2>
+<p>The optimization capability of <tt class="docutils literal"><span class="pre">poropy</span></tt> is currently based
+on the genetic algorithm library PGAPack, used through the
+Python wrapped version
+<a class="reference external" href="http://github.com/robertsj/pypgapack/">pypgapack</a>.</p>
+<p>The literature is full of work on loading pattern optimization.
+The original <tt class="docutils literal"><span class="pre">poropy</span></tt> project report gives a short survey
+of some of this work, along with a tutorial on genetic algorithms
+and how they can be applied to loading pattern optimization.
+See <a class="reference download internal" href="_downloads/optimizationtheory.pdf"><tt class="xref download docutils literal"><span class="pre">optimzation</span> <span class="pre">report</span></tt></a>.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Methods</a><ul>
+<li><a class="reference internal" href="#nuclear-data">Nuclear Data</a></li>
+<li><a class="reference internal" href="#neutronics">Neutronics</a></li>
+<li><a class="reference internal" href="#optimization">Optimization</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="examples.html"
+                        title="previous chapter">Examples</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="api_reference.html"
+                        title="next chapter">API Reference Manual</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/methods.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="api_reference.html" title="API Reference Manual"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="examples.html" title="Examples"
+             >previous</a> |</li>
+        <li><a href="index.html">poropy 0.1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Jeremy Roberts.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.
+    </div>
+  </body>
+</html>

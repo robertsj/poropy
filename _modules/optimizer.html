@@ -1,0 +1,162 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>optimizer &mdash; poropy 0.1.0 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/proBlue_mod.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="poropy 0.1.0 documentation" href="../index.html" />
+    <link rel="up" title="Module code" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../index.html">poropy 0.1.0 documentation</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for optimizer</h1><div class="highlight"><pre>
+<span class="c"># poropy/coretools/optimizer.py  --  optimization tools.</span>
+
+<span class="kn">from</span> <span class="nn">reactor</span> <span class="kn">import</span> <span class="n">Reactor</span><span class="p">,</span> <span class="n">Core</span><span class="p">,</span> <span class="n">SpentFuelPool</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">PyQt4.QtCore</span> <span class="kn">import</span> <span class="o">*</span>
+    <span class="kn">from</span> <span class="nn">PyQt4.QtGui</span> <span class="kn">import</span> <span class="o">*</span>
+    <span class="n">PYQT4</span> <span class="o">=</span> <span class="bp">True</span>
+    <span class="n">OBJECTBASE</span> <span class="o">=</span> <span class="n">QObject</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="n">PYQT4</span> <span class="o">=</span> <span class="bp">False</span>
+    <span class="n">OBJECTBASE</span> <span class="o">=</span> <span class="nb">object</span>
+
+<div class="viewcode-block" id="Optimizer"><a class="viewcode-back" href="../api_reference.html#optimizer.Optimizer">[docs]</a><span class="k">class</span> <span class="nc">Optimizer</span><span class="p">(</span><span class="n">OBJECTBASE</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;  Abstract base class for optimization.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">argv</span><span class="p">,</span> <span class="n">reactor</span><span class="p">,</span> <span class="n">objective</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Constructor.  </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">PYQT4</span><span class="p">:</span>
+            <span class="n">QObject</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">)</span>
+    
+        <span class="c"># Set the reactor</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reactor</span> <span class="o">=</span> <span class="n">reactor</span>
+        <span class="c"># Set the objective function; must have signature f(k, p).</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">objective</span> <span class="o">=</span> <span class="n">objective</span>
+        <span class="c"># Current evaluation of keff</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">k</span> <span class="o">=</span> <span class="mf">1.0</span>
+        <span class="c"># Current maximum power peaking factor</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">p</span> <span class="o">=</span> <span class="mf">0.0</span>
+        
+<div class="viewcode-block" id="Optimizer.set_fixed_central"><a class="viewcode-back" href="../api_reference.html#optimizer.Optimizer.set_fixed_central">[docs]</a>    <span class="k">def</span> <span class="nf">set_fixed_central</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;  Fix the central bundle.</span>
+<span class="sd">        </span>
+<span class="sd">        By construction, the central bundle is the  first entry in the </span>
+<span class="sd">        pattern. This flag will indicate crossover should skip this.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fixed_central</span> <span class="o">=</span> <span class="n">value</span>      
+        </div>
+<div class="viewcode-block" id="Optimizer.fire_signal"><a class="viewcode-back" href="../api_reference.html#optimizer.Optimizer.fire_signal">[docs]</a>    <span class="k">def</span> <span class="nf">fire_signal</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;  Let mainWindow know a new evaluation is available.</span>
+<span class="sd">        </span>
+<span class="sd">        This *must* be called at the end of each inherited optimizer&#39;s</span>
+<span class="sd">        end_of_iteration class.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c"># Have reactor update anything needed for displays.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reactor</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">update_assembly_peaking</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">PYQT4</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="n">SIGNAL</span><span class="p">(</span><span class="s">&quot;reactorEvaluated(float,float)&quot;</span><span class="p">),</span><span class="bp">self</span><span class="o">.</span><span class="n">k</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="n">SIGNAL</span><span class="p">(</span><span class="s">&quot;patternUpdated()&quot;</span><span class="p">))</span>            
+       
+    <span class="c"># Abstract Interface       </span>
+        </div>
+<div class="viewcode-block" id="Optimizer.execute"><a class="viewcode-back" href="../api_reference.html#optimizer.Optimizer.execute">[docs]</a>    <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;  Optimize the reactor for the objective.</span>
+<span class="sd">        &quot;&quot;&quot;</span>     
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>   
+        </div>
+<div class="viewcode-block" id="Optimizer.end_of_iteration"><a class="viewcode-back" href="../api_reference.html#optimizer.Optimizer.end_of_iteration">[docs]</a>    <span class="k">def</span> <span class="nf">end_of_iteration</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;  Do something at the end of each iteration.</span>
+<span class="sd">        </span>
+<span class="sd">        Many optimization algorithms have relatively distinct </span>
+<span class="sd">        &quot;iterations&quot;.  For genetic algorithms, this is the generation.</span>
+<span class="sd">        For simulated annealing, this could be a temperature change.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span> 
+
+    </div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../index.html">poropy 0.1.0 documentation</a> &raquo;</li>
+          <li><a href="index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Jeremy Roberts.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.
+    </div>
+  </body>
+</html>

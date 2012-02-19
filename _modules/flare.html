@@ -1,0 +1,191 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>flare &mdash; poropy 0.1.0 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/proBlue_mod.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="poropy 0.1.0 documentation" href="../index.html" />
+    <link rel="up" title="Module code" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../index.html">poropy 0.1.0 documentation</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for flare</h1><div class="highlight"><pre>
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">Created on Feb 14, 2012</span>
+
+<span class="sd">@author: robertsj</span>
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="kn">from</span> <span class="nn">evaluator</span> <span class="kn">import</span> <span class="n">Evaluator</span>
+<span class="kn">from</span> <span class="nn">pyflare</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+
+
+<div class="viewcode-block" id="Flare"><a class="viewcode-back" href="../api_reference.html#flare.Flare">[docs]</a><span class="k">class</span> <span class="nc">Flare</span><span class="p">(</span><span class="n">Evaluator</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Uses the FLARE model to evaluate loading patterns.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="c"># Public Interface</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot; Constructor</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">keff</span> <span class="o">=</span> <span class="mf">1.0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">maxpeak</span> <span class="o">=</span> <span class="mf">1.0</span>
+        
+<div class="viewcode-block" id="Flare.setup"><a class="viewcode-back" href="../api_reference.html#flare.Flare.setup">[docs]</a>    <span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">core</span><span class="p">)</span> <span class="p">:</span>     
+        <span class="sd">&quot;&quot;&quot;  Set up some structures needed before solving.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c"># We need direct access to the core</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">core</span> <span class="o">=</span> <span class="n">core</span>
+        <span class="c"># Validate a square quarter core. (Not applicable to 1/2 or 1/8)</span>
+        <span class="k">assert</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">stencil</span><span class="p">[</span><span class="mi">0</span><span class="p">,:])</span><span class="o">==</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">stencil</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]))</span>
+        
+        <span class="c"># Set the geometry</span>
+        <span class="n">geometry</span><span class="o">.</span><span class="n">stencil</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">stencil</span>
+        <span class="n">geometry</span><span class="o">.</span><span class="n">number_bundles</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">pattern</span><span class="p">)</span>
+        <span class="n">geometry</span><span class="o">.</span><span class="n">stencil_dimension</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">stencil</span><span class="p">[</span><span class="mi">0</span><span class="p">,:])</span>
+        <span class="n">geometry</span><span class="o">.</span><span class="n">initialize_geometry</span><span class="p">()</span>
+        <span class="n">geometry</span><span class="o">.</span><span class="n">delta</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">width</span>
+        <span class="n">geometry</span><span class="o">.</span><span class="n">build_geometry</span><span class="p">()</span>
+        
+        <span class="c"># Set the group data.</span>
+        <span class="n">group_data</span><span class="o">.</span><span class="n">d1</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">geometry</span><span class="o">.</span><span class="n">number_bundles</span><span class="p">)</span>
+        <span class="n">group_data</span><span class="o">.</span><span class="n">d2</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">geometry</span><span class="o">.</span><span class="n">number_bundles</span><span class="p">)</span>
+        <span class="n">group_data</span><span class="o">.</span><span class="n">r1</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">geometry</span><span class="o">.</span><span class="n">number_bundles</span><span class="p">)</span>
+        <span class="n">group_data</span><span class="o">.</span><span class="n">a2</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">geometry</span><span class="o">.</span><span class="n">number_bundles</span><span class="p">)</span>
+        <span class="n">group_data</span><span class="o">.</span><span class="n">f1</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">geometry</span><span class="o">.</span><span class="n">number_bundles</span><span class="p">)</span>
+        <span class="n">group_data</span><span class="o">.</span><span class="n">f2</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">geometry</span><span class="o">.</span><span class="n">number_bundles</span><span class="p">)</span>
+        <span class="n">group_data</span><span class="o">.</span><span class="n">s12</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">geometry</span><span class="o">.</span><span class="n">number_bundles</span><span class="p">)</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">assemblies</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">geometry</span><span class="o">.</span><span class="n">number_bundles</span><span class="p">)</span> <span class="p">:</span>
+            <span class="n">D1</span><span class="p">,</span><span class="n">D2</span><span class="p">,</span><span class="n">A1</span><span class="p">,</span><span class="n">A2</span><span class="p">,</span><span class="n">F1</span><span class="p">,</span><span class="n">F2</span><span class="p">,</span><span class="n">S12</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">get_constants</span><span class="p">()</span>
+            <span class="n">group_data</span><span class="o">.</span><span class="n">d1</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>  <span class="o">=</span> <span class="n">D1</span>
+            <span class="n">group_data</span><span class="o">.</span><span class="n">d2</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>  <span class="o">=</span> <span class="n">D2</span>
+            <span class="n">group_data</span><span class="o">.</span><span class="n">r1</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>  <span class="o">=</span> <span class="n">A1</span> <span class="o">+</span> <span class="n">S12</span>
+            <span class="n">group_data</span><span class="o">.</span><span class="n">a2</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>  <span class="o">=</span> <span class="n">A2</span>
+            <span class="n">group_data</span><span class="o">.</span><span class="n">f1</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>  <span class="o">=</span> <span class="n">F1</span>
+            <span class="n">group_data</span><span class="o">.</span><span class="n">f2</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>  <span class="o">=</span> <span class="n">F2</span>
+            <span class="n">group_data</span><span class="o">.</span><span class="n">s12</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">S12</span>
+                      
+        <span class="c"># Initialize everything                      </span>
+        <span class="c"># 0.9301625652404083	-0.014350080586832403	0.0431344280309891</span>
+        <span class="n">coefficients</span><span class="o">.</span><span class="n">initialize_coefficients</span><span class="p">()</span>
+        <span class="n">coefficients</span><span class="o">.</span><span class="n">set_model</span><span class="p">(</span><span class="mf">0.9302</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.0144</span><span class="p">,</span> <span class="mf">0.0431</span><span class="p">)</span>
+        <span class="n">state</span><span class="o">.</span><span class="n">initialize_state</span><span class="p">()</span>
+        <span class="n">solver</span><span class="o">.</span><span class="n">initialize_solver</span><span class="p">()</span>
+        <span class="c">#solver.verbose = 1</span>
+        <span class="c"># Core size per dimension.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dimension</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">stencil</span><span class="p">[</span><span class="mi">0</span><span class="p">,:])</span>
+        <span class="c"># Peaking factor map</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">peaking</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">geometry</span><span class="o">.</span><span class="n">number_bundles</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">peaking_map</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">dimension</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dimension</span><span class="p">))</span>
+        </div>
+<div class="viewcode-block" id="Flare.evaluate"><a class="viewcode-back" href="../api_reference.html#flare.Flare.evaluate">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;  Evaluate the current core.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c"># The core is a member variable, and so the updated</span>
+        <span class="c">#   one is always available once shuffle is called</span>
+        <span class="c">#   in Reactor.</span>
+        
+        <span class="c"># Update the p0attern.</span>
+        <span class="n">geometry</span><span class="o">.</span><span class="n">set_pattern</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">pattern</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+        <span class="c"># Solve the problem.</span>
+        <span class="n">solver</span><span class="o">.</span><span class="n">solve</span><span class="p">()</span>
+        <span class="c"># Get the solution.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">keff</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">get_keff</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">maxpeak</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">get_mppf</span><span class="p">()</span>
+        <span class="n">state</span><span class="o">.</span><span class="n">make_peaking_map</span><span class="p">()</span>
+        <span class="c"># Get the peaking map and a 1-d array of peaking</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">peaking_map</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">peaking_map</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">peaking_map</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">peaking_map</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">peaking</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">assembly_peaking</span>
+
+        <span class="c"># Return the evaluation parameters</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">keff</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">maxpeak</span>
+        </div>
+<div class="viewcode-block" id="Flare.display"><a class="viewcode-back" href="../api_reference.html#flare.Flare.display">[docs]</a>    <span class="k">def</span> <span class="nf">display</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;  Introduce myself.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">print</span> <span class="s">&quot;    EVALUATOR:  FLARE&quot;</span>
+   </div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../index.html">poropy 0.1.0 documentation</a> &raquo;</li>
+          <li><a href="index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Jeremy Roberts.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,96 @@
+.. _sec_reference:
+
+API Reference Manual
+====================
+
+This chapter describes the application programming interface
+for ``poropy``.  Currently, ``poropy`` has three packages,
+``nucleardata``, ``coretools`` and ``bundletools``.  Only the
+first two have undergone development.
+
+
+.. _sec_reference_nucleardata:
+
+``poropy.nucleardata`` --- The nucleardata package
+--------------------------------------------------
+
+``poropy.nucleardata`` provides a very simple and efficient library
+of two group data for several common assembly types.  A user defines
+the type of assembly  they want to use, the initial enrichment, 
+burnup, and burnable poison configuration, and the relevant two
+group data is returned.  While this does not provide "production"
+quality data as provided by a typical reactor database, it does
+give reasonably good data for scoping and educational purposes.
+
+.. _sec_reference_coretools:
+
+``poropy.coretools`` --- The coretools package
+----------------------------------------------
+
+``poropy.coretools`` aims to provide a complete set of tools for
+analyzing and optimizing loading patterns for a simple set of inputs.
+Currently, it contains a number of modules, each with one or more
+classes.  The current documentation is quite basic, as the interfaces
+and such are in a state of flux.
+
+.. _sec_reference_coretools_reactor:
+
+``coretools.reactor`` --- The reactor module
+--------------------------------------------
+
+.. automodule:: reactor
+   :members:
+
+
+.. _sec_reference_coretools_assembly:
+
+``coretools.assembly`` --- The assembly module
+----------------------------------------------
+
+.. automodule:: assembly
+   :members:
+
+
+.. _sec_reference_coretools_evaluator:
+
+``coretools.evaluator`` --- The evaluator module
+------------------------------------------------
+
+.. automodule:: evaluator
+   :members:
+
+
+.. _sec_reference_coretools_laban:
+
+``coretools.laban`` --- The laban module
+----------------------------------------
+
+.. automodule:: laban
+   :members:
+
+
+.. _sec_reference_coretools_flare:
+
+``coretools.flare`` --- The flare module
+-----------------------------------------
+
+.. automodule:: flare
+   :members:
+
+
+.. _sec_reference_coretools_vendor:
+
+``coretools.assembly`` --- The vendor module
+--------------------------------------------
+
+.. automodule:: vendor
+   :members:
+
+
+.. _sec_reference_coretools_optimizer:
+
+``coretools.assembly`` --- The optimizer module
+-----------------------------------------------
+
+.. automodule:: optimizer
+   :members:

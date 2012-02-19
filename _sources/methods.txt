@@ -1,0 +1,45 @@
+.. _sec_methods:
+
+Methods
+=======
+
+This chapter briefly describes some of the methods used in
+``poropy``.  Original documentation is attached where
+applicable.
+
+
+
+Nuclear Data
+------------
+
+See :download:`nuclear data report <datatheory.pdf>`.
+
+
+Neutronics
+----------
+
+Currently, ``poropy`` has two neutronics options, one based
+on a crude python wrapper around an old Fortran code LABAN-PEL,
+and the other based on a simple FLARE implementation.  
+
+Details
+on LABAN-PEL are best left to original documentation; see, 
+for example to be continued.
+
+The FLARE model is quite simple.  To be continued.
+
+
+Optimization
+------------
+
+The optimization capability of ``poropy`` is currently based
+on the genetic algorithm library PGAPack, used through the 
+Python wrapped version
+`pypgapack <http://github.com/robertsj/pypgapack/>`_.
+
+The literature is full of work on loading pattern optimization.
+The original ``poropy`` project report gives a short survey
+of some of this work, along with a tutorial on genetic algorithms
+and how they can be applied to loading pattern optimization.
+See :download:`optimzation report <optimizationtheory.pdf>`.
+

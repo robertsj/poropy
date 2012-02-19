@@ -1,0 +1,497 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>reactor &mdash; poropy 0.1.0 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/proBlue_mod.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="poropy 0.1.0 documentation" href="../index.html" />
+    <link rel="up" title="Module code" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../index.html">poropy 0.1.0 documentation</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for reactor</h1><div class="highlight"><pre>
+<span class="c"># poropy/coretools/reactor.py</span>
+
+<span class="c"># things from coretools</span>
+<span class="kn">from</span> <span class="nn">assembly</span> <span class="kn">import</span> <span class="n">Assembly</span><span class="p">,</span> <span class="n">Reflector</span>
+
+<span class="c"># others</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
+<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">rc</span>
+
+<span class="c">#try:</span>
+<span class="c">#    from PyQt4.QtCore import *</span>
+<span class="c">#    from PyQt4.QtGui import *</span>
+<span class="c">#    PYQT4 = True</span>
+<span class="c">#    OBJECTBASE = QObject</span>
+<span class="c">#except ImportError:</span>
+<span class="c">#    PYQT4 = False</span>
+<span class="c">#    OBJECTBASE = object</span>
+
+
+<span class="c"># Allows LaTeX in labels and uses nicer serif font.</span>
+<span class="n">rc</span><span class="p">(</span><span class="s">&#39;text&#39;</span><span class="p">,</span> <span class="n">usetex</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="n">rc</span><span class="p">(</span><span class="s">&#39;font&#39;</span><span class="p">,</span> <span class="n">family</span><span class="o">=</span><span class="s">&#39;serif&#39;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Reactor"><a class="viewcode-back" href="../api_reference.html#reactor.Reactor">[docs]</a><span class="k">class</span> <span class="nc">Reactor</span><span class="p">(</span><span class="nb">object</span><span class="p">)</span> <span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot; Represents the reactor</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stencil</span><span class="p">,</span> <span class="n">pattern</span><span class="p">,</span> <span class="n">assemblies</span><span class="p">,</span> <span class="n">reflector</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">evaluator</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="bp">None</span><span class="p">)</span> <span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot; Constructor</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+<span class="c">#        if PYQT4:</span>
+<span class="c">#            QWidget.__init__(self,parent)</span>
+  
+        <span class="c"># Create the core.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">core</span> <span class="o">=</span> <span class="n">Core</span><span class="p">(</span><span class="n">stencil</span><span class="p">,</span> <span class="n">pattern</span><span class="p">,</span> <span class="n">assemblies</span><span class="p">,</span> <span class="n">reflector</span><span class="p">,</span> <span class="n">width</span><span class="p">)</span>  
+        <span class="c"># Create the spent fuel pool.  Currently not implemented.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pool</span> <span class="o">=</span> <span class="n">SpentFuelPool</span><span class="p">()</span>
+        <span class="c"># Create the evaluator.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">evaluator</span> <span class="o">=</span> <span class="n">evaluator</span>
+        <span class="c"># Set up the evaluator, i.e. the neutronics kernel</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">evaluator</span><span class="o">.</span><span class="n">setup</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">core</span><span class="p">)</span>
+        
+        <span class="c"># Some things that aren&#39;t used now but may be important</span>
+        <span class="c">#   for later additions.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">power_thermal</span>  <span class="o">=</span> <span class="mi">1000</span> <span class="c"># MWth</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">power_electric</span> <span class="o">=</span>  <span class="mi">300</span> <span class="c"># MWe</span>
+    
+<div class="viewcode-block" id="Reactor.shuffle"><a class="viewcode-back" href="../api_reference.html#reactor.Reactor.shuffle">[docs]</a>    <span class="k">def</span> <span class="nf">shuffle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pattern</span><span class="p">)</span> <span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot; Update the pattern.  </span>
+<span class="sd">        </span>
+<span class="sd">        This applies *only* to within-core shuffling.  Accounting for different</span>
+<span class="sd">        new fuel or swaps with the pool will need something more to handle the</span>
+<span class="sd">        assemblies issue.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">update_pattern</span><span class="p">(</span><span class="n">pattern</span><span class="p">)</span>
+        </div>
+<div class="viewcode-block" id="Reactor.swap"><a class="viewcode-back" href="../api_reference.html#reactor.Reactor.swap">[docs]</a>    <span class="k">def</span> <span class="nf">swap</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span> <span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;  Swap two bundles.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        </span>
+<span class="sd">        x : integer tuple</span>
+<span class="sd">            Pair of integer indices for first bundle. </span>
+<span class="sd">        y : integer tuple</span>
+<span class="sd">            Pair of integer indices for first bundle. </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">swap</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+        </div>
+<div class="viewcode-block" id="Reactor.evaluate"><a class="viewcode-back" href="../api_reference.html#reactor.Reactor.evaluate">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="p">:</span>  
+        <span class="sd">&quot;&quot;&quot; Evaluate the current core.  Pattern must be up-to-date.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        val : float</span>
+<span class="sd">            Value of objection function for current solution.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c"># currently returns only keff and maxpeaking</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluator</span><span class="o">.</span><span class="n">evaluate</span><span class="p">()</span>
+    </div>
+<div class="viewcode-block" id="Reactor.number_bundles"><a class="viewcode-back" href="../api_reference.html#reactor.Reactor.number_bundles">[docs]</a>    <span class="k">def</span> <span class="nf">number_bundles</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;  Return the number of fuel bundles.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">pattern</span><span class="p">)</span>
+    </div>
+<div class="viewcode-block" id="Reactor.display"><a class="viewcode-back" href="../api_reference.html#reactor.Reactor.display">[docs]</a>    <span class="k">def</span> <span class="nf">display</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;  Print out all information (for debugging).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">print</span> <span class="s">&quot; poropy - diagnostic output &quot;</span>
+        <span class="k">print</span> <span class="s">&quot;&quot;</span>
+        <span class="k">print</span> <span class="s">&quot;REACTOR:&quot;</span>
+        <span class="k">print</span> <span class="s">&quot;    thermal power :&quot;</span> <span class="o">+</span> <span class="s">&#39;</span><span class="si">%5i</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">power_thermal</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot; MWth&quot;</span>
+        <span class="k">print</span> <span class="s">&quot;   electric power :&quot;</span> <span class="o">+</span> <span class="s">&#39;</span><span class="si">%5i</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">power_electric</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot; MWel&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">display</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pool</span><span class="o">.</span><span class="n">display</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">evaluator</span><span class="o">.</span><span class="n">display</span><span class="p">()</span>
+    </div>
+<div class="viewcode-block" id="Reactor.print_peaking"><a class="viewcode-back" href="../api_reference.html#reactor.Reactor.print_peaking">[docs]</a>    <span class="k">def</span> <span class="nf">print_peaking</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;  Print out the peaking factor matrix.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c"># TODO(robertsj): Add some nice formatting.</span>
+        <span class="k">print</span> <span class="s">&quot;&quot;</span>
+        <span class="k">print</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluator</span><span class="o">.</span><span class="n">peaking_map</span>
+        </div>
+    <span class="k">def</span> <span class="nf">print_pattern</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;  Print out the peaking factor matrix.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">print</span> <span class="s">&quot;&quot;</span>
+        <span class="k">print</span> <span class="s">&quot; current loading pattern &quot;</span>
+        <span class="k">print</span> <span class="s">&quot; ----------------------- &quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">print_pattern</span><span class="p">()</span>   
+
+<div class="viewcode-block" id="Reactor.plot_peaking"><a class="viewcode-back" href="../api_reference.html#reactor.Reactor.plot_peaking">[docs]</a>    <span class="k">def</span> <span class="nf">plot_peaking</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;  Plot the peaking factor matrix.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c"># TODO(robertsj): Add some nice formatting.</span>
+        <span class="k">print</span> <span class="s">&quot;&quot;</span>
+        <span class="k">print</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluator</span><span class="o">.</span><span class="n">plot_peaking</span><span class="p">()</span>
+        </div>
+<div class="viewcode-block" id="Reactor.plot_pattern"><a class="viewcode-back" href="../api_reference.html#reactor.Reactor.plot_pattern">[docs]</a>    <span class="k">def</span> <span class="nf">plot_pattern</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param</span><span class="o">=</span><span class="s">&#39;burnup&#39;</span><span class="p">)</span> <span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;  Plot the peaking factor matrix.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        param : str</span>
+<span class="sd">            Designates which metric to plot.  Currently, the </span>
+<span class="sd">            options are &#39;burnup&#39; and &#39;enrichment&#39;.        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">plot_map</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">get_plot_map</span><span class="p">(</span><span class="n">param</span><span class="p">)</span>
+        <span class="k">print</span> <span class="n">plot_map</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">plot_map</span><span class="p">,</span> <span class="n">interpolation</span><span class="o">=</span><span class="s">&#39;nearest&#39;</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">hot</span><span class="p">)</span>  
+        <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="n">param</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+        <span class="c">#self.core.plot_pattern()           </span>
+        </div>
+<div class="viewcode-block" id="Reactor.print_pattern"><a class="viewcode-back" href="../api_reference.html#reactor.Reactor.print_pattern">[docs]</a>    <span class="k">def</span> <span class="nf">print_pattern</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param</span><span class="o">=</span><span class="s">&#39;burnup&#39;</span><span class="p">)</span> <span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;  Plot the peaking factor matrix.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        param : str</span>
+<span class="sd">            Designates which metric to plot.  Currently, the </span>
+<span class="sd">            options are &#39;burnup&#39; and &#39;enrichment&#39;.        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">plot_map</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">get_plot_map</span><span class="p">(</span><span class="n">param</span><span class="p">)</span>
+        <span class="k">print</span> <span class="n">plot_map</span>
+
+        <span class="n">N</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">stencil</span><span class="p">[</span><span class="mi">0</span><span class="p">,:])</span> 
+        <span class="n">out</span> <span class="o">=</span> <span class="s">&quot;   &quot;</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">N</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">:</span>
+            <span class="n">out</span> <span class="o">+=</span> <span class="s">&#39;</span><span class="si">%7i</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">i</span><span class="p">)</span>
+        <span class="n">out</span> <span class="o">+=</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span> <span class="o">+</span> <span class="s">&quot;  ----&quot;</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">N</span><span class="p">)</span> <span class="p">:</span>
+            <span class="n">out</span> <span class="o">+=</span> <span class="s">&quot;-------&quot;</span>
+        <span class="n">out</span> <span class="o">+=</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span> 
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">N</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">:</span>
+            <span class="n">out</span> <span class="o">+=</span> <span class="s">&#39;</span><span class="si">%4i</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">i</span><span class="p">)</span>
+            <span class="n">out</span> <span class="o">+=</span> <span class="s">&#39;| &#39;</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">:</span>
+                <span class="n">jj</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">else</span> <span class="p">:</span>
+                <span class="n">jj</span> <span class="o">=</span> <span class="mi">1</span>
+                <span class="n">out</span><span class="o">+=</span><span class="s">&quot;  rs   &quot;</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">jj</span><span class="p">,</span> <span class="n">N</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">:</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">fuelmap</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="p">:</span>
+                    <span class="k">if</span> <span class="n">param</span> <span class="o">==</span> <span class="s">&#39;burnup&#39;</span> <span class="p">:</span>
+                        <span class="n">out</span> <span class="o">+=</span> <span class="s">&#39;</span><span class="si">%6.2f</span><span class="s"> &#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">assemblies</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">fuelmap</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]]</span><span class="o">.</span><span class="n">burnup</span><span class="p">)</span>
+                    <span class="k">else</span> <span class="p">:</span>
+                        <span class="n">out</span> <span class="o">+=</span> <span class="s">&#39;</span><span class="si">%6.2f</span><span class="s"> &#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">assemblies</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">fuelmap</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]]</span><span class="o">.</span><span class="n">enrichment</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">stencil</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span>  <span class="p">:</span>
+                    <span class="n">out</span> <span class="o">+=</span> <span class="s">&#39;  ref  &#39;</span>
+                <span class="k">else</span> <span class="p">:</span>
+                    <span class="n">out</span> <span class="o">+=</span> <span class="s">&#39;    &#39;</span>
+            <span class="n">out</span> <span class="o">+=</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span>
+        <span class="k">print</span> <span class="n">out</span>        
+                </div>
+<div class="viewcode-block" id="Reactor.print_params"><a class="viewcode-back" href="../api_reference.html#reactor.Reactor.print_params">[docs]</a>    <span class="k">def</span> <span class="nf">print_params</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;  Print out optimization parameters.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">print</span> <span class="s">&quot;&quot;</span>
+        <span class="k">print</span> <span class="s">&quot; optimization parameters &quot;</span>
+        <span class="k">print</span> <span class="s">&quot; ----------------------- &quot;</span>
+        <span class="k">print</span> <span class="s">&quot;    keff   = &quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluator</span><span class="o">.</span><span class="n">keff</span>    
+        <span class="k">print</span> <span class="s">&quot; maxpeak   = &quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluator</span><span class="o">.</span><span class="n">maxpeak</span>  
+
+<span class="c">#    def fire_eval_signal(self,k,p):</span>
+<span class="c">#        # we do this here so optimizers that evaluate the reactor a zillion times don&#39;t</span>
+<span class="c">#        # trigger a billion repaints.  Should be called explicitly, e.g. at the end of</span>
+<span class="c">#        # generations</span>
+<span class="c">#        if PYQT4:</span>
+<span class="c">#            self.emit(SIGNAL(&quot;reactorEvaluated(float,float)&quot;),k,p)</span>
+
+<span class="c">#    def fire_pattupdate_signal(self):</span>
+<span class="c">#        # we do this here so optimizers that evaluate the reactor a zillion times don&#39;t</span>
+<span class="c">#        # trigger a billion repaints.  Should be called explicitly, e.g. at the end of</span>
+<span class="c">#        # generations</span>
+<span class="c">#        if PYQT4:</span>
+<span class="c">#            self.emit(SIGNAL(&quot;patternUpdated()&quot;))</span>
+        </div></div>
+<div class="viewcode-block" id="Core"><a class="viewcode-back" href="../api_reference.html#reactor.Core">[docs]</a><span class="k">class</span> <span class="nc">Core</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot; Represents the core.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stencil</span><span class="p">,</span> <span class="n">pattern</span><span class="p">,</span> <span class="n">assemblies</span><span class="p">,</span> <span class="n">reflector</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Constructor</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c"># Validate input.</span>
+        <span class="k">assert</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">pattern</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">assemblies</span><span class="p">))</span>
+        <span class="k">assert</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">assemblies</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="k">assert</span><span class="p">(</span><span class="n">width</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
+
+        <span class="c"># Assign the stencil</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stencil</span> <span class="o">=</span> <span class="n">stencil</span>
+        <span class="c"># Assign the pattern and assemblies</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pattern</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">assemblies</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sort_assemblies</span><span class="p">(</span><span class="n">pattern</span><span class="p">,</span> <span class="n">assemblies</span><span class="p">)</span>
+        <span class="c"># Make the fuel map</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">make_fuel_map</span><span class="p">()</span>
+        <span class="c"># Assign the reflector</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reflector</span> <span class="o">=</span> <span class="n">reflector</span>
+        <span class="c"># Assign assembly dimension</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">width</span> <span class="o">=</span> <span class="n">width</span>
+  
+<div class="viewcode-block" id="Core.sort_assemblies"><a class="viewcode-back" href="../api_reference.html#reactor.Core.sort_assemblies">[docs]</a>    <span class="k">def</span> <span class="nf">sort_assemblies</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pattern</span><span class="p">,</span> <span class="n">assemblies</span><span class="p">)</span> <span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot; Sort the assemblies by reactivity.</span>
+<span class="sd">        &quot;&quot;&quot;</span> 
+        <span class="c"># TODO(robertsj): Consider a cleaner approach for this sorting.</span>
+        
+        <span class="c"># We build a 2-d array of [index,kinf] pairs.  Sorting this gives</span>
+        <span class="c">#   permuted index in the first entry.  The location of each</span>
+        <span class="c">#   original index will become the new pattern.  (Note that kinf</span>
+        <span class="c">#   is negated so we get descending order of reactivity. It seems</span>
+        <span class="c">#   argsort has no option for ascend/descend.</span>
+        <span class="n">pattern_length</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">pattern</span><span class="p">)</span>
+        <span class="n">index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">pattern_length</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">pattern_length</span><span class="p">)</span> <span class="p">:</span>
+            <span class="n">index</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">i</span>
+            <span class="n">index</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="n">assemblies</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">kinf</span><span class="p">()</span>
+        <span class="n">index</span><span class="o">=</span><span class="n">index</span><span class="p">[</span><span class="n">index</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">argsort</span><span class="p">(),</span><span class="mi">0</span><span class="p">]</span>
+        
+        <span class="c"># Define the sorted pattern and assemblies using the permuted </span>
+        <span class="c">#   indices. Note that each pattern element will be unique, even </span>
+        <span class="c">#   if a small number of unique assemblies  defined the pattern</span>
+        <span class="c">#   initially.</span>
+        <span class="n">sorted_pattern</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">pattern</span><span class="p">),</span><span class="n">dtype</span><span class="o">=</span><span class="s">&#39;i&#39;</span><span class="p">)</span>
+        <span class="n">sorted_assemblies</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">pattern_length</span><span class="p">)</span> <span class="p">:</span>
+            <span class="n">sorted_pattern</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">index</span> <span class="o">==</span> <span class="n">i</span><span class="p">))[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">sorted_assemblies</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">assemblies</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">index</span><span class="p">[</span><span class="n">i</span><span class="p">])])</span>
+
+        <span class="k">return</span> <span class="n">sorted_pattern</span><span class="p">,</span> <span class="n">sorted_assemblies</span>
+            </div>
+<div class="viewcode-block" id="Core.make_fuel_map"><a class="viewcode-back" href="../api_reference.html#reactor.Core.make_fuel_map">[docs]</a>    <span class="k">def</span> <span class="nf">make_fuel_map</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;  Map the fuel to (i,j) for easy swapping.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">N</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stencil</span><span class="p">[</span><span class="mi">0</span><span class="p">,:])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fuelmap</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">N</span><span class="p">,</span> <span class="n">N</span><span class="p">),</span><span class="s">&#39;i&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fuelidx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">N</span><span class="p">,</span> <span class="n">N</span><span class="p">),</span><span class="s">&#39;i&#39;</span><span class="p">)</span><span class="o">*-</span><span class="mi">1</span>
+        <span class="n">fuelindex</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">N</span><span class="p">)</span> <span class="p">:</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">:</span>
+                <span class="n">jj</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">else</span> <span class="p">:</span>
+                <span class="n">jj</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">jj</span><span class="p">,</span> <span class="n">N</span><span class="p">)</span> <span class="p">:</span>        
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">stencil</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="p">:</span>    <span class="c"># a fuel</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">fuelmap</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pattern</span><span class="p">[</span><span class="n">fuelindex</span><span class="p">]</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">fuelidx</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">fuelindex</span>
+                    <span class="n">fuelindex</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">stencil</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">:</span> <span class="c"># a reflector</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">fuelmap</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+                <span class="k">else</span> <span class="p">:</span>                    <span class="c"># a void</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">fuelmap</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">2</span> 
+                    
+        <span class="c"># Assign the ones constrained by symmetry.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fuelmap</span><span class="p">[</span><span class="mi">1</span><span class="p">:,</span><span class="mi">0</span><span class="p">]</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">fuelmap</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">:]</span>     
+          </div>
+<div class="viewcode-block" id="Core.update_pattern"><a class="viewcode-back" href="../api_reference.html#reactor.Core.update_pattern">[docs]</a>    <span class="k">def</span> <span class="nf">update_pattern</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pattern</span><span class="p">)</span> <span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;  Update the pattern.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c"># Ensure we&#39;re not adding fuel (not for now anyway!).</span>
+        <span class="k">assert</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">pattern</span><span class="p">)</span><span class="o">==</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pattern</span><span class="p">))</span>
+        <span class="c"># Assign new pattern</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pattern</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">pattern</span>
+        <span class="c"># and then update the map</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">make_fuel_map</span><span class="p">()</span>
+        <span class="c">#TODO(robertsj): There should be checking.</span>
+     </div>
+<div class="viewcode-block" id="Core.swap"><a class="viewcode-back" href="../api_reference.html#reactor.Core.swap">[docs]</a>    <span class="k">def</span> <span class="nf">swap</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span> <span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot; Swap two bundles.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">y</span><span class="p">))</span>
+        <span class="k">assert</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="k">assert</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="nb">max</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fuelmap</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]))</span>
+        <span class="k">assert</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="nb">max</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fuelmap</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]))</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">fuelmap</span><span class="p">[</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="p">:</span>
+            <span class="k">print</span> <span class="s">&quot; Bundle 1 isn&#39;t fuel!! &quot;</span>
+            <span class="k">return</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">fuelmap</span><span class="p">[</span><span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">y</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="p">:</span>
+            <span class="k">print</span> <span class="s">&quot; Bundle 2 isn&#39;t fuel!! &quot;</span>
+            <span class="k">return</span>
+
+        <span class="n">tmp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fuelmap</span><span class="p">[</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pattern</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">fuelidx</span><span class="p">[</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]]]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pattern</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">fuelidx</span><span class="p">[</span><span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">y</span><span class="p">[</span><span class="mi">1</span><span class="p">]]]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pattern</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">fuelidx</span><span class="p">[</span><span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">y</span><span class="p">[</span><span class="mi">1</span><span class="p">]]]</span> <span class="o">=</span> <span class="n">tmp</span>
+<span class="c">#        tmp = self.pattern[self.fuelmap[x[0],x[1]]]</span>
+<span class="c">#        self.pattern[self.fuelidx[x[0],x[1]]] = self.fuelidx[y[0],y[1]]</span>
+<span class="c">#        self.pattern[self.fuelidx[y[0],y[1]]] = tmp</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">make_fuel_map</span><span class="p">()</span>
+        </div>
+<div class="viewcode-block" id="Core.inventory_size"><a class="viewcode-back" href="../api_reference.html#reactor.Core.inventory_size">[docs]</a>    <span class="k">def</span> <span class="nf">inventory_size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Return the inventory size.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">assemblies</span><span class="p">)</span>
+ </div>
+<div class="viewcode-block" id="Core.print_pattern"><a class="viewcode-back" href="../api_reference.html#reactor.Core.print_pattern">[docs]</a>    <span class="k">def</span> <span class="nf">print_pattern</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;  Print the pattern in a nice 2-D format.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">N</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stencil</span><span class="p">[</span><span class="mi">0</span><span class="p">,:])</span> 
+        <span class="n">out</span> <span class="o">=</span> <span class="s">&quot;    &quot;</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">N</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">:</span>
+            <span class="n">out</span> <span class="o">+=</span> <span class="s">&#39;</span><span class="si">%4i</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">i</span><span class="p">)</span>
+        <span class="n">out</span> <span class="o">+=</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span> <span class="o">+</span> <span class="s">&quot;  --&quot;</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">N</span><span class="p">)</span> <span class="p">:</span>
+            <span class="n">out</span> <span class="o">+=</span> <span class="s">&quot;----&quot;</span>
+        <span class="n">out</span> <span class="o">+=</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span> 
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">N</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">:</span>
+            <span class="n">out</span> <span class="o">+=</span> <span class="s">&#39;</span><span class="si">%2i</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">i</span><span class="p">)</span>
+            <span class="n">out</span> <span class="o">+=</span> <span class="s">&#39;| &#39;</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">:</span>
+                <span class="n">jj</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">else</span> <span class="p">:</span>
+                <span class="n">jj</span> <span class="o">=</span> <span class="mi">1</span>
+                <span class="n">out</span><span class="o">+=</span><span class="s">&quot;  rs&quot;</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">jj</span><span class="p">,</span> <span class="n">N</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">:</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">fuelmap</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="p">:</span>
+                    <span class="n">out</span> <span class="o">+=</span> <span class="s">&#39;</span><span class="si">%4i</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fuelmap</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">])</span>
+                <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">stencil</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span>  <span class="p">:</span>
+                    <span class="n">out</span> <span class="o">+=</span> <span class="s">&#39; ref&#39;</span>
+                <span class="k">else</span> <span class="p">:</span>
+                    <span class="n">out</span> <span class="o">+=</span> <span class="s">&#39;    &#39;</span>
+            <span class="n">out</span> <span class="o">+=</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span>
+        <span class="k">print</span> <span class="n">out</span>
+       </div>
+<div class="viewcode-block" id="Core.update_assembly_peaking"><a class="viewcode-back" href="../api_reference.html#reactor.Core.update_assembly_peaking">[docs]</a>    <span class="k">def</span> <span class="nf">update_assembly_peaking</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;  Give each assembly its current power peaking factor.</span>
+
+<span class="sd">        This should be called following evaluate for the GUI output.</span>
+
+<span class="sd">        Finish me.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">assemblies</span><span class="p">)):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">assemblies</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">set_peak</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">evaluator</span><span class="o">.</span><span class="n">peaking</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+ </div>
+<div class="viewcode-block" id="Core.get_plot_map"><a class="viewcode-back" href="../api_reference.html#reactor.Core.get_plot_map">[docs]</a>    <span class="k">def</span> <span class="nf">get_plot_map</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param</span><span class="p">)</span> <span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;  Return a 2-d array of pattern parameters.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">length</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fuelmap</span><span class="p">[:,</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">plot_map</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">length</span><span class="p">,</span><span class="n">length</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="s">&#39;f&#39;</span><span class="p">)</span><span class="o">+</span><span class="mf">1.0</span>
+        <span class="k">print</span> <span class="s">&quot;fuelmap=&quot;</span>
+        <span class="k">print</span> <span class="bp">self</span><span class="o">.</span><span class="n">fuelmap</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">length</span><span class="p">)</span> <span class="p">:</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">length</span><span class="p">)</span> <span class="p">:</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">fuelmap</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="p">:</span>
+                    <span class="c"># get the assembly</span>
+                    <span class="n">a</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">assemblies</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">fuelmap</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]]</span>
+                    <span class="k">if</span> <span class="n">param</span> <span class="o">==</span> <span class="s">&#39;burnup&#39;</span> <span class="p">:</span>
+                        <span class="n">val</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">burnup</span>
+                    <span class="k">else</span> <span class="p">:</span>
+                        <span class="n">val</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">enrichment</span>
+                <span class="k">else</span> <span class="p">:</span>
+                    <span class="n">val</span> <span class="o">=</span> <span class="o">-</span><span class="mi">10</span>
+                    <span class="k">pass</span> <span class="c"># nothing else needed for now.</span>
+                <span class="n">plot_map</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">val</span>
+        <span class="k">return</span> <span class="n">plot_map</span>  
+        </div>
+<div class="viewcode-block" id="Core.display"><a class="viewcode-back" href="../api_reference.html#reactor.Core.display">[docs]</a>    <span class="k">def</span> <span class="nf">display</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;  Print my information.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">print</span> <span class="s">&quot;    CORE:           &quot;</span>
+        <span class="k">print</span> <span class="s">&quot;        pattern:    &quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">pattern</span>
+        <span class="k">print</span> <span class="s">&quot;        ASSEMBLIES: &quot;</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">assemblies</span><span class="p">))</span> <span class="p">:</span>
+            <span class="k">print</span> <span class="s">&quot;             assembly: &quot;</span><span class="p">,</span> <span class="n">i</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">assemblies</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">display</span><span class="p">()</span> 
+        <span class="k">print</span> <span class="s">&quot;        REFLECTOR: &quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reflector</span><span class="o">.</span><span class="n">display</span><span class="p">()</span>
+ </div></div>
+<div class="viewcode-block" id="SpentFuelPool"><a class="viewcode-back" href="../api_reference.html#reactor.SpentFuelPool">[docs]</a><span class="k">class</span> <span class="nc">SpentFuelPool</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Represents the spent fuel pool. *NOT IMPLEMENTED*</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Constructor.  </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="SpentFuelPool.display"><a class="viewcode-back" href="../api_reference.html#reactor.SpentFuelPool.display">[docs]</a>    <span class="k">def</span> <span class="nf">display</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Display my contents.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span></div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../index.html">poropy 0.1.0 documentation</a> &raquo;</li>
+          <li><a href="index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Jeremy Roberts.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.
+    </div>
+  </body>
+</html>

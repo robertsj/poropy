@@ -1,0 +1,275 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>assembly &mdash; poropy 0.1.0 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/proBlue_mod.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="poropy 0.1.0 documentation" href="../index.html" />
+    <link rel="up" title="Module code" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../index.html">poropy 0.1.0 documentation</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for assembly</h1><div class="highlight"><pre>
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">Created on Dec 14, 2011</span>
+
+<span class="sd">@author: robertsj</span>
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="kn">from</span> <span class="nn">poropy.nucleardata</span> <span class="kn">import</span> <span class="o">*</span>
+
+<div class="viewcode-block" id="Assembly"><a class="viewcode-back" href="../api_reference.html#assembly.Assembly">[docs]</a><span class="k">class</span> <span class="nc">Assembly</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;  Represents a fuel assembly.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">        model : str</span>
+<span class="sd">            Basic description of assembly, e.g. IFBA.</span>
+<span class="sd">        enrichment : float</span>
+<span class="sd">            Initial enrichment (weight percent)</span>
+<span class="sd">        burnup : float</span>
+<span class="sd">            Current burnup (MWd/kg)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>            \
+                 <span class="n">model</span><span class="o">=</span><span class="s">&quot;IFBA&quot;</span><span class="p">,</span>    \
+                 <span class="n">enrichment</span><span class="o">=</span><span class="mf">4.0</span><span class="p">,</span>  \
+                 <span class="n">burnup</span><span class="o">=</span><span class="mf">0.0</span>       <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;  Constructor.  </span>
+
+<span class="sd">        By default, the built-in data module is used.  Users may </span>
+<span class="sd">        explicitly set constants for single statepoints via the</span>
+<span class="sd">        set_constants command.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c"># Set characteristics used to define the group constants</span>
+        <span class="c"># within the data module.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">enrichment</span> <span class="o">=</span> <span class="n">enrichment</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">burnup</span> <span class="o">=</span> <span class="n">burnup</span> 
+       
+        <span class="c"># Get the group data object.</span>
+        <span class="n">IFBA</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">WABA</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">GAD</span>  <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">model</span> <span class="o">==</span> <span class="s">&quot;IFBA&quot;</span><span class="p">):</span>
+            <span class="n">IFBA</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">model</span> <span class="o">==</span> <span class="s">&quot;WABA&quot;</span><span class="p">):</span>
+            <span class="n">WABA</span> <span class="o">=</span> <span class="mi">1</span>   
+        <span class="k">if</span> <span class="p">(</span><span class="n">model</span> <span class="o">==</span> <span class="s">&quot;GAD&quot;</span><span class="p">):</span>
+            <span class="n">GAD</span> <span class="o">=</span> <span class="mi">1</span>  
+        <span class="n">data</span> <span class="o">=</span> <span class="n">get_2g_parms</span><span class="p">(</span><span class="n">burnup</span><span class="p">,</span> <span class="n">enrichment</span><span class="p">,</span> <span class="n">IFBA</span><span class="p">,</span> <span class="n">WABA</span><span class="p">,</span> <span class="n">GAD</span><span class="p">)</span>
+
+        <span class="c"># Set the group data.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">D1</span>   <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">DIFF1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">D2</span>   <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">DIFF2</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">A1</span>   <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">ABS1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">A2</span>   <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">ABS2</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">F1</span>   <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">NUFISS1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">F2</span>   <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">NUFISS2</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">S12</span>  <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">REMOV1</span>              <span class="c"># Note, this is strange but is</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">R1</span>   <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">REMOV1</span> <span class="o">+</span> <span class="n">data</span><span class="o">.</span><span class="n">ABS1</span>  <span class="c"># the way CASMO defines them.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">KINF</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">K_INF_NO_XE</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">M2</span>   <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">M2_XE</span>
+
+        <span class="c"># Peaking factor.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">peak</span> <span class="o">=</span> <span class="mf">0.0</span>
+        
+<div class="viewcode-block" id="Assembly.set_constants"><a class="viewcode-back" href="../api_reference.html#assembly.Assembly.set_constants">[docs]</a>    <span class="k">def</span> <span class="nf">set_constants</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="p">[</span><span class="mf">1.4493e+00</span><span class="p">,</span><span class="mf">3.8070e-01</span><span class="p">,</span><span class="mf">9.9000e-03</span><span class="p">,</span> \
+                                  <span class="mf">1.0420e-01</span><span class="p">,</span><span class="mf">7.9000e-03</span><span class="p">,</span><span class="mf">1.6920e-01</span><span class="p">,</span> \
+                                  <span class="mf">1.5100e-02</span><span class="p">]</span>                       <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;  Explicitly change the group constants.</span>
+
+<span class="sd">        This is for use when a user wishes to bypass the data module for</span>
+<span class="sd">        a run at a *single* state point, i.e. no burnup, etc.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">D1</span>   <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">D2</span>   <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">A1</span>   <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">A2</span>   <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>   
+        <span class="bp">self</span><span class="o">.</span><span class="n">F1</span>   <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">F2</span>   <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span>  
+        <span class="bp">self</span><span class="o">.</span><span class="n">S12</span>  <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">R1</span>   <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">A1</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">S12</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">KINF</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">F1</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">F2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">S12</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">A2</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">R1</span>  
+        <span class="bp">self</span><span class="o">.</span><span class="n">M2</span>   <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">D1</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">R1</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">D2</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">A2</span>
+   </div>
+<div class="viewcode-block" id="Assembly.get_constants"><a class="viewcode-back" href="../api_reference.html#assembly.Assembly.get_constants">[docs]</a>    <span class="k">def</span> <span class="nf">get_constants</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>    
+        <span class="sd">&quot;&quot;&quot; Grab individual group constants.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">D1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">D2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">A1</span><span class="p">,</span>  <span class="bp">self</span><span class="o">.</span><span class="n">A2</span><span class="p">,</span>  \
+               <span class="bp">self</span><span class="o">.</span><span class="n">F1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">F2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">S12</span> 
+               </div>
+<div class="viewcode-block" id="Assembly.get_constants_list"><a class="viewcode-back" href="../api_reference.html#assembly.Assembly.get_constants_list">[docs]</a>    <span class="k">def</span> <span class="nf">get_constants_list</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>    
+        <span class="sd">&quot;&quot;&quot; Grab group constants as a list.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">D1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">D2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">A1</span><span class="p">,</span>  <span class="bp">self</span><span class="o">.</span><span class="n">A2</span><span class="p">,</span>  \
+                <span class="bp">self</span><span class="o">.</span><span class="n">F1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">F2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">S12</span><span class="p">]</span>   
+    </div>
+<div class="viewcode-block" id="Assembly.kinf"><a class="viewcode-back" href="../api_reference.html#assembly.Assembly.kinf">[docs]</a>    <span class="k">def</span> <span class="nf">kinf</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;  Return kinf.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">KINF</span>
+</div>
+<div class="viewcode-block" id="Assembly.peak"><a class="viewcode-back" href="../api_reference.html#assembly.Assembly.peak">[docs]</a>    <span class="k">def</span> <span class="nf">peak</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;  Return my peaking factor.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">peak</span>
+</div>
+<div class="viewcode-block" id="Assembly.set_peak"><a class="viewcode-back" href="../api_reference.html#assembly.Assembly.set_peak">[docs]</a>    <span class="k">def</span> <span class="nf">set_peak</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;  Update my peaking factor.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">peak</span> <span class="o">=</span> <span class="n">p</span>
+    </div>
+<div class="viewcode-block" id="Assembly.burn"><a class="viewcode-back" href="../api_reference.html#assembly.Assembly.burn">[docs]</a>    <span class="k">def</span> <span class="nf">burn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">burnup</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;  Stub method for inserting a data model.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c"># Given the burnup, enrichment, and assembly type,</span>
+        <span class="c">#   the data model returns a new set of data.           </span>
+        </div>
+<div class="viewcode-block" id="Assembly.display"><a class="viewcode-back" href="../api_reference.html#assembly.Assembly.display">[docs]</a>    <span class="k">def</span> <span class="nf">display</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Display my contents.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">print</span> <span class="s">&quot;                model: &quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span>
+        <span class="k">print</span> <span class="s">&quot;           enrichment: &quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">enrichment</span>
+        <span class="k">print</span> <span class="s">&quot;               burnup: &quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">burnup</span>        
+        <span class="k">print</span> <span class="s">&quot;            constants: &quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">D1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">D2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">A1</span><span class="p">,</span>  <span class="bp">self</span><span class="o">.</span><span class="n">A2</span><span class="p">,</span> \
+                                <span class="bp">self</span><span class="o">.</span><span class="n">F1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">F2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">S12</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">R1</span>   
+        <span class="k">print</span> <span class="s">&quot;                 kinf: &quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">kinf</span><span class="p">()</span> 
+        </div></div>
+<div class="viewcode-block" id="Reflector"><a class="viewcode-back" href="../api_reference.html#assembly.Reflector">[docs]</a><span class="k">class</span> <span class="nc">Reflector</span><span class="p">(</span><span class="n">Assembly</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Represents a reflector.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Constructor.  Default data corresponds to a fresh IFBA assembly.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">model</span> <span class="o">==</span> <span class="s">&quot;biblis&quot;</span> <span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.3200e+00</span><span class="p">,</span> <span class="mf">2.7720e-01</span><span class="p">,</span> <span class="mf">2.6562e-03</span><span class="p">,</span> \
+                    <span class="mf">7.1596e-02</span><span class="p">,</span> <span class="mf">0.00000000</span><span class="p">,</span> <span class="mf">0.00000000</span><span class="p">,</span> \
+                    <span class="mf">2.3106e-02</span><span class="p">]</span>   
+        <span class="k">else</span> <span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s">&quot;Reflector model not available&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span>
+        <span class="c"># Default group data.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">D1</span>  <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">D2</span>  <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">A1</span>  <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">A2</span>  <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>   
+        <span class="bp">self</span><span class="o">.</span><span class="n">F1</span>  <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">F2</span>  <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span>  
+        <span class="bp">self</span><span class="o">.</span><span class="n">S12</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span>   
+        <span class="bp">self</span><span class="o">.</span><span class="n">R1</span>  <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">A1</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">S12</span>
+        
+<div class="viewcode-block" id="Reflector.display"><a class="viewcode-back" href="../api_reference.html#assembly.Reflector.display">[docs]</a>    <span class="k">def</span> <span class="nf">display</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Display my contents.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">print</span> <span class="s">&quot;                model: &quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span>
+        <span class="k">print</span> <span class="s">&quot;            constants: &quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">D1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">D2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">A1</span><span class="p">,</span>  <span class="bp">self</span><span class="o">.</span><span class="n">A2</span><span class="p">,</span> \
+                                   <span class="bp">self</span><span class="o">.</span><span class="n">F1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">F2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">S12</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">R1</span>   
+        </div>
+<div class="viewcode-block" id="Reflector.burn"><a class="viewcode-back" href="../api_reference.html#assembly.Reflector.burn">[docs]</a>    <span class="k">def</span> <span class="nf">burn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">burnup</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Stub method for inserting a data model.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">print</span> <span class="s">&quot;Prepare to be extinguished.&quot;</span>
+        </div></div>
+<div class="viewcode-block" id="Void"><a class="viewcode-back" href="../api_reference.html#assembly.Void">[docs]</a><span class="k">class</span> <span class="nc">Void</span><span class="p">(</span><span class="n">Assembly</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Represents a void.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Constructor.  Default data corresponds to a fresh IFBA assembly.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+</div>
+<div class="viewcode-block" id="assembly_compare"><a class="viewcode-back" href="../api_reference.html#assembly.assembly_compare">[docs]</a><span class="k">def</span> <span class="nf">assembly_compare</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span> <span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;  Compare assemblies based on BOC kinf; sorted by descending reactivity.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">kinf</span><span class="p">()</span> <span class="o">&lt;</span> <span class="n">y</span><span class="o">.</span><span class="n">kinf</span><span class="p">()</span> <span class="p">:</span>
+        <span class="k">return</span> <span class="mi">1</span>
+    <span class="k">elif</span> <span class="n">x</span><span class="o">.</span><span class="n">kinf</span><span class="p">()</span> <span class="o">==</span> <span class="n">y</span><span class="o">.</span><span class="n">kinf</span><span class="p">()</span> <span class="p">:</span>
+        <span class="k">return</span> <span class="mi">0</span>
+    <span class="k">else</span> <span class="p">:</span>  <span class="c">#x.resultType &lt; y.resultType</span>
+        <span class="k">return</span> <span class="o">-</span><span class="mi">1</span> 
+               </div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../index.html">poropy 0.1.0 documentation</a> &raquo;</li>
+          <li><a href="index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Jeremy Roberts.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.
+    </div>
+  </body>
+</html>

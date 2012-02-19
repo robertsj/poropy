@@ -1,0 +1,51 @@
+.. _sec_contributor:
+
+Contributors
+============
+
+History
+-------
+
+``poropy`` was originally created by J. Roberts as a project 
+for 22.251, a nuclear fuel cycle class at MIT taught at the 
+time by Kord Smith.  That original implementation formed the
+simple base components for optimizing loading patterns using
+a simple neutronics module (a Python-wrapped executable) and
+a genetic algorithm.
+
+For the same class, N. Horelik and N. Gibson put together a
+simple two group data module based on a variety of fits to
+hundreds of CASMO-4 runs of typical assembly types.  This
+data module has been folded into the ``poropy`` framework.
+
+GUI development has been led by N. Horelik, and much of the
+user experience is based on all our time in Waltham, MA 
+playing with Studsvik's XIMAGE.  
+
+Collaborations
+--------------
+
+While ``poropy`` is in its infancy, we are interested in 
+collaborations in all areas, including:
+
+* Including a thermal hydraulic engine of a similar fidelity
+  to the extant data module; our data module will need to be
+  extended a bit, but ultimately we won't be able to include
+  things like history effects (unless someone has a really 
+  good idea...)
+* Additional optimization approaches; currently, we have 
+  the genetic algorithm; several greedy heuristic 
+  methods are in ongoing development
+* Porting to other architectures; all our development is 
+  in Ubuntu.  We'd love to drag and drop assemblies on
+  an iPad.
+* Educational materials; a primary motivator for continued 
+  development is to produce a tool viable for classroom
+
+People
+------
+
+Jeremy Roberts
+Nick Horelik
+Nathan Gibson
+you?

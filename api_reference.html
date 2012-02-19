@@ -1,0 +1,610 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>API Reference Manual &mdash; poropy 0.1.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/proBlue_mod.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="poropy 0.1.0 documentation" href="index.html" />
+    <link rel="next" title="Contributors" href="contributors.html" />
+    <link rel="prev" title="Methods" href="methods.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="contributors.html" title="Contributors"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="methods.html" title="Methods"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">poropy 0.1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="api-reference-manual">
+<span id="sec-reference"></span><h1>API Reference Manual<a class="headerlink" href="#api-reference-manual" title="Permalink to this headline">¶</a></h1>
+<p>This chapter describes the application programming interface
+for <tt class="docutils literal"><span class="pre">poropy</span></tt>.  Currently, <tt class="docutils literal"><span class="pre">poropy</span></tt> has three packages,
+<tt class="docutils literal"><span class="pre">nucleardata</span></tt>, <tt class="docutils literal"><span class="pre">coretools</span></tt> and <tt class="docutils literal"><span class="pre">bundletools</span></tt>.  Only the
+first two have undergone development.</p>
+<div class="section" id="poropy-nucleardata-the-nucleardata-package">
+<span id="sec-reference-nucleardata"></span><h2><tt class="docutils literal"><span class="pre">poropy.nucleardata</span></tt> &#8212; The nucleardata package<a class="headerlink" href="#poropy-nucleardata-the-nucleardata-package" title="Permalink to this headline">¶</a></h2>
+<p><tt class="docutils literal"><span class="pre">poropy.nucleardata</span></tt> provides a very simple and efficient library
+of two group data for several common assembly types.  A user defines
+the type of assembly  they want to use, the initial enrichment,
+burnup, and burnable poison configuration, and the relevant two
+group data is returned.  While this does not provide &#8220;production&#8221;
+quality data as provided by a typical reactor database, it does
+give reasonably good data for scoping and educational purposes.</p>
+</div>
+<div class="section" id="poropy-coretools-the-coretools-package">
+<span id="sec-reference-coretools"></span><h2><tt class="docutils literal"><span class="pre">poropy.coretools</span></tt> &#8212; The coretools package<a class="headerlink" href="#poropy-coretools-the-coretools-package" title="Permalink to this headline">¶</a></h2>
+<p><tt class="docutils literal"><span class="pre">poropy.coretools</span></tt> aims to provide a complete set of tools for
+analyzing and optimizing loading patterns for a simple set of inputs.
+Currently, it contains a number of modules, each with one or more
+classes.  The current documentation is quite basic, as the interfaces
+and such are in a state of flux.</p>
+</div>
+<div class="section" id="module-reactor">
+<span id="coretools-reactor-the-reactor-module"></span><span id="sec-reference-coretools-reactor"></span><h2><tt class="docutils literal"><span class="pre">coretools.reactor</span></tt> &#8212; The reactor module<a class="headerlink" href="#module-reactor" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="reactor.Core">
+<em class="property">class </em><tt class="descclassname">reactor.</tt><tt class="descname">Core</tt><big>(</big><em>stencil</em>, <em>pattern</em>, <em>assemblies</em>, <em>reflector</em>, <em>width</em>, <em>parent=None</em><big>)</big><a class="reference internal" href="_modules/reactor.html#Core"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#reactor.Core" title="Permalink to this definition">¶</a></dt>
+<dd><p>Represents the core.</p>
+<dl class="method">
+<dt id="reactor.Core.display">
+<tt class="descname">display</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/reactor.html#Core.display"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#reactor.Core.display" title="Permalink to this definition">¶</a></dt>
+<dd><p>Print my information.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="reactor.Core.get_plot_map">
+<tt class="descname">get_plot_map</tt><big>(</big><em>param</em><big>)</big><a class="reference internal" href="_modules/reactor.html#Core.get_plot_map"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#reactor.Core.get_plot_map" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a 2-d array of pattern parameters.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="reactor.Core.inventory_size">
+<tt class="descname">inventory_size</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/reactor.html#Core.inventory_size"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#reactor.Core.inventory_size" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the inventory size.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="reactor.Core.make_fuel_map">
+<tt class="descname">make_fuel_map</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/reactor.html#Core.make_fuel_map"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#reactor.Core.make_fuel_map" title="Permalink to this definition">¶</a></dt>
+<dd><p>Map the fuel to (i,j) for easy swapping.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="reactor.Core.print_pattern">
+<tt class="descname">print_pattern</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/reactor.html#Core.print_pattern"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#reactor.Core.print_pattern" title="Permalink to this definition">¶</a></dt>
+<dd><p>Print the pattern in a nice 2-D format.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="reactor.Core.sort_assemblies">
+<tt class="descname">sort_assemblies</tt><big>(</big><em>pattern</em>, <em>assemblies</em><big>)</big><a class="reference internal" href="_modules/reactor.html#Core.sort_assemblies"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#reactor.Core.sort_assemblies" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sort the assemblies by reactivity.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="reactor.Core.swap">
+<tt class="descname">swap</tt><big>(</big><em>x</em>, <em>y</em><big>)</big><a class="reference internal" href="_modules/reactor.html#Core.swap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#reactor.Core.swap" title="Permalink to this definition">¶</a></dt>
+<dd><p>Swap two bundles.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="reactor.Core.update_assembly_peaking">
+<tt class="descname">update_assembly_peaking</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/reactor.html#Core.update_assembly_peaking"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#reactor.Core.update_assembly_peaking" title="Permalink to this definition">¶</a></dt>
+<dd><p>Give each assembly its current power peaking factor.</p>
+<p>This should be called following evaluate for the GUI output.</p>
+<p>Finish me.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="reactor.Core.update_pattern">
+<tt class="descname">update_pattern</tt><big>(</big><em>pattern</em><big>)</big><a class="reference internal" href="_modules/reactor.html#Core.update_pattern"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#reactor.Core.update_pattern" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update the pattern.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="reactor.Reactor">
+<em class="property">class </em><tt class="descclassname">reactor.</tt><tt class="descname">Reactor</tt><big>(</big><em>stencil</em>, <em>pattern</em>, <em>assemblies</em>, <em>reflector</em>, <em>width</em>, <em>evaluator</em>, <em>parent=None</em><big>)</big><a class="reference internal" href="_modules/reactor.html#Reactor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#reactor.Reactor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Represents the reactor</p>
+<dl class="method">
+<dt id="reactor.Reactor.display">
+<tt class="descname">display</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/reactor.html#Reactor.display"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#reactor.Reactor.display" title="Permalink to this definition">¶</a></dt>
+<dd><p>Print out all information (for debugging).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="reactor.Reactor.evaluate">
+<tt class="descname">evaluate</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/reactor.html#Reactor.evaluate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#reactor.Reactor.evaluate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Evaluate the current core.  Pattern must be up-to-date.</p>
+<dl class="docutils">
+<dt>val <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
+<dd>Value of objection function for current solution.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="reactor.Reactor.number_bundles">
+<tt class="descname">number_bundles</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/reactor.html#Reactor.number_bundles"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#reactor.Reactor.number_bundles" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the number of fuel bundles.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="reactor.Reactor.plot_pattern">
+<tt class="descname">plot_pattern</tt><big>(</big><em>param='burnup'</em><big>)</big><a class="reference internal" href="_modules/reactor.html#Reactor.plot_pattern"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#reactor.Reactor.plot_pattern" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot the peaking factor matrix.</p>
+<dl class="docutils">
+<dt>param <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd>Designates which metric to plot.  Currently, the 
+options are &#8216;burnup&#8217; and &#8216;enrichment&#8217;.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="reactor.Reactor.plot_peaking">
+<tt class="descname">plot_peaking</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/reactor.html#Reactor.plot_peaking"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#reactor.Reactor.plot_peaking" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot the peaking factor matrix.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="reactor.Reactor.print_params">
+<tt class="descname">print_params</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/reactor.html#Reactor.print_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#reactor.Reactor.print_params" title="Permalink to this definition">¶</a></dt>
+<dd><p>Print out optimization parameters.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="reactor.Reactor.print_pattern">
+<tt class="descname">print_pattern</tt><big>(</big><em>param='burnup'</em><big>)</big><a class="reference internal" href="_modules/reactor.html#Reactor.print_pattern"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#reactor.Reactor.print_pattern" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot the peaking factor matrix.</p>
+<dl class="docutils">
+<dt>param <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd>Designates which metric to plot.  Currently, the 
+options are &#8216;burnup&#8217; and &#8216;enrichment&#8217;.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="reactor.Reactor.print_peaking">
+<tt class="descname">print_peaking</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/reactor.html#Reactor.print_peaking"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#reactor.Reactor.print_peaking" title="Permalink to this definition">¶</a></dt>
+<dd><p>Print out the peaking factor matrix.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="reactor.Reactor.shuffle">
+<tt class="descname">shuffle</tt><big>(</big><em>pattern</em><big>)</big><a class="reference internal" href="_modules/reactor.html#Reactor.shuffle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#reactor.Reactor.shuffle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update the pattern.</p>
+<p>This applies <em>only</em> to within-core shuffling.  Accounting for different
+new fuel or swaps with the pool will need something more to handle the
+assemblies issue.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="reactor.Reactor.swap">
+<tt class="descname">swap</tt><big>(</big><em>x</em>, <em>y</em><big>)</big><a class="reference internal" href="_modules/reactor.html#Reactor.swap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#reactor.Reactor.swap" title="Permalink to this definition">¶</a></dt>
+<dd><p>Swap two bundles.</p>
+<dl class="docutils">
+<dt>x <span class="classifier-delimiter">:</span> <span class="classifier">integer tuple</span></dt>
+<dd>Pair of integer indices for first bundle.</dd>
+<dt>y <span class="classifier-delimiter">:</span> <span class="classifier">integer tuple</span></dt>
+<dd>Pair of integer indices for first bundle.</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="reactor.SpentFuelPool">
+<em class="property">class </em><tt class="descclassname">reactor.</tt><tt class="descname">SpentFuelPool</tt><a class="reference internal" href="_modules/reactor.html#SpentFuelPool"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#reactor.SpentFuelPool" title="Permalink to this definition">¶</a></dt>
+<dd><p>Represents the spent fuel pool. <em>NOT IMPLEMENTED</em></p>
+<dl class="method">
+<dt id="reactor.SpentFuelPool.display">
+<tt class="descname">display</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/reactor.html#SpentFuelPool.display"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#reactor.SpentFuelPool.display" title="Permalink to this definition">¶</a></dt>
+<dd><p>Display my contents.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-assembly">
+<span id="coretools-assembly-the-assembly-module"></span><span id="sec-reference-coretools-assembly"></span><h2><tt class="docutils literal"><span class="pre">coretools.assembly</span></tt> &#8212; The assembly module<a class="headerlink" href="#module-assembly" title="Permalink to this headline">¶</a></h2>
+<p>Created on Dec 14, 2011</p>
+<p>&#64;author: robertsj</p>
+<dl class="class">
+<dt id="assembly.Assembly">
+<em class="property">class </em><tt class="descclassname">assembly.</tt><tt class="descname">Assembly</tt><big>(</big><em>model='IFBA'</em>, <em>enrichment=4.0</em>, <em>burnup=0.0</em><big>)</big><a class="reference internal" href="_modules/assembly.html#Assembly"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#assembly.Assembly" title="Permalink to this definition">¶</a></dt>
+<dd><p>Represents a fuel assembly.</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>model <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd>Basic description of assembly, e.g. IFBA.</dd>
+<dt>enrichment <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
+<dd>Initial enrichment (weight percent)</dd>
+<dt>burnup <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
+<dd>Current burnup (MWd/kg)</dd>
+</dl>
+</div></blockquote>
+<dl class="method">
+<dt id="assembly.Assembly.burn">
+<tt class="descname">burn</tt><big>(</big><em>burnup</em><big>)</big><a class="reference internal" href="_modules/assembly.html#Assembly.burn"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#assembly.Assembly.burn" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stub method for inserting a data model.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="assembly.Assembly.display">
+<tt class="descname">display</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/assembly.html#Assembly.display"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#assembly.Assembly.display" title="Permalink to this definition">¶</a></dt>
+<dd><p>Display my contents.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="assembly.Assembly.get_constants">
+<tt class="descname">get_constants</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/assembly.html#Assembly.get_constants"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#assembly.Assembly.get_constants" title="Permalink to this definition">¶</a></dt>
+<dd><p>Grab individual group constants.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="assembly.Assembly.get_constants_list">
+<tt class="descname">get_constants_list</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/assembly.html#Assembly.get_constants_list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#assembly.Assembly.get_constants_list" title="Permalink to this definition">¶</a></dt>
+<dd><p>Grab group constants as a list.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="assembly.Assembly.kinf">
+<tt class="descname">kinf</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/assembly.html#Assembly.kinf"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#assembly.Assembly.kinf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return kinf.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="assembly.Assembly.peak">
+<tt class="descname">peak</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/assembly.html#Assembly.peak"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#assembly.Assembly.peak" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return my peaking factor.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="assembly.Assembly.set_constants">
+<tt class="descname">set_constants</tt><big>(</big><em>data=[1.4493, 0.3807, 0.0099, 0.1042, 0.0079, 0.1692, 0.0151]</em><big>)</big><a class="reference internal" href="_modules/assembly.html#Assembly.set_constants"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#assembly.Assembly.set_constants" title="Permalink to this definition">¶</a></dt>
+<dd><p>Explicitly change the group constants.</p>
+<p>This is for use when a user wishes to bypass the data module for
+a run at a <em>single</em> state point, i.e. no burnup, etc.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="assembly.Assembly.set_peak">
+<tt class="descname">set_peak</tt><big>(</big><em>p</em><big>)</big><a class="reference internal" href="_modules/assembly.html#Assembly.set_peak"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#assembly.Assembly.set_peak" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update my peaking factor.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="assembly.Reflector">
+<em class="property">class </em><tt class="descclassname">assembly.</tt><tt class="descname">Reflector</tt><big>(</big><em>model</em><big>)</big><a class="reference internal" href="_modules/assembly.html#Reflector"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#assembly.Reflector" title="Permalink to this definition">¶</a></dt>
+<dd><p>Represents a reflector.</p>
+<dl class="method">
+<dt id="assembly.Reflector.burn">
+<tt class="descname">burn</tt><big>(</big><em>burnup</em><big>)</big><a class="reference internal" href="_modules/assembly.html#Reflector.burn"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#assembly.Reflector.burn" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stub method for inserting a data model.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="assembly.Reflector.display">
+<tt class="descname">display</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/assembly.html#Reflector.display"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#assembly.Reflector.display" title="Permalink to this definition">¶</a></dt>
+<dd><p>Display my contents.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="assembly.Void">
+<em class="property">class </em><tt class="descclassname">assembly.</tt><tt class="descname">Void</tt><a class="reference internal" href="_modules/assembly.html#Void"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#assembly.Void" title="Permalink to this definition">¶</a></dt>
+<dd><p>Represents a void.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="assembly.assembly_compare">
+<tt class="descclassname">assembly.</tt><tt class="descname">assembly_compare</tt><big>(</big><em>x</em>, <em>y</em><big>)</big><a class="reference internal" href="_modules/assembly.html#assembly_compare"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#assembly.assembly_compare" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compare assemblies based on BOC kinf; sorted by descending reactivity.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-evaluator">
+<span id="coretools-evaluator-the-evaluator-module"></span><span id="sec-reference-coretools-evaluator"></span><h2><tt class="docutils literal"><span class="pre">coretools.evaluator</span></tt> &#8212; The evaluator module<a class="headerlink" href="#module-evaluator" title="Permalink to this headline">¶</a></h2>
+<p>Created on Feb 14, 2012</p>
+<p>&#64;author: robertsj</p>
+<dl class="class">
+<dt id="evaluator.Evaluator">
+<em class="property">class </em><tt class="descclassname">evaluator.</tt><tt class="descname">Evaluator</tt><a class="reference internal" href="_modules/evaluator.html#Evaluator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#evaluator.Evaluator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Abstract base class for evaluating patterns.</p>
+<p>The interface below is the public interface for all evaluators.</p>
+<dl class="method">
+<dt id="evaluator.Evaluator.display">
+<tt class="descname">display</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/evaluator.html#Evaluator.display"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#evaluator.Evaluator.display" title="Permalink to this definition">¶</a></dt>
+<dd><p>Introduce myself.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="evaluator.Evaluator.evaluate">
+<tt class="descname">evaluate</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/evaluator.html#Evaluator.evaluate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#evaluator.Evaluator.evaluate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Evaluate the current core.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="evaluator.Evaluator.plot_peaking">
+<tt class="descname">plot_peaking</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/evaluator.html#Evaluator.plot_peaking"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#evaluator.Evaluator.plot_peaking" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot the power peaking factors.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="evaluator.Evaluator.setup">
+<tt class="descname">setup</tt><big>(</big><em>core</em><big>)</big><a class="reference internal" href="_modules/evaluator.html#Evaluator.setup"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#evaluator.Evaluator.setup" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set up some structures needed before solving.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-laban">
+<span id="coretools-laban-the-laban-module"></span><span id="sec-reference-coretools-laban"></span><h2><tt class="docutils literal"><span class="pre">coretools.laban</span></tt> &#8212; The laban module<a class="headerlink" href="#module-laban" title="Permalink to this headline">¶</a></h2>
+<p>Created on Dec 11, 2011</p>
+<p>&#64;author: robertsj</p>
+<dl class="class">
+<dt id="laban.Laban">
+<em class="property">class </em><tt class="descclassname">laban.</tt><tt class="descname">Laban</tt><big>(</big><em>rank=0</em><big>)</big><a class="reference internal" href="_modules/laban.html#Laban"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#laban.Laban" title="Permalink to this definition">¶</a></dt>
+<dd><p>Uses the LABAN-PEL code to evaluate loading patterns.</p>
+<dl class="method">
+<dt id="laban.Laban.display">
+<tt class="descname">display</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/laban.html#Laban.display"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#laban.Laban.display" title="Permalink to this definition">¶</a></dt>
+<dd><p>Introduce myself.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="laban.Laban.evaluate">
+<tt class="descname">evaluate</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/laban.html#Laban.evaluate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#laban.Laban.evaluate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Evaluate the current core.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="laban.Laban.make_input_map">
+<tt class="descname">make_input_map</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/laban.html#Laban.make_input_map"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#laban.Laban.make_input_map" title="Permalink to this definition">¶</a></dt>
+<dd><p>Print the map of assemblies.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="laban.Laban.make_input_materials">
+<tt class="descname">make_input_materials</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/laban.html#Laban.make_input_materials"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#laban.Laban.make_input_materials" title="Permalink to this definition">¶</a></dt>
+<dd><p>Print the materials definitions.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="laban.Laban.make_input_top">
+<tt class="descname">make_input_top</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/laban.html#Laban.make_input_top"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#laban.Laban.make_input_top" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create the string for the top invariant part of the input.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="laban.Laban.read">
+<tt class="descname">read</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/laban.html#Laban.read"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#laban.Laban.read" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read a LABAN-PEL output file and load various data.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="laban.Laban.run">
+<tt class="descname">run</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/laban.html#Laban.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#laban.Laban.run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run LABAN-PEL (must set input first)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="laban.Laban.setup">
+<tt class="descname">setup</tt><big>(</big><em>core</em><big>)</big><a class="reference internal" href="_modules/laban.html#Laban.setup"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#laban.Laban.setup" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set up some structures needed before solving.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-flare">
+<span id="coretools-flare-the-flare-module"></span><span id="sec-reference-coretools-flare"></span><h2><tt class="docutils literal"><span class="pre">coretools.flare</span></tt> &#8212; The flare module<a class="headerlink" href="#module-flare" title="Permalink to this headline">¶</a></h2>
+<p>Created on Feb 14, 2012</p>
+<p>&#64;author: robertsj</p>
+<dl class="class">
+<dt id="flare.Flare">
+<em class="property">class </em><tt class="descclassname">flare.</tt><tt class="descname">Flare</tt><a class="reference internal" href="_modules/flare.html#Flare"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flare.Flare" title="Permalink to this definition">¶</a></dt>
+<dd><p>Uses the FLARE model to evaluate loading patterns.</p>
+<dl class="method">
+<dt id="flare.Flare.display">
+<tt class="descname">display</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/flare.html#Flare.display"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flare.Flare.display" title="Permalink to this definition">¶</a></dt>
+<dd><p>Introduce myself.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="flare.Flare.evaluate">
+<tt class="descname">evaluate</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/flare.html#Flare.evaluate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flare.Flare.evaluate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Evaluate the current core.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="flare.Flare.setup">
+<tt class="descname">setup</tt><big>(</big><em>core</em><big>)</big><a class="reference internal" href="_modules/flare.html#Flare.setup"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flare.Flare.setup" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set up some structures needed before solving.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-vendor">
+<span id="coretools-assembly-the-vendor-module"></span><span id="sec-reference-coretools-vendor"></span><h2><tt class="docutils literal"><span class="pre">coretools.assembly</span></tt> &#8212; The vendor module<a class="headerlink" href="#module-vendor" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="vendor.Vendor">
+<em class="property">class </em><tt class="descclassname">vendor.</tt><tt class="descname">Vendor</tt><a class="reference internal" href="_modules/vendor.html#Vendor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vendor.Vendor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fresh fuel vendor.  <em>NOT IMPLEMENTED</em></p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-optimizer">
+<span id="coretools-assembly-the-optimizer-module"></span><span id="sec-reference-coretools-optimizer"></span><h2><tt class="docutils literal"><span class="pre">coretools.assembly</span></tt> &#8212; The optimizer module<a class="headerlink" href="#module-optimizer" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="optimizer.Optimizer">
+<em class="property">class </em><tt class="descclassname">optimizer.</tt><tt class="descname">Optimizer</tt><big>(</big><em>argv</em>, <em>reactor</em>, <em>objective</em>, <em>parent=None</em><big>)</big><a class="reference internal" href="_modules/optimizer.html#Optimizer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#optimizer.Optimizer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Abstract base class for optimization.</p>
+<dl class="method">
+<dt id="optimizer.Optimizer.end_of_iteration">
+<tt class="descname">end_of_iteration</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/optimizer.html#Optimizer.end_of_iteration"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#optimizer.Optimizer.end_of_iteration" title="Permalink to this definition">¶</a></dt>
+<dd><p>Do something at the end of each iteration.</p>
+<p>Many optimization algorithms have relatively distinct 
+&#8220;iterations&#8221;.  For genetic algorithms, this is the generation.
+For simulated annealing, this could be a temperature change.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="optimizer.Optimizer.execute">
+<tt class="descname">execute</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/optimizer.html#Optimizer.execute"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#optimizer.Optimizer.execute" title="Permalink to this definition">¶</a></dt>
+<dd><p>Optimize the reactor for the objective.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="optimizer.Optimizer.fire_signal">
+<tt class="descname">fire_signal</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/optimizer.html#Optimizer.fire_signal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#optimizer.Optimizer.fire_signal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Let mainWindow know a new evaluation is available.</p>
+<p>This <em>must</em> be called at the end of each inherited optimizer&#8217;s
+end_of_iteration class.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="optimizer.Optimizer.set_fixed_central">
+<tt class="descname">set_fixed_central</tt><big>(</big><em>value=True</em><big>)</big><a class="reference internal" href="_modules/optimizer.html#Optimizer.set_fixed_central"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#optimizer.Optimizer.set_fixed_central" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fix the central bundle.</p>
+<p>By construction, the central bundle is the  first entry in the 
+pattern. This flag will indicate crossover should skip this.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="optimizer.bin">
+<tt class="descclassname">optimizer.</tt><tt class="descname">bin</tt><big>(</big><em>QTextStream</em><big>)</big> &rarr; QTextStream<a class="headerlink" href="#optimizer.bin" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="optimizer.hex">
+<tt class="descclassname">optimizer.</tt><tt class="descname">hex</tt><big>(</big><em>QTextStream</em><big>)</big> &rarr; QTextStream<a class="headerlink" href="#optimizer.hex" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="optimizer.oct">
+<tt class="descclassname">optimizer.</tt><tt class="descname">oct</tt><big>(</big><em>QTextStream</em><big>)</big> &rarr; QTextStream<a class="headerlink" href="#optimizer.oct" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">API Reference Manual</a><ul>
+<li><a class="reference internal" href="#poropy-nucleardata-the-nucleardata-package"><tt class="docutils literal"><span class="pre">poropy.nucleardata</span></tt> &#8212; The nucleardata package</a></li>
+<li><a class="reference internal" href="#poropy-coretools-the-coretools-package"><tt class="docutils literal"><span class="pre">poropy.coretools</span></tt> &#8212; The coretools package</a></li>
+<li><a class="reference internal" href="#module-reactor"><tt class="docutils literal"><span class="pre">coretools.reactor</span></tt> &#8212; The reactor module</a></li>
+<li><a class="reference internal" href="#module-assembly"><tt class="docutils literal"><span class="pre">coretools.assembly</span></tt> &#8212; The assembly module</a></li>
+<li><a class="reference internal" href="#module-evaluator"><tt class="docutils literal"><span class="pre">coretools.evaluator</span></tt> &#8212; The evaluator module</a></li>
+<li><a class="reference internal" href="#module-laban"><tt class="docutils literal"><span class="pre">coretools.laban</span></tt> &#8212; The laban module</a></li>
+<li><a class="reference internal" href="#module-flare"><tt class="docutils literal"><span class="pre">coretools.flare</span></tt> &#8212; The flare module</a></li>
+<li><a class="reference internal" href="#module-vendor"><tt class="docutils literal"><span class="pre">coretools.assembly</span></tt> &#8212; The vendor module</a></li>
+<li><a class="reference internal" href="#module-optimizer"><tt class="docutils literal"><span class="pre">coretools.assembly</span></tt> &#8212; The optimizer module</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="methods.html"
+                        title="previous chapter">Methods</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="contributors.html"
+                        title="next chapter">Contributors</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/api_reference.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="contributors.html" title="Contributors"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="methods.html" title="Methods"
+             >previous</a> |</li>
+        <li><a href="index.html">poropy 0.1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Jeremy Roberts.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.
+    </div>
+  </body>
+</html>
