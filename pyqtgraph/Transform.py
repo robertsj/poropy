@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
-from PyQt4 import QtCore, QtGui
+from Qt import QtCore, QtGui
 from Point import Point
 import numpy as np
 
 class Transform(QtGui.QTransform):
     """Transform that can always be represented as a combination of 3 matrices: scale * rotate * translate
-    
-    This transform always has 0 shear."""
+    This transform has no shear; angles are always preserved.
+    """
     def __init__(self, init=None):
         QtGui.QTransform.__init__(self)
         self.reset()
@@ -23,6 +23,16 @@ class Transform(QtGui.QTransform):
         elif isinstance(init, QtGui.QTransform):
             self.setFromQTransform(init)
 
+        
+    def getScale(self):
+        return self._state['scale']
+        
+    def getAngle(self):
+        return self._state['angle']
+        
+    def getTranslation(self):
+        return self._state['pos']
+    
     def reset(self):
         self._state = {
             'pos': Point(0,0),
@@ -41,7 +51,8 @@ class Transform(QtGui.QTransform):
         
         ## detect flipped axes
         if dp2.angle(dp3) > 0:
-            da = 180
+            #da = 180
+            da = 0
             sy = -1.0
         else:
             da = 0
@@ -106,8 +117,8 @@ class Transform(QtGui.QTransform):
     def saveState(self):
         p = self._state['pos']
         s = self._state['scale']
-        if s[0] == 0:
-            raise Exception('Invalid scale')
+        #if s[0] == 0:
+            #raise Exception('Invalid scale: %s' % str(s))
         return {'pos': (p[0], p[1]), 'scale': (s[0], s[1]), 'angle': self._state['angle']}
 
     def restoreState(self, state):
@@ -141,13 +152,37 @@ if __name__ == '__main__':
     win.setCentralWidget(cw)
     s = QtGui.QGraphicsScene()
     cw.setScene(s)
+    win.resize(600,600)
+    cw.enableMouse()
+    cw.setRange(QtCore.QRectF(-100., -100., 200., 200.))
     
-    b = QtGui.QGraphicsRectItem(-5, -5, 10, 10)
-    b.setPen(QtGui.QPen(mkPen('y')))
-    t1 = QtGui.QGraphicsTextItem()
-    t1.setHtml('<span style="color: #F00">R</span>')
-    s.addItem(b)
-    s.addItem(t1)
+    class Item(QtGui.QGraphicsItem):
+        def __init__(self):
+            QtGui.QGraphicsItem.__init__(self)
+            self.b = QtGui.QGraphicsRectItem(20, 20, 20, 20, self)
+            self.b.setPen(QtGui.QPen(mkPen('y')))
+            self.t1 = QtGui.QGraphicsTextItem(self)
+            self.t1.setHtml('<span style="color: #F00">R</span>')
+            self.t1.translate(20, 20)
+            self.l1 = QtGui.QGraphicsLineItem(10, 0, -10, 0, self)
+            self.l2 = QtGui.QGraphicsLineItem(0, 10, 0, -10, self)
+            self.l1.setPen(QtGui.QPen(mkPen('y')))
+            self.l2.setPen(QtGui.QPen(mkPen('y')))
+        def boundingRect(self):
+            return QtCore.QRectF()
+        def paint(self, *args):
+            pass
+            
+    #s.addItem(b)
+    #s.addItem(t1)
+    item = Item()
+    s.addItem(item)
+    l1 = QtGui.QGraphicsLineItem(10, 0, -10, 0)
+    l2 = QtGui.QGraphicsLineItem(0, 10, 0, -10)
+    l1.setPen(QtGui.QPen(mkPen('r')))
+    l2.setPen(QtGui.QPen(mkPen('r')))
+    s.addItem(l1)
+    s.addItem(l2)
     
     tr1 = Transform()
     tr2 = Transform()
@@ -172,19 +207,26 @@ if __name__ == '__main__':
     tr4.rotate(30)
     print "tr1 * tr4 = ", tr1*tr4
     
-    w1 = widgets.TestROI((0,0), (50, 50))
-    w2 = widgets.TestROI((0,0), (150, 150))
+    w1 = widgets.TestROI((19,19), (22, 22), invertible=True)
+    #w2 = widgets.TestROI((0,0), (150, 150))
+    w1.setZValue(10)
     s.addItem(w1)
-    s.addItem(w2)
+    #s.addItem(w2)
     w1Base = w1.getState()
-    w2Base = w2.getState()
+    #w2Base = w2.getState()
     def update():
         tr1 = w1.getGlobalTransform(w1Base)
-        tr2 = w2.getGlobalTransform(w2Base)
-        t1.setTransform(tr1 * tr2)
-        w1.setState(w1Base)
-        w1.applyGlobalTransform(tr2)
+        #tr2 = w2.getGlobalTransform(w2Base)
+        item.setTransform(tr1)
+        
+    #def update2():
+        #tr1 = w1.getGlobalTransform(w1Base)
+        #tr2 = w2.getGlobalTransform(w2Base)
+        #t1.setTransform(tr1)
+        #w1.setState(w1Base)
+        #w1.applyGlobalTransform(tr2)
+        
     w1.sigRegionChanged.connect(update)
-    w2.sigRegionChanged.connect(update)
+    #w2.sigRegionChanged.connect(update2)
     
     

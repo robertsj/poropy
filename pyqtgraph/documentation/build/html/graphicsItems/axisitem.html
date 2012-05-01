@@ -1,0 +1,210 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>AxisItem &mdash; pyqtgraph v1.8 documentation</title>
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.8',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="pyqtgraph v1.8 documentation" href="../index.html" />
+    <link rel="up" title="Pyqtgraph’s Graphics Items" href="index.html" />
+    <link rel="next" title="ArrowItem" href="arrowitem.html" />
+    <link rel="prev" title="ScatterPlotItem" href="scatterplotitem.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="arrowitem.html" title="ArrowItem"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="scatterplotitem.html" title="ScatterPlotItem"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">pyqtgraph v1.8 documentation</a> &raquo;</li>
+          <li><a href="../apireference.html" >API Reference</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">Pyqtgraph&#8217;s Graphics Items</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="axisitem">
+<h1>AxisItem<a class="headerlink" href="#axisitem" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="pyqtgraph.AxisItem">
+<em class="property">class </em><tt class="descclassname">pyqtgraph.</tt><tt class="descname">AxisItem</tt><big>(</big><em>orientation</em>, <em>pen=None</em>, <em>linkView=None</em>, <em>parent=None</em>, <em>maxTickLength=-5</em>, <em>showValues=True</em><big>)</big><a class="headerlink" href="#pyqtgraph.AxisItem" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="pyqtgraph.AxisItem.__init__">
+<tt class="descname">__init__</tt><big>(</big><em>orientation</em>, <em>pen=None</em>, <em>linkView=None</em>, <em>parent=None</em>, <em>maxTickLength=-5</em>, <em>showValues=True</em><big>)</big><a class="headerlink" href="#pyqtgraph.AxisItem.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>GraphicsItem showing a single plot axis with ticks, values, and label.
+Can be configured to fit on any side of a plot, and can automatically synchronize its displayed scale with ViewBox items.
+Ticks can be extended to make a grid.
+If maxTickLength is negative, ticks point into the plot.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyqtgraph.AxisItem.linkedView">
+<tt class="descname">linkedView</tt><big>(</big><big>)</big><a class="headerlink" href="#pyqtgraph.AxisItem.linkedView" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the ViewBox this axis is linked to</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyqtgraph.AxisItem.setGrid">
+<tt class="descname">setGrid</tt><big>(</big><em>grid</em><big>)</big><a class="headerlink" href="#pyqtgraph.AxisItem.setGrid" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the alpha value for the grid, or False to disable.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyqtgraph.AxisItem.setScale">
+<tt class="descname">setScale</tt><big>(</big><em>scale=None</em><big>)</big><a class="headerlink" href="#pyqtgraph.AxisItem.setScale" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the value scaling for this axis. 
+The scaling value 1) multiplies the values displayed along the axis
+and 2) changes the way units are displayed in the label. 
+For example:</p>
+<blockquote>
+<div>If the axis spans values from -0.1 to 0.1 and has units set to &#8216;V&#8217;
+then a scale of 1000 would cause the axis to display values -100 to 100
+and the units would appear as &#8216;mV&#8217;</div></blockquote>
+<p>If scale is None, then it will be determined automatically based on the current 
+range displayed by the axis.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyqtgraph.AxisItem.tickSpacing">
+<tt class="descname">tickSpacing</tt><big>(</big><em>minVal</em>, <em>maxVal</em>, <em>size</em><big>)</big><a class="headerlink" href="#pyqtgraph.AxisItem.tickSpacing" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return values describing the desired spacing and offset of ticks.</p>
+<p>This method is called whenever the axis needs to be redrawn and is a 
+good method to override in subclasses that require control over tick locations.</p>
+<dl class="docutils">
+<dt>The return value must be a list of three tuples:</dt>
+<dd><dl class="first docutils">
+<dt>[</dt>
+<dd>(major tick spacing, offset),
+(minor tick spacing, offset),
+(sub-minor tick spacing, offset),
+...</dd>
+</dl>
+<p class="last">]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyqtgraph.AxisItem.tickStrings">
+<tt class="descname">tickStrings</tt><big>(</big><em>values</em>, <em>scale</em>, <em>spacing</em><big>)</big><a class="headerlink" href="#pyqtgraph.AxisItem.tickStrings" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the strings that should be placed next to ticks. This method is called 
+when redrawing the axis and is a good method to override in subclasses.
+The method is called with a list of tick values, a scaling factor (see below), and the 
+spacing between ticks (this is required since, in some instances, there may be only 
+one tick and thus no other way to determine the tick spacing)</p>
+<p>The scale argument is used when the axis label is displaying units which may have an SI scaling prefix.
+When determining the text to display, use value*scale to correctly account for this prefix.
+For example, if the axis label&#8217;s units are set to &#8216;V&#8217;, then a tick value of 0.001 might
+be accompanied by a scale value of 1000. This indicates that the label is displaying &#8216;mV&#8217;, and 
+thus the tick should display 0.001 * 1000 = 1.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyqtgraph.AxisItem.tickValues">
+<tt class="descname">tickValues</tt><big>(</big><em>minVal</em>, <em>maxVal</em>, <em>size</em><big>)</big><a class="headerlink" href="#pyqtgraph.AxisItem.tickValues" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the values and spacing of ticks to draw
+[</p>
+<blockquote>
+<div>(spacing, [major ticks]), 
+(spacing, [minor ticks]), 
+...</div></blockquote>
+<p>]</p>
+<p>By default, this method calls tickSpacing to determine the correct tick locations.
+This is a good method to override in subclasses.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="scatterplotitem.html"
+                        title="previous chapter">ScatterPlotItem</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="arrowitem.html"
+                        title="next chapter">ArrowItem</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/graphicsItems/axisitem.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="arrowitem.html" title="ArrowItem"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="scatterplotitem.html" title="ScatterPlotItem"
+             >previous</a> |</li>
+        <li><a href="../index.html">pyqtgraph v1.8 documentation</a> &raquo;</li>
+          <li><a href="../apireference.html" >API Reference</a> &raquo;</li>
+          <li><a href="index.html" >Pyqtgraph&#8217;s Graphics Items</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Luke Campagnola.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
+    </div>
+  </body>
+</html>

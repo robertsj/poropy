@@ -51,7 +51,8 @@ class Laban(Evaluator):
         # Subdivisions.  Not really used.
         self.subdivisions = np.ones(self.dimension,dtype='i')
         # Peaking factor map
-        self.peaking  = np.zeros((self.dimension, self.dimension))
+        self.peaking_map  = np.zeros((self.dimension, self.dimension))
+        self.peaking = np.zeros(len(self.core.assemblies))
         # Create the static top part of the LABAN-PEL input
         self.make_input_top()
 
@@ -220,6 +221,8 @@ class Laban(Evaluator):
             count += 1
         
         # Find the peaking.
+        a = 0 # Assembly index
+        
         while True :
             words = lines[count].split()
             if len(words) == 8 :
@@ -229,17 +232,21 @@ class Laban(Evaluator):
                         words = lines[count].split()
                         assert(len(words) >= self.dimension)
                         for col in range(0, self.dimension) :
-                            self.peaking[row,col] = float(words[col+1])
+                            self.peaking_map[row, col] = float(words[col+1])
+                            if self.core.stencil[row, col] > 0:
+                                #print " a=", a, " row=", row, " col=", col, len(self.peaking)
+                                self.peaking[a] = self.peaking_map[row, col]
+                                a += 1
                         count += 1
                     break
-            count += 1   
-                     
+            count += 1             
         # Maximum peaking.
         self.maxpeak = np.max(self.peaking)
 
     def run(self) :
         """  Run LABAN-PEL (must set input first)
         """
+#        print "evaluating with laban"
         # currently, labanx reads from a preset file
         os.system('labanx '+str(self.rank)+" "+self.input+" "+self.output)     
         

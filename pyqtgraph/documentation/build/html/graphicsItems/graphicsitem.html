@@ -1,0 +1,218 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>GraphicsItem &mdash; pyqtgraph v1.8 documentation</title>
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.8',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="pyqtgraph v1.8 documentation" href="../index.html" />
+    <link rel="up" title="Pyqtgraph’s Graphics Items" href="index.html" />
+    <link rel="next" title="UIGraphicsItem" href="uigraphicsitem.html" />
+    <link rel="prev" title="GraphicsWidget" href="graphicswidget.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="uigraphicsitem.html" title="UIGraphicsItem"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="graphicswidget.html" title="GraphicsWidget"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">pyqtgraph v1.8 documentation</a> &raquo;</li>
+          <li><a href="../apireference.html" >API Reference</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">Pyqtgraph&#8217;s Graphics Items</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="graphicsitem">
+<h1>GraphicsItem<a class="headerlink" href="#graphicsitem" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="pyqtgraph.GraphicsItem">
+<em class="property">class </em><tt class="descclassname">pyqtgraph.</tt><tt class="descname">GraphicsItem</tt><a class="headerlink" href="#pyqtgraph.GraphicsItem" title="Permalink to this definition">¶</a></dt>
+<dd><p><strong>Bases:</strong> <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>Abstract class providing useful methods to GraphicsObject and GraphicsWidget.
+(This is required because we cannot have multiple inheritance with QObject subclasses.)</p>
+<dl class="method">
+<dt id="pyqtgraph.GraphicsItem.deviceTransform">
+<tt class="descname">deviceTransform</tt><big>(</big><em>viewportTransform=None</em><big>)</big><a class="headerlink" href="#pyqtgraph.GraphicsItem.deviceTransform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the transform that converts local item coordinates to device coordinates (usually pixels).
+Extends deviceTransform to automatically determine the viewportTransform.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyqtgraph.GraphicsItem.getBoundingParents">
+<tt class="descname">getBoundingParents</tt><big>(</big><big>)</big><a class="headerlink" href="#pyqtgraph.GraphicsItem.getBoundingParents" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a list of parents to this item that have child clipping enabled.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyqtgraph.GraphicsItem.getViewBox">
+<tt class="descname">getViewBox</tt><big>(</big><big>)</big><a class="headerlink" href="#pyqtgraph.GraphicsItem.getViewBox" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the first ViewBox or GraphicsView which bounds this item&#8217;s visible space.
+If this item is not contained within a ViewBox, then the GraphicsView is returned.
+If the item is contained inside nested ViewBoxes, then the inner-most ViewBox is returned.
+The result is cached; clear the cache with forgetViewBox()</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyqtgraph.GraphicsItem.getViewWidget">
+<tt class="descname">getViewWidget</tt><big>(</big><big>)</big><a class="headerlink" href="#pyqtgraph.GraphicsItem.getViewWidget" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the view widget for this item. If the scene has multiple views, only the first view is returned.
+The return value is cached; clear the cached value with forgetViewWidget()</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyqtgraph.GraphicsItem.mapFromDevice">
+<tt class="descname">mapFromDevice</tt><big>(</big><em>obj</em><big>)</big><a class="headerlink" href="#pyqtgraph.GraphicsItem.mapFromDevice" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return <em>obj</em> mapped from device coordinates (pixels) to local coordinates.
+If there is no device mapping available, return None.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyqtgraph.GraphicsItem.mapRectFromDevice">
+<tt class="descname">mapRectFromDevice</tt><big>(</big><em>rect</em><big>)</big><a class="headerlink" href="#pyqtgraph.GraphicsItem.mapRectFromDevice" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return <em>rect</em> mapped from device coordinates (pixels) to local coordinates.
+If there is no device mapping available, return None.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyqtgraph.GraphicsItem.mapRectToDevice">
+<tt class="descname">mapRectToDevice</tt><big>(</big><em>rect</em><big>)</big><a class="headerlink" href="#pyqtgraph.GraphicsItem.mapRectToDevice" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return <em>rect</em> mapped from local coordinates to device coordinates (pixels).
+If there is no device mapping available, return None.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyqtgraph.GraphicsItem.mapToDevice">
+<tt class="descname">mapToDevice</tt><big>(</big><em>obj</em><big>)</big><a class="headerlink" href="#pyqtgraph.GraphicsItem.mapToDevice" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return <em>obj</em> mapped from local coordinates to device coordinates (pixels).
+If there is no device mapping available, return None.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyqtgraph.GraphicsItem.pixelLength">
+<tt class="descname">pixelLength</tt><big>(</big><em>direction</em><big>)</big><a class="headerlink" href="#pyqtgraph.GraphicsItem.pixelLength" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the length of one pixel in the direction indicated (in local coordinates)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyqtgraph.GraphicsItem.pixelVectors">
+<tt class="descname">pixelVectors</tt><big>(</big><big>)</big><a class="headerlink" href="#pyqtgraph.GraphicsItem.pixelVectors" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return vectors in local coordinates representing the width and height of a view pixel.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyqtgraph.GraphicsItem.transformAngle">
+<tt class="descname">transformAngle</tt><big>(</big><em>relativeItem=None</em><big>)</big><a class="headerlink" href="#pyqtgraph.GraphicsItem.transformAngle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the rotation produced by this item&#8217;s transform (this assumes there is no shear in the transform)
+If relativeItem is given, then the angle is determined relative to that item.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyqtgraph.GraphicsItem.viewRect">
+<tt class="descname">viewRect</tt><big>(</big><big>)</big><a class="headerlink" href="#pyqtgraph.GraphicsItem.viewRect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the bounds (in item coordinates) of this item&#8217;s ViewBox or GraphicsWidget</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyqtgraph.GraphicsItem.viewTransform">
+<tt class="descname">viewTransform</tt><big>(</big><big>)</big><a class="headerlink" href="#pyqtgraph.GraphicsItem.viewTransform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the transform that maps from local coordinates to the item&#8217;s ViewBox coordinates
+If there is no ViewBox, return the scene transform.
+Returns None if the item does not have a view.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="graphicswidget.html"
+                        title="previous chapter">GraphicsWidget</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="uigraphicsitem.html"
+                        title="next chapter">UIGraphicsItem</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/graphicsItems/graphicsitem.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="uigraphicsitem.html" title="UIGraphicsItem"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="graphicswidget.html" title="GraphicsWidget"
+             >previous</a> |</li>
+        <li><a href="../index.html">pyqtgraph v1.8 documentation</a> &raquo;</li>
+          <li><a href="../apireference.html" >API Reference</a> &raquo;</li>
+          <li><a href="index.html" >Pyqtgraph&#8217;s Graphics Items</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Luke Campagnola.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
+    </div>
+  </body>
+</html>

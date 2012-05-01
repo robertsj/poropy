@@ -46,7 +46,7 @@ class Evaluator(object) :
     def plot_peaking(self) :
         """  Plot the power peaking factors.
         """
-        plt.imshow(self.peaking, interpolation='nearest', cmap=plt.cm.hot)  
+        plt.imshow(self.peaking_map, interpolation='nearest', cmap=plt.cm.hot)  
         plt.title('power peaking')
         plt.colorbar()
         plt.show() 

@@ -8,16 +8,16 @@ import numpy as np
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 
-from poropy.coretools import Optimizer
+from poropy.coretools import OptimizerGA
 from pypgapack import PGA
 from mpi4py import MPI
 
 class PGAOpt(QThread):
-    def __init__(self, reactor, parent):
+    def __init__(self, model, parent):
         QThread.__init__(self,parent)
         # parent required to prevent early garbage collecting
 
-        self.reactor = reactor
+        self.reactor = model.reactor
 
 
     def run(self):
@@ -62,7 +62,7 @@ class PGAOpt(QThread):
                 best = opt.GetBestIndex(PGA.OLDPOP)     # Get the best string
                 bestpattern = opt.GetIntegerChromosome(best, PGA.OLDPOP)
                 print " best pattern ", bestpattern
-                self.reactor.shuffle(bestpattern)  
+                self.reactor.shuffle(bestpattern)
                 self.reactor.evaluate()
                 self.reactor.print_params()
                 self.reactor.print_pattern()
@@ -71,6 +71,7 @@ class PGAOpt(QThread):
                 kefs[i]=self.reactor.evaluator.keff
                 peks[i]=self.reactor.evaluator.maxpeak
                 evas[i]=opt.evals
+                
         if rank == 0 :
             print np.mean(vals), np.std(vals)
             print np.mean(kefs), np.std(kefs)
@@ -83,7 +84,7 @@ class PGAOpt(QThread):
         os.chdir(cwd)
         self.emit(SIGNAL("progressChanged(int)"),100)
 
-class OptimizeSmallCore(Optimizer) :
+class OptimizeSmallCore(OptimizerGA):
     """  Derive our own class from PGA.
     """
     def small_core_objective(self, p, pop) :

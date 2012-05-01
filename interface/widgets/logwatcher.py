@@ -1,5 +1,7 @@
 from __future__ import division
 
+import os
+
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 
@@ -7,6 +9,10 @@ from PyQt4.QtGui import *
 class LogWatcher(QWidget):
     def __init__(self,logfile,parent=None):
         QWidget.__init__(self,parent)
+
+        self.file = logfile
+
+        self.lines = []
 
         self.display = QTextEdit()
         self.display.setReadOnly(True)
@@ -16,21 +22,18 @@ class LogWatcher(QWidget):
 
         timer = QTimer(self)
         QObject.connect(timer, SIGNAL("timeout()"), self.update_display)
-        timer.start(50)
+        timer.start(1000)
 
-        self.mutex = QMutex()
-
-        self.fh = open(logfile,'r')
-        self.lines = self.fh.readlines()
-        for line in self.lines:
-            self.display.append(line)
 
     def update_display(self):
-        self.mutex.lock()
-        newlines = self.fh.readlines()
-        newTextLines = newlines[len(newlines)-len(self.lines)-1:]
-        for line in newTextLines:
-            self.display.append(line)
-        self.display.update()
-        self.lines = newlines
-        self.mutex.unlock()
+
+        if not os.path.isfile(self.file): return
+
+        with open(self.file,'r') as fh:
+            newlines = fh.readlines()
+            if len(newlines) > len(self.lines):
+                for line in newlines[len(self.lines)-len(newlines):]:
+                    self.display.append(line[:-1])
+                self.display.update()
+                self.lines = newlines
+

@@ -22,3 +22,4 @@ from evaluator import *
 from flare import *
 from laban import *
 from optimizer import *
+from optimizer_ga import *

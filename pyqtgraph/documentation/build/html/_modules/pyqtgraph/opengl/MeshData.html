@@ -1,0 +1,278 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>pyqtgraph.opengl.MeshData &mdash; pyqtgraph v1.8 documentation</title>
+    <link rel="stylesheet" href="../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '1.8',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="top" title="pyqtgraph v1.8 documentation" href="../../../index.html" />
+    <link rel="up" title="pyqtgraph.opengl" href="../opengl.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">pyqtgraph v1.8 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li>
+          <li><a href="../../pyqtgraph.html" >pyqtgraph</a> &raquo;</li>
+          <li><a href="../opengl.html" accesskey="U">pyqtgraph.opengl</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for pyqtgraph.opengl.MeshData</h1><div class="highlight"><pre>
+<span class="kn">from</span> <span class="nn">pyqtgraph.Qt</span> <span class="kn">import</span> <span class="n">QtGui</span>
+<span class="kn">import</span> <span class="nn">pyqtgraph.functions</span> <span class="kn">as</span> <span class="nn">fn</span>
+
+<div class="viewcode-block" id="MeshData"><a class="viewcode-back" href="../../../3dgraphics/meshdata.html#pyqtgraph.opengl.MeshData.MeshData">[docs]</a><span class="k">class</span> <span class="nc">MeshData</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class for storing and operating on 3D mesh data. May contain:</span>
+<span class="sd">    </span>
+<span class="sd">    - list of vertex locations</span>
+<span class="sd">    - list of edges</span>
+<span class="sd">    - list of triangles</span>
+<span class="sd">    - colors per vertex, edge, or tri</span>
+<span class="sd">    - normals per vertex or tri</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="MeshData.__init__"><a class="viewcode-back" href="../../../3dgraphics/meshdata.html#pyqtgraph.opengl.MeshData.MeshData.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_vertexes</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_edges</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_faces</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_vertexFaces</span> <span class="o">=</span> <span class="bp">None</span>  <span class="c">## maps vertex ID to a list of face IDs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_vertexNormals</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_faceNormals</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_vertexColors</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_edgeColors</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_faceColors</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_meshColor</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">)</span>  <span class="c"># default color to use if no face/edge/vertex colors are given</span>
+        </div>
+<div class="viewcode-block" id="MeshData.setFaces"><a class="viewcode-back" href="../../../3dgraphics/meshdata.html#pyqtgraph.opengl.MeshData.MeshData.setFaces">[docs]</a>    <span class="k">def</span> <span class="nf">setFaces</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">faces</span><span class="p">,</span> <span class="n">vertexes</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the faces in this data set.</span>
+<span class="sd">        Data may be provided either as an Nx3x3 list of floats (9 float coordinate values per face)::</span>
+<span class="sd">        </span>
+<span class="sd">            faces = [ [(x, y, z), (x, y, z), (x, y, z)], ... ] </span>
+<span class="sd">            </span>
+<span class="sd">        or as an Nx3 list of ints (vertex integers) AND an Mx3 list of floats (3 float coordinate values per vertex)::</span>
+<span class="sd">        </span>
+<span class="sd">            faces = [ (p1, p2, p3), ... ]</span>
+<span class="sd">            vertexes = [ (x, y, z), ... ]</span>
+<span class="sd">            </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="k">if</span> <span class="n">vertexes</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_setUnindexedFaces</span><span class="p">(</span><span class="n">faces</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_setIndexedFaces</span><span class="p">(</span><span class="n">faces</span><span class="p">,</span> <span class="n">vertexes</span><span class="p">)</span>
+    </div>
+<div class="viewcode-block" id="MeshData.setMeshColor"><a class="viewcode-back" href="../../../3dgraphics/meshdata.html#pyqtgraph.opengl.MeshData.MeshData.setMeshColor">[docs]</a>    <span class="k">def</span> <span class="nf">setMeshColor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">color</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Set the color of the entire mesh. This removes any per-face or per-vertex colors.&quot;&quot;&quot;</span>
+        <span class="n">color</span> <span class="o">=</span> <span class="n">fn</span><span class="o">.</span><span class="n">Color</span><span class="p">(</span><span class="n">color</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_meshColor</span> <span class="o">=</span> <span class="n">color</span><span class="o">.</span><span class="n">glColor</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_vertexColors</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_faceColors</span> <span class="o">=</span> <span class="bp">None</span>
+    </div>
+    <span class="k">def</span> <span class="nf">_setUnindexedFaces</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">faces</span><span class="p">):</span>
+        <span class="n">verts</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_faces</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_vertexes</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_vertexFaces</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_faceNormals</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_vertexNormals</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="k">for</span> <span class="n">face</span> <span class="ow">in</span> <span class="n">faces</span><span class="p">:</span>
+            <span class="n">inds</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">pt</span> <span class="ow">in</span> <span class="n">face</span><span class="p">:</span>
+                <span class="n">pt2</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">([</span><span class="nb">round</span><span class="p">(</span><span class="n">x</span><span class="o">*</span><span class="mf">1e14</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">pt</span><span class="p">])</span>  <span class="c">## quantize to be sure that nearly-identical points will be merged</span>
+                <span class="n">index</span> <span class="o">=</span> <span class="n">verts</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">pt2</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">index</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_vertexes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QVector3D</span><span class="p">(</span><span class="o">*</span><span class="n">pt</span><span class="p">))</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_vertexFaces</span><span class="o">.</span><span class="n">append</span><span class="p">([])</span>
+                    <span class="n">index</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_vertexes</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span>
+                    <span class="n">verts</span><span class="p">[</span><span class="n">pt2</span><span class="p">]</span> <span class="o">=</span> <span class="n">index</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_vertexFaces</span><span class="p">[</span><span class="n">index</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_faces</span><span class="p">))</span>
+                <span class="n">inds</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_faces</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="n">inds</span><span class="p">))</span>
+    
+    <span class="k">def</span> <span class="nf">_setIndexedFaces</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">faces</span><span class="p">,</span> <span class="n">vertexes</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_vertexes</span> <span class="o">=</span> <span class="p">[</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QVector3D</span><span class="p">(</span><span class="o">*</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">vertexes</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_faces</span> <span class="o">=</span> <span class="n">faces</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_edges</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_vertexFaces</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_faceNormals</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_vertexNormals</span> <span class="o">=</span> <span class="bp">None</span>
+
+<div class="viewcode-block" id="MeshData.vertexFaces"><a class="viewcode-back" href="../../../3dgraphics/meshdata.html#pyqtgraph.opengl.MeshData.MeshData.vertexFaces">[docs]</a>    <span class="k">def</span> <span class="nf">vertexFaces</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return list mapping each vertex index to a list of face indexes that use the vertex.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vertexFaces</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_vertexFaces</span> <span class="o">=</span> <span class="p">[[]]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_vertexes</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">face</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_faces</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">ind</span> <span class="ow">in</span> <span class="n">face</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_vertexFaces</span><span class="p">[</span><span class="n">ind</span><span class="p">])</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_vertexFaces</span><span class="p">[</span><span class="n">ind</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c">## need a unique/empty list to fill</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_vertexFaces</span><span class="p">[</span><span class="n">ind</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vertexFaces</span>
+        </div>
+<div class="viewcode-block" id="MeshData.__iter__"><a class="viewcode-back" href="../../../3dgraphics/meshdata.html#pyqtgraph.opengl.MeshData.MeshData.__iter__">[docs]</a>    <span class="k">def</span> <span class="nf">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Iterate over all faces, yielding a list of three tuples [(position, normal, color), ...] for each face.&quot;&quot;&quot;</span>
+        <span class="n">vnorms</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">vertexNormals</span><span class="p">()</span>
+        <span class="n">vcolors</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">vertexColors</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_faces</span><span class="p">)):</span>
+            <span class="n">face</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">]:</span>
+                <span class="n">vind</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_faces</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span>
+                <span class="n">pos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vertexes</span><span class="p">[</span><span class="n">vind</span><span class="p">]</span>
+                <span class="n">norm</span> <span class="o">=</span> <span class="n">vnorms</span><span class="p">[</span><span class="n">vind</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">vcolors</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+                    <span class="n">color</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_meshColor</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">color</span> <span class="o">=</span> <span class="n">vcolors</span><span class="p">[</span><span class="n">vind</span><span class="p">]</span>
+                <span class="n">face</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">pos</span><span class="p">,</span> <span class="n">norm</span><span class="p">,</span> <span class="n">color</span><span class="p">))</span>
+            <span class="k">yield</span> <span class="n">face</span>
+    
+    </div>
+<div class="viewcode-block" id="MeshData.faceNormals"><a class="viewcode-back" href="../../../3dgraphics/meshdata.html#pyqtgraph.opengl.MeshData.MeshData.faceNormals">[docs]</a>    <span class="k">def</span> <span class="nf">faceNormals</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Computes and stores normal of each face.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_faceNormals</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_faceNormals</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">face</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_faces</span><span class="p">):</span>
+                <span class="c">## compute face normal</span>
+                <span class="n">pts</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_vertexes</span><span class="p">[</span><span class="n">vind</span><span class="p">]</span> <span class="k">for</span> <span class="n">vind</span> <span class="ow">in</span> <span class="n">face</span><span class="p">]</span>
+                <span class="n">norm</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QVector3D</span><span class="o">.</span><span class="n">crossProduct</span><span class="p">(</span><span class="n">pts</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">pts</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">pts</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">-</span><span class="n">pts</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+                <span class="n">norm</span> <span class="o">=</span> <span class="n">norm</span> <span class="o">/</span> <span class="n">norm</span><span class="o">.</span><span class="n">length</span><span class="p">()</span>  <span class="c">## don&#39;t use .normalized(); doesn&#39;t work for small values.</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_faceNormals</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">norm</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_faceNormals</span>
+    </div>
+<div class="viewcode-block" id="MeshData.vertexNormals"><a class="viewcode-back" href="../../../3dgraphics/meshdata.html#pyqtgraph.opengl.MeshData.MeshData.vertexNormals">[docs]</a>    <span class="k">def</span> <span class="nf">vertexNormals</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Assigns each vertex the average of its connected face normals.</span>
+<span class="sd">        If face normals have not been computed yet, then generateFaceNormals will be called.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vertexNormals</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">faceNorms</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">faceNormals</span><span class="p">()</span>
+            <span class="n">vertFaces</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">vertexFaces</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_vertexNormals</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">vindex</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_vertexes</span><span class="p">)):</span>
+                <span class="c">#print vertFaces[vindex]</span>
+                <span class="n">norms</span> <span class="o">=</span> <span class="p">[</span><span class="n">faceNorms</span><span class="p">[</span><span class="n">findex</span><span class="p">]</span> <span class="k">for</span> <span class="n">findex</span> <span class="ow">in</span> <span class="n">vertFaces</span><span class="p">[</span><span class="n">vindex</span><span class="p">]]</span>
+                <span class="n">norm</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QVector3D</span><span class="p">()</span>
+                <span class="k">for</span> <span class="n">fn</span> <span class="ow">in</span> <span class="n">norms</span><span class="p">:</span>
+                    <span class="n">norm</span> <span class="o">+=</span> <span class="n">fn</span>
+                <span class="n">norm</span> <span class="o">=</span> <span class="n">norm</span> <span class="o">/</span> <span class="n">norm</span><span class="o">.</span><span class="n">length</span><span class="p">()</span>  <span class="c">## don&#39;t use .normalize(); doesn&#39;t work for small values.</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_vertexNormals</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">norm</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vertexNormals</span>
+        </div>
+    <span class="k">def</span> <span class="nf">vertexColors</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vertexColors</span>
+        
+    <span class="k">def</span> <span class="nf">faceColors</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_faceColors</span>
+        
+    <span class="k">def</span> <span class="nf">edgeColors</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_edgeColors</span>
+        
+    <span class="c">#def reverseNormals(self):</span>
+        <span class="c">#&quot;&quot;&quot;</span>
+        <span class="c">#Reverses the direction of all normal vectors.</span>
+        <span class="c">#&quot;&quot;&quot;</span>
+        <span class="c">#pass</span>
+        
+    <span class="c">#def generateEdgesFromFaces(self):</span>
+        <span class="c">#&quot;&quot;&quot;</span>
+        <span class="c">#Generate a set of edges by listing all the edges of faces and removing any duplicates.</span>
+        <span class="c">#Useful for displaying wireframe meshes.</span>
+        <span class="c">#&quot;&quot;&quot;</span>
+        <span class="c">#pass</span>
+        
+<div class="viewcode-block" id="MeshData.save"><a class="viewcode-back" href="../../../3dgraphics/meshdata.html#pyqtgraph.opengl.MeshData.MeshData.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Serialize this mesh to a string appropriate for disk storage&quot;&quot;&quot;</span>
+        <span class="kn">import</span> <span class="nn">pickle</span>
+        <span class="n">names</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;_vertexes&#39;</span><span class="p">,</span> <span class="s">&#39;_edges&#39;</span><span class="p">,</span> <span class="s">&#39;_faces&#39;</span><span class="p">,</span> <span class="s">&#39;_vertexFaces&#39;</span><span class="p">,</span> <span class="s">&#39;_vertexNormals&#39;</span><span class="p">,</span> <span class="s">&#39;_faceNormals&#39;</span><span class="p">,</span> <span class="s">&#39;_vertexColors&#39;</span><span class="p">,</span> <span class="s">&#39;_edgeColors&#39;</span><span class="p">,</span> <span class="s">&#39;_faceColors&#39;</span><span class="p">,</span> <span class="s">&#39;_meshColor&#39;</span><span class="p">]</span>
+        <span class="n">state</span> <span class="o">=</span> <span class="p">{</span><span class="n">n</span><span class="p">:</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">names</span><span class="p">}</span>
+        <span class="k">return</span> <span class="n">pickle</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+        </div>
+<div class="viewcode-block" id="MeshData.restore"><a class="viewcode-back" href="../../../3dgraphics/meshdata.html#pyqtgraph.opengl.MeshData.MeshData.restore">[docs]</a>    <span class="k">def</span> <span class="nf">restore</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Restore the state of a mesh previously saved using save()&quot;&quot;&quot;</span>
+        <span class="kn">import</span> <span class="nn">pickle</span>
+        <span class="n">state</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">state</span><span class="p">:</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">state</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
+        
+        
+        </div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">pyqtgraph v1.8 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li>
+          <li><a href="../../pyqtgraph.html" >pyqtgraph</a> &raquo;</li>
+          <li><a href="../opengl.html" >pyqtgraph.opengl</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Luke Campagnola.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
+    </div>
+  </body>
+</html>

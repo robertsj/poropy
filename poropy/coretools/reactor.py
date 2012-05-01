@@ -1,8 +1,8 @@
 # poropy/coretools/reactor.py
 
 # things from coretools
-from laban import Laban
 from assembly import Assembly, Reflector
+
 # others
 import numpy as np
 import sys
@@ -10,32 +10,32 @@ import os
 import matplotlib.pyplot as plt
 from matplotlib import rc
 
-try:
-    from PyQt4.QtCore import *
-    from PyQt4.QtGui import *
-    PYQT4 = True
-    OBJECTBASE = QObject
-except ImportError:
-    PYQT4 = False
-    OBJECTBASE = object
+#try:
+#    from PyQt4.QtCore import *
+#    from PyQt4.QtGui import *
+#    PYQT4 = True
+#    OBJECTBASE = QObject
+#except ImportError:
+#    PYQT4 = False
+#    OBJECTBASE = object
 
 
 # Allows LaTeX in labels and uses nicer serif font.
 rc('text', usetex=True)
 rc('font', family='serif')
 
-class Reactor(OBJECTBASE):
+class Reactor(object) :
     """ Represents the reactor
     """
     
     def __init__(self, stencil, pattern, assemblies, reflector, width, evaluator, parent=None) :
         """ Constructor
         """
-        if PYQT4:
-            QWidget.__init__(self,parent)
-  
+#        if PYQT4:
+#            QWidget.__init__(self,parent)
+
         # Create the core.
-        self.core = Core(stencil, pattern, assemblies, reflector, width)  
+        self.core = Core(stencil, pattern, assemblies, reflector, width)
         # Create the spent fuel pool.  Currently not implemented.
         self.pool = SpentFuelPool()
         # Create the evaluator.
@@ -47,6 +47,12 @@ class Reactor(OBJECTBASE):
         #   for later additions.
         self.power_thermal  = 1000 # MWth
         self.power_electric =  300 # MWe
+    
+
+    def set_evaluator(self,evaluator):
+        self.evaluator = evaluator
+        self.evaluator.setup(self.core)
+    
     
     def shuffle(self, pattern) :
         """ Update the pattern.  
@@ -103,7 +109,7 @@ class Reactor(OBJECTBASE):
         """
         # TODO(robertsj): Add some nice formatting.
         print ""
-        print self.evaluator.peaking
+        print self.evaluator.peaking_map
         
     def print_pattern(self) :
         """  Print out the peaking factor matrix.
@@ -187,19 +193,19 @@ class Reactor(OBJECTBASE):
         print "    keff   = ", self.evaluator.keff    
         print " maxpeak   = ", self.evaluator.maxpeak  
 
-    def fire_eval_signal(self,k,p):
-        # we do this here so optimizers that evaluate the reactor a zillion times don't
-        # trigger a billion repaints.  Should be called explicitly, e.g. at the end of
-        # generations
-        if PYQT4:
-            self.emit(SIGNAL("reactorEvaluated(float,float)"),k,p)
+#    def fire_eval_signal(self,k,p):
+#        # we do this here so optimizers that evaluate the reactor a zillion times don't
+#        # trigger a billion repaints.  Should be called explicitly, e.g. at the end of
+#        # generations
+#        if PYQT4:
+#            self.emit(SIGNAL("reactorEvaluated(float,float)"),k,p)
 
-    def fire_pattupdate_signal(self):
-        # we do this here so optimizers that evaluate the reactor a zillion times don't
-        # trigger a billion repaints.  Should be called explicitly, e.g. at the end of
-        # generations
-        if PYQT4:
-            self.emit(SIGNAL("patternUpdated()"))
+#    def fire_pattupdate_signal(self):
+#        # we do this here so optimizers that evaluate the reactor a zillion times don't
+#        # trigger a billion repaints.  Should be called explicitly, e.g. at the end of
+#        # generations
+#        if PYQT4:
+#            self.emit(SIGNAL("patternUpdated()"))
         
 class Core:
     """ Represents the core.
@@ -353,8 +359,10 @@ class Core:
 
         Finish me.
         """
-        for i in range(0, len(self.assemblies)) :
-            self.assemblies[i].set_peak(0.0)
+#        for i in range(0, len(self.assemblies)):
+#            self.assemblies[i].set_peak(self.evaluator.peaking[i])
+        pass
+        # the evaluator currently isn't available to the core object
  
     def get_plot_map(self, param) :
         """  Return a 2-d array of pattern parameters.

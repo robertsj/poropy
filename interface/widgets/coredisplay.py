@@ -6,10 +6,13 @@ from PyQt4.QtGui import *
 L = 100 # default pixel width of assembly displays
 
 class CoreDisplay(QGraphicsView):
-    def __init__(self,core,parent=None):
+    def __init__(self,reactor,parent=None):
         QGraphicsView.__init__(self,parent)
         
-        self.core = core
+        if reactor == None:
+          self.core = None
+        else:
+          self.core = reactor.core
         self.needsRefresh = True
 
         self.mutex = QMutex()
@@ -26,9 +29,12 @@ class CoreDisplay(QGraphicsView):
 
         timer = QTimer(self)
         QObject.connect(timer, SIGNAL("timeout()"), self.draw_core)
-        timer.start(50)
+        timer.start(10)
 
 
+    def set_core(self,core):
+        self.core = core
+        self.needsRefresh = True
 
 
     def pattern_updated(self):
@@ -47,12 +53,11 @@ class CoreDisplay(QGraphicsView):
 
     def draw_core(self):
         if not self.needsRefresh: return
-        
+        if not self.core: return
+
         self.mutex.lock()
 
         self.needsRefresh = False
-
-        
 
         self.scene.clear()
 
@@ -98,17 +103,19 @@ class CoreDisplay(QGraphicsView):
                         a.name = patt_id
                         ass = AssemblyDisplay(r,c,a,"fuel",self,scene=self.scene)
                         i += 1
-                self.connect(ass.sigFire,SIGNAL("assemblySwap"),self.assembly_swap)
+                self.connect(ass.sigFire,SIGNAL("assemblySwapped"),self.assembly_swap)
                 
 
         m = 20 # pixel margin
         self.scene.setSceneRect(-m,-m,numCols*L+2*m,numRows*L+2*m)
 
+        self.fitInView(self.scene.sceneRect(),Qt.KeepAspectRatio)
+
         self.mutex.unlock()
 
 
     def assembly_swap(self,toFrom):
-        self.emit(SIGNAL("assemblySwap"),toFrom)
+        self.emit(SIGNAL("assemblySwapped"),toFrom)
 
 
 
@@ -261,4 +268,4 @@ class SignalFire(QObject):
     def __init__(self,parent=None):
         QObject.__init__(self,parent)
     def fireSwap(self,to,from_):
-        self.emit(SIGNAL("assemblySwap"),[from_,to])
+        self.emit(SIGNAL("assemblySwapped"),[from_,to])

@@ -1,0 +1,33 @@
+***Constructing PGA***
+Iter #     Field      Value
+10         Best       -1.749399e+00
+Iter #     Field      Value
+20         Best       -1.687547e+00
+Iter #     Field      Value
+30         Best       -1.638662e+00
+Iter #     Field      Value
+40         Best       -1.631752e+00
+Iter #     Field      Value
+50         Best       -1.529033e+00
+Iter #     Field      Value
+60         Best       -1.505834e+00
+Iter #     Field      Value
+70         Best       -1.464669e+00
+Iter #     Field      Value
+80         Best       -1.457798e+00
+Iter #     Field      Value
+90         Best       -1.457798e+00
+Iter #     Field      Value
+100        Best       -1.429688e+00
+The Best Evaluation: -1.429688e+00.
+The Best String:
+#    0: [      48], [      36], [      20], [      11], [      28], [      26]
+#    6: [      24], [      35], [       4], [       3], [       9], [      27]
+#   12: [      25], [      13], [       8], [       6], [      12], [      21]
+#   18: [      19], [      10], [      30], [      39], [      22], [      32]
+#   24: [       2], [      29], [      16], [      17], [      37], [      14]
+#   30: [      15], [       5], [      33], [      18], [      31], [      23]
+#   36: [      34], [       7], [       1], [      38], [      44], [       0]
+#   42: [      41], [      43], [      46], [      42], [      40], [      47]
+#   48: [      45]
+

@@ -1,0 +1,196 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>MeshData &mdash; pyqtgraph v1.8 documentation</title>
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.8',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="pyqtgraph v1.8 documentation" href="../index.html" />
+    <link rel="up" title="Pyqtgraph’s 3D Graphics System" href="index.html" />
+    <link rel="next" title="GraphicsScene and Mouse Events" href="../graphicsscene/index.html" />
+    <link rel="prev" title="GLGraphicsItem" href="glgraphicsitem.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../graphicsscene/index.html" title="GraphicsScene and Mouse Events"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="glgraphicsitem.html" title="GLGraphicsItem"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">pyqtgraph v1.8 documentation</a> &raquo;</li>
+          <li><a href="../apireference.html" >API Reference</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">Pyqtgraph&#8217;s 3D Graphics System</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="meshdata">
+<h1>MeshData<a class="headerlink" href="#meshdata" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="pyqtgraph.opengl.MeshData.MeshData">
+<em class="property">class </em><tt class="descclassname">pyqtgraph.opengl.MeshData.</tt><tt class="descname">MeshData</tt><a class="reference internal" href="../_modules/pyqtgraph/opengl/MeshData.html#MeshData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyqtgraph.opengl.MeshData.MeshData" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class for storing and operating on 3D mesh data. May contain:</p>
+<ul class="simple">
+<li>list of vertex locations</li>
+<li>list of edges</li>
+<li>list of triangles</li>
+<li>colors per vertex, edge, or tri</li>
+<li>normals per vertex or tri</li>
+</ul>
+<dl class="method">
+<dt id="pyqtgraph.opengl.MeshData.MeshData.__init__">
+<tt class="descname">__init__</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pyqtgraph/opengl/MeshData.html#MeshData.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyqtgraph.opengl.MeshData.MeshData.__init__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="pyqtgraph.opengl.MeshData.MeshData.__iter__">
+<tt class="descname">__iter__</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pyqtgraph/opengl/MeshData.html#MeshData.__iter__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyqtgraph.opengl.MeshData.MeshData.__iter__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Iterate over all faces, yielding a list of three tuples [(position, normal, color), ...] for each face.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyqtgraph.opengl.MeshData.MeshData.faceNormals">
+<tt class="descname">faceNormals</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pyqtgraph/opengl/MeshData.html#MeshData.faceNormals"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyqtgraph.opengl.MeshData.MeshData.faceNormals" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes and stores normal of each face.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyqtgraph.opengl.MeshData.MeshData.restore">
+<tt class="descname">restore</tt><big>(</big><em>state</em><big>)</big><a class="reference internal" href="../_modules/pyqtgraph/opengl/MeshData.html#MeshData.restore"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyqtgraph.opengl.MeshData.MeshData.restore" title="Permalink to this definition">¶</a></dt>
+<dd><p>Restore the state of a mesh previously saved using save()</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyqtgraph.opengl.MeshData.MeshData.save">
+<tt class="descname">save</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pyqtgraph/opengl/MeshData.html#MeshData.save"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyqtgraph.opengl.MeshData.MeshData.save" title="Permalink to this definition">¶</a></dt>
+<dd><p>Serialize this mesh to a string appropriate for disk storage</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyqtgraph.opengl.MeshData.MeshData.setFaces">
+<tt class="descname">setFaces</tt><big>(</big><em>faces</em>, <em>vertexes=None</em><big>)</big><a class="reference internal" href="../_modules/pyqtgraph/opengl/MeshData.html#MeshData.setFaces"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyqtgraph.opengl.MeshData.MeshData.setFaces" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the faces in this data set.
+Data may be provided either as an Nx3x3 list of floats (9 float coordinate values per face):</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">faces</span> <span class="o">=</span> <span class="p">[</span> <span class="p">[(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">),</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">),</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">)],</span> <span class="o">...</span> <span class="p">]</span> 
+</pre></div>
+</div>
+<p>or as an Nx3 list of ints (vertex integers) AND an Mx3 list of floats (3 float coordinate values per vertex):</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">faces</span> <span class="o">=</span> <span class="p">[</span> <span class="p">(</span><span class="n">p1</span><span class="p">,</span> <span class="n">p2</span><span class="p">,</span> <span class="n">p3</span><span class="p">),</span> <span class="o">...</span> <span class="p">]</span>
+<span class="n">vertexes</span> <span class="o">=</span> <span class="p">[</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">),</span> <span class="o">...</span> <span class="p">]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyqtgraph.opengl.MeshData.MeshData.setMeshColor">
+<tt class="descname">setMeshColor</tt><big>(</big><em>color</em><big>)</big><a class="reference internal" href="../_modules/pyqtgraph/opengl/MeshData.html#MeshData.setMeshColor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyqtgraph.opengl.MeshData.MeshData.setMeshColor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the color of the entire mesh. This removes any per-face or per-vertex colors.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyqtgraph.opengl.MeshData.MeshData.vertexFaces">
+<tt class="descname">vertexFaces</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pyqtgraph/opengl/MeshData.html#MeshData.vertexFaces"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyqtgraph.opengl.MeshData.MeshData.vertexFaces" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return list mapping each vertex index to a list of face indexes that use the vertex.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyqtgraph.opengl.MeshData.MeshData.vertexNormals">
+<tt class="descname">vertexNormals</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pyqtgraph/opengl/MeshData.html#MeshData.vertexNormals"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyqtgraph.opengl.MeshData.MeshData.vertexNormals" title="Permalink to this definition">¶</a></dt>
+<dd><p>Assigns each vertex the average of its connected face normals.
+If face normals have not been computed yet, then generateFaceNormals will be called.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="glgraphicsitem.html"
+                        title="previous chapter">GLGraphicsItem</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../graphicsscene/index.html"
+                        title="next chapter">GraphicsScene and Mouse Events</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/3dgraphics/meshdata.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../graphicsscene/index.html" title="GraphicsScene and Mouse Events"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="glgraphicsitem.html" title="GLGraphicsItem"
+             >previous</a> |</li>
+        <li><a href="../index.html">pyqtgraph v1.8 documentation</a> &raquo;</li>
+          <li><a href="../apireference.html" >API Reference</a> &raquo;</li>
+          <li><a href="index.html" >Pyqtgraph&#8217;s 3D Graphics System</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Luke Campagnola.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
+    </div>
+  </body>
+</html>
