@@ -13,12 +13,12 @@ class OptimizerTABU(Optimizer) :
     
     # Public Interface
     
-    def __init__(self, argv, reactor):
+    def __init__(self, argv, reactor, objective):
         """ Constructor.  
         """
         # Initialize the Optimizer object.
-        Optimizer.__init__(self, argv, reactor)
-        
+        Optimizer.__init__(self, argv, reactor, objective)
+
     def execute(self):
         """  Optimize the reactor for the objective.
         """     

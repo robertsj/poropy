@@ -1,5 +1,7 @@
 # poropy/coretools/optimizer.py  --  optimization tools.
 
+import copy
+
 from reactor import Reactor, Core, SpentFuelPool
 
 try:
@@ -37,6 +39,7 @@ class Optimizer(OBJECTBASE):
         pattern. This flag will indicate crossover should skip this.
         """
         self.fixed_central = value      
+
         
     def fire_signal(self):
         """  Let mainWindow know a new evaluation is available.
@@ -47,9 +50,11 @@ class Optimizer(OBJECTBASE):
         # Have reactor update anything needed for displays.
         self.reactor.core.update_assembly_peaking()
         if PYQT4:
-            self.emit(SIGNAL("reactorEvaluated(float,float)"),self.k, self.p)
-            self.emit(SIGNAL("patternUpdated()"))            
-       
+            self.emit(SIGNAL("patternUpdated"), self.k,
+                                                self.p,
+                                                self.objective(self.k,self.p),
+                                                copy.copy(self.reactor.core.pattern))
+
     # Abstract Interface       
         
     def execute(self):
@@ -66,4 +71,3 @@ class Optimizer(OBJECTBASE):
         """
         raise NotImplementedError 
 
-    

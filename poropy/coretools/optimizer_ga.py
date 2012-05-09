@@ -20,6 +20,7 @@ class OptimizerGA(Optimizer, PGA) :
         
         # Initialize the Optimizer object.
         Optimizer.__init__(self, argv, reactor, objective)
+
         # Initialize the PGA object.
         PGA.__init__(self, argv, PGA.DATATYPE_INTEGER, self.reactor.number_bundles(), PGA.MAXIMIZE)
         
@@ -112,7 +113,7 @@ class OptimizerGA(Optimizer, PGA) :
         pattern = self.GetIntegerChromosome(p, pop)
         self.reactor.shuffle(pattern) 
         k, p = self.reactor.evaluate()
-        val = self.objective(self, k, p)
+        val = self.objective(k, p)
         return val
     
     def htbx(self, p1, p2, pop1, c1, c2, pop2) :

@@ -246,6 +246,7 @@ class Laban(Evaluator):
     def run(self) :
         """  Run LABAN-PEL (must set input first)
         """
+#        print "evaluating with laban"
         # currently, labanx reads from a preset file
         os.system('labanx '+str(self.rank)+" "+self.input+" "+self.output)     
         

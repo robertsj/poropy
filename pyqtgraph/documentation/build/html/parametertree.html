@@ -1,0 +1,152 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Rapid GUI prototyping &mdash; pyqtgraph v1.8 documentation</title>
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '1.8',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="pyqtgraph v1.8 documentation" href="index.html" />
+    <link rel="next" title="Internals - Extensions to Qt’s GraphicsView" href="internals.html" />
+    <link rel="prev" title="Interactive Data Selection Controls" href="region_of_interest.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="internals.html" title="Internals - Extensions to Qt’s GraphicsView"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="region_of_interest.html" title="Interactive Data Selection Controls"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">pyqtgraph v1.8 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="rapid-gui-prototyping">
+<h1>Rapid GUI prototyping<a class="headerlink" href="#rapid-gui-prototyping" title="Permalink to this headline">¶</a></h1>
+<p>[Just an overview; documentation is not complete yet]</p>
+<p>Pyqtgraph offers several powerful features which are commonly used in engineering and scientific applications.</p>
+<div class="section" id="parameter-trees">
+<h2>Parameter Trees<a class="headerlink" href="#parameter-trees" title="Permalink to this headline">¶</a></h2>
+<p>The parameter tree system provides a widget displaying a tree of modifiable values similar to those used in most GUI editor applications. This allows a large number of variables to be controlled by the user with relatively little programming effort. The system also provides separation between the data being controlled and the user interface controlling it (model/view architecture). Parameters may be grouped/nested to any depth and custom parameter types can be built by subclassing from Parameter and ParameterItem.</p>
+<p>See the parametertree example for more information.</p>
+</div>
+<div class="section" id="visual-programming-flowcharts">
+<h2>Visual Programming Flowcharts<a class="headerlink" href="#visual-programming-flowcharts" title="Permalink to this headline">¶</a></h2>
+<p>Pyqtgraph&#8217;s flowcharts provide a visual programming environment similar in concept to LabView&#8211;functional modules are added to a flowchart and connected by wires to define a more complex and arbitrarily configurable algorithm. A small number of predefined modules (called Nodes) are included with pyqtgraph, but most flowchart developers will want to define their own library of Nodes. At their core, the Nodes are little more than 1) a Python function 2) a list of input/output terminals, and 3) an optional widget providing a control panel for the Node. Nodes may transmit/receive any type of Python object via their terminals.</p>
+<p>One major limitation of flowcharts is that there is no mechanism for looping within a flowchart. (however individual Nodes may contain loops (they may contain any Python code at all), and an entire flowchart may be executed from within a loop).</p>
+<p>There are two distinct modes of executing the code in a flowchart:</p>
+<ol class="arabic simple">
+<li>Provide data to the input terminals of the flowchart. This method is slower and will provide a graphical representation of the data as it passes through the flowchart. This is useful for debugging as it allows the user to inspect the data at each terminal and see where exceptions occurred within the flowchart.</li>
+<li>Call Flowchart.process. This method does not update the displayed state of the flowchart and only retains the state of each terminal as long as it is needed. Additionally, Nodes which do not contribute to the output values of the flowchart (such as plotting nodes) are ignored. This mode allows for faster processing of large data sets and avoids memory issues which can occur if doo much data is present in the flowchart at once (e.g., when processing image data through several stages).</li>
+</ol>
+<p>See the flowchart example for more information.</p>
+</div>
+<div class="section" id="graphical-canvas">
+<h2>Graphical Canvas<a class="headerlink" href="#graphical-canvas" title="Permalink to this headline">¶</a></h2>
+<p>The Canvas is a system designed to allow the user to add/remove items to a 2D canvas similar to most vector graphics applications. Items can be translated/scaled/rotated and each item may define its own custom control interface.</p>
+</div>
+<div class="section" id="dockable-widgets">
+<h2>Dockable Widgets<a class="headerlink" href="#dockable-widgets" title="Permalink to this headline">¶</a></h2>
+<p>The dockarea system allows the design of user interfaces which can be rearranged by the user at runtime. Docks can be moved, resized, stacked, and torn out of the main window. This is similar in principle to the docking system built into Qt, but offers a more deterministic dock placement API (in Qt it is very difficult to programatically generate complex dock arrangements). Additionally, Qt&#8217;s docks are designed to be used as small panels around the outer edge of a window. Pyqtgraph&#8217;s docks were created with the notion that the entire window (or any portion of it) would consist of dockable components.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Rapid GUI prototyping</a><ul>
+<li><a class="reference internal" href="#parameter-trees">Parameter Trees</a></li>
+<li><a class="reference internal" href="#visual-programming-flowcharts">Visual Programming Flowcharts</a></li>
+<li><a class="reference internal" href="#graphical-canvas">Graphical Canvas</a></li>
+<li><a class="reference internal" href="#dockable-widgets">Dockable Widgets</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="region_of_interest.html"
+                        title="previous chapter">Interactive Data Selection Controls</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="internals.html"
+                        title="next chapter">Internals - Extensions to Qt&#8217;s GraphicsView</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/parametertree.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="internals.html" title="Internals - Extensions to Qt’s GraphicsView"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="region_of_interest.html" title="Interactive Data Selection Controls"
+             >previous</a> |</li>
+        <li><a href="index.html">pyqtgraph v1.8 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Luke Campagnola.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
+    </div>
+  </body>
+</html>

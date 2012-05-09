@@ -33,9 +33,9 @@ class Reactor(object) :
         """
 #        if PYQT4:
 #            QWidget.__init__(self,parent)
-  
+
         # Create the core.
-        self.core = Core(stencil, pattern, assemblies, reflector, width)  
+        self.core = Core(stencil, pattern, assemblies, reflector, width)
         # Create the spent fuel pool.  Currently not implemented.
         self.pool = SpentFuelPool()
         # Create the evaluator.
@@ -47,6 +47,12 @@ class Reactor(object) :
         #   for later additions.
         self.power_thermal  = 1000 # MWth
         self.power_electric =  300 # MWe
+    
+
+    def set_evaluator(self,evaluator):
+        self.evaluator = evaluator
+        self.evaluator.setup(self.core)
+    
     
     def shuffle(self, pattern) :
         """ Update the pattern.  
@@ -353,8 +359,12 @@ class Core:
 
         Finish me.
         """
-        for i in range(0, len(self.assemblies)):
-            self.assemblies[i].set_peak(self.evaluator.peaking[i])
+
+#        for i in range(0, len(self.assemblies)):
+#            self.assemblies[i].set_peak(self.evaluator.peaking[i])
+        pass
+        # the evaluator currently isn't available to the core object
+
  
     def get_plot_map(self, param) :
         """  Return a 2-d array of pattern parameters.
