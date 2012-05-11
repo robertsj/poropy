@@ -1,3 +1,5 @@
+/home/robertsj/Research/poropy/interface/plugincontrol.py:84: UserWarning: No control class named small_core_meta found in small_core_meta.py.  Is the filename exactly the same as the control class name?
+  warnings.warn("No control class named {0} found in {1}.  Is the filename exactly the same as the control class name?".format(mod_name,f))
 ***Constructing PGA***
 Iter #     Field      Value
 10         Best       -1.749399e+00
@@ -19,15 +21,195 @@ Iter #     Field      Value
 90         Best       -1.457798e+00
 Iter #     Field      Value
 100        Best       -1.429688e+00
-The Best Evaluation: -1.429688e+00.
+Iter #     Field      Value
+110        Best       -1.429688e+00
+Iter #     Field      Value
+120        Best       -1.422300e+00
+Iter #     Field      Value
+130        Best       -1.415355e+00
+Iter #     Field      Value
+140        Best       -1.410907e+00
+Iter #     Field      Value
+150        Best       -1.410907e+00
+Iter #     Field      Value
+160        Best       -1.410907e+00
+Iter #     Field      Value
+170        Best       -1.409088e+00
+Iter #     Field      Value
+180        Best       -1.402948e+00
+Iter #     Field      Value
+190        Best       -1.396088e+00
+Iter #     Field      Value
+200        Best       -1.396088e+00
+Iter #     Field      Value
+210        Best       -1.390222e+00
+Iter #     Field      Value
+220        Best       -1.377433e+00
+Iter #     Field      Value
+230        Best       -1.377433e+00
+Iter #     Field      Value
+240        Best       -1.366261e+00
+Iter #     Field      Value
+250        Best       -1.363068e+00
+Iter #     Field      Value
+260        Best       -1.363068e+00
+Iter #     Field      Value
+270        Best       -1.363068e+00
+Iter #     Field      Value
+280        Best       -1.363068e+00
+Iter #     Field      Value
+290        Best       -1.360594e+00
+Iter #     Field      Value
+300        Best       -1.359788e+00
+Iter #     Field      Value
+310        Best       -1.359788e+00
+Iter #     Field      Value
+320        Best       -1.358337e+00
+Iter #     Field      Value
+330        Best       -1.358337e+00
+Iter #     Field      Value
+340        Best       -1.350859e+00
+Iter #     Field      Value
+350        Best       -1.350859e+00
+Iter #     Field      Value
+360        Best       -1.350859e+00
+Iter #     Field      Value
+370        Best       -1.348891e+00
+Iter #     Field      Value
+380        Best       -1.348891e+00
+Iter #     Field      Value
+390        Best       -1.348891e+00
+Iter #     Field      Value
+400        Best       -1.348891e+00
+Iter #     Field      Value
+410        Best       -1.348891e+00
+Iter #     Field      Value
+420        Best       -1.347728e+00
+Iter #     Field      Value
+430        Best       -1.347728e+00
+Iter #     Field      Value
+440        Best       -1.347728e+00
+Iter #     Field      Value
+450        Best       -1.341202e+00
+Iter #     Field      Value
+460        Best       -1.341202e+00
+Iter #     Field      Value
+470        Best       -1.341202e+00
+Iter #     Field      Value
+480        Best       -1.341202e+00
+Iter #     Field      Value
+490        Best       -1.341202e+00
+Iter #     Field      Value
+500        Best       -1.341202e+00
+Iter #     Field      Value
+510        Best       -1.341202e+00
+Iter #     Field      Value
+520        Best       -1.341202e+00
+Iter #     Field      Value
+530        Best       -1.341202e+00
+Iter #     Field      Value
+540        Best       -1.341202e+00
+Iter #     Field      Value
+550        Best       -1.341202e+00
+Iter #     Field      Value
+560        Best       -1.341202e+00
+Iter #     Field      Value
+570        Best       -1.341202e+00
+Iter #     Field      Value
+580        Best       -1.341202e+00
+Iter #     Field      Value
+590        Best       -1.341202e+00
+Iter #     Field      Value
+600        Best       -1.341202e+00
+Iter #     Field      Value
+610        Best       -1.341202e+00
+Iter #     Field      Value
+620        Best       -1.341202e+00
+Iter #     Field      Value
+630        Best       -1.341202e+00
+Iter #     Field      Value
+640        Best       -1.331456e+00
+Iter #     Field      Value
+650        Best       -1.331456e+00
+Iter #     Field      Value
+660        Best       -1.331456e+00
+Iter #     Field      Value
+670        Best       -1.331456e+00
+Iter #     Field      Value
+680        Best       -1.331456e+00
+Iter #     Field      Value
+690        Best       -1.331456e+00
+Iter #     Field      Value
+700        Best       -1.331456e+00
+Iter #     Field      Value
+710        Best       -1.331456e+00
+Iter #     Field      Value
+720        Best       -1.331456e+00
+Iter #     Field      Value
+730        Best       -1.331456e+00
+Iter #     Field      Value
+740        Best       -1.331456e+00
+Iter #     Field      Value
+750        Best       -1.331456e+00
+Iter #     Field      Value
+760        Best       -1.331456e+00
+Iter #     Field      Value
+770        Best       -1.326548e+00
+Iter #     Field      Value
+780        Best       -1.326548e+00
+Iter #     Field      Value
+790        Best       -1.326548e+00
+Iter #     Field      Value
+800        Best       -1.326548e+00
+Iter #     Field      Value
+810        Best       -1.326548e+00
+Iter #     Field      Value
+820        Best       -1.326548e+00
+Iter #     Field      Value
+830        Best       -1.326548e+00
+Iter #     Field      Value
+840        Best       -1.321398e+00
+Iter #     Field      Value
+850        Best       -1.321398e+00
+Iter #     Field      Value
+860        Best       -1.321398e+00
+Iter #     Field      Value
+870        Best       -1.321398e+00
+Iter #     Field      Value
+880        Best       -1.321398e+00
+Iter #     Field      Value
+890        Best       -1.321398e+00
+Iter #     Field      Value
+900        Best       -1.321398e+00
+Iter #     Field      Value
+910        Best       -1.321398e+00
+Iter #     Field      Value
+920        Best       -1.321398e+00
+Iter #     Field      Value
+930        Best       -1.321398e+00
+Iter #     Field      Value
+940        Best       -1.321398e+00
+Iter #     Field      Value
+950        Best       -1.321398e+00
+Iter #     Field      Value
+960        Best       -1.321398e+00
+Iter #     Field      Value
+970        Best       -1.321398e+00
+Iter #     Field      Value
+980        Best       -1.321398e+00
+Iter #     Field      Value
+990        Best       -1.321398e+00
+Iter #     Field      Value
+1000       Best       -1.321398e+00
+The Best Evaluation: -1.321398e+00.
 The Best String:
-#    0: [      48], [      36], [      20], [      11], [      28], [      26]
-#    6: [      24], [      35], [       4], [       3], [       9], [      27]
-#   12: [      25], [      13], [       8], [       6], [      12], [      21]
-#   18: [      19], [      10], [      30], [      39], [      22], [      32]
-#   24: [       2], [      29], [      16], [      17], [      37], [      14]
-#   30: [      15], [       5], [      33], [      18], [      31], [      23]
-#   36: [      34], [       7], [       1], [      38], [      44], [       0]
-#   42: [      41], [      43], [      46], [      42], [      40], [      47]
-#   48: [      45]
+#    0: [      48], [      36], [       5], [       6], [      23], [      19]
+#    6: [      17], [      40], [       3], [       7], [       2], [      25]
+#   12: [      32], [       1], [      45], [       8], [       9], [      31]
+#   18: [      18], [      21], [      12], [      41], [      11], [      33]
+#   24: [      26], [      24], [      20], [      16], [      39], [      27]
+#   30: [      28], [      29], [      30], [      10], [      43], [      34]
+#   36: [      22], [      13], [      15], [      44], [      37], [      14]
+#   42: [       0], [       4], [      42], [      47], [      46], [      38]
+#   48: [      35]
 

@@ -48,6 +48,8 @@ class Reactor(object) :
         self.power_thermal  = 1000 # MWth
         self.power_electric =  300 # MWe
     
+        # Count the number of times I'm evaluated
+        self.number_evaluations = 0
 
     def set_evaluator(self,evaluator):
         self.evaluator = evaluator
@@ -85,6 +87,7 @@ class Reactor(object) :
             Value of objection function for current solution.
         """
         # currently returns only keff and maxpeaking
+        self.number_evaluations = self.number_evaluations + 1
         return self.evaluator.evaluate()
     
     def number_bundles(self) :
@@ -143,7 +146,7 @@ class Reactor(object) :
         plt.show()
         #self.core.plot_pattern()           
         
-    def print_pattern(self, param='burnup') :
+    def print_map(self, param='burnup') :
         """  Plot the peaking factor matrix.
         
         Parameters
@@ -153,8 +156,11 @@ class Reactor(object) :
             options are 'burnup' and 'enrichment'.        
         """
         plot_map = self.core.get_plot_map(param)
-        print plot_map
+        #print plot_map
 
+        print ""
+        print "", param, " "
+        print " ----------------------- "
         N = len(self.core.stencil[0,:]) 
         out = "   "
         for i in range(0, N-1) :
@@ -371,8 +377,8 @@ class Core:
         """
         length = len(self.fuelmap[:,0])
         plot_map = np.zeros((length,length), dtype='f')+1.0
-        print "fuelmap="
-        print self.fuelmap
+        #print "fuelmap="
+        #print self.fuelmap
         for i in range(0, length) :
             for j in range(0, length) :
                 if self.fuelmap[i, j] >= 0 :
