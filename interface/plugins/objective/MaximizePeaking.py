@@ -7,7 +7,7 @@ Created on Feb 17, 2012
 import plugin
 
 
-class DefaultObjective(plugin.Plugin):
+class MaximizePeaking(plugin.Plugin):
     
     def __init__(self,model,parent=None):
       plugin.Plugin.__init__(self,model,parent=parent)
@@ -31,11 +31,12 @@ class DefaultObjective(plugin.Plugin):
         return actions
 
     def title(self):
-        return "Default"
+        return "Maximize peaking"
 
     def description(self):
-        return """Default Objective
+        return """Maximize peaking.
 
+               Not recommended, but good for sanity checks!
                """
     def set_objective(self):
     
@@ -44,9 +45,8 @@ class DefaultObjective(plugin.Plugin):
         self.close_plugin_diag()
 
 def objective(k, p):
-    """  Default objective function.
+    """  Maximize peaking.
     """
-    delta = 0
-    if k < 1.1 :
-        delta = k - 1.1
-    return 1.0 * (1.5 - p) + 50.0 * delta
+    return p
+
+
