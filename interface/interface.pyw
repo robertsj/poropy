@@ -14,8 +14,6 @@ from PyQt4.QtGui import *
 
 import widgets
 
-from driver import PGAOpt
-
 from plugincontrol import PluginControl
 from model import Model
 
@@ -50,7 +48,9 @@ class MainWindow(QMainWindow):
         self.connect(self.actionEval, SIGNAL("triggered()"), self.evaluator_settings)
         self.actionObjective = QAction("&Objective Settings",self)
         self.connect(self.actionObjective, SIGNAL("triggered()"), self.objective_settings)
-        self.menuSettings.addActions([self.actionEval,self.actionObjective])
+        self.actionCore = QAction("&Core Display Settings",self)
+        self.connect(self.actionCore, SIGNAL("triggered()"), self.core_display_settings)
+        self.menuSettings.addActions([self.actionEval,self.actionObjective,self.actionCore])
 
         self.menuTools = QMenu("&Tools",self.menubar)
         self.actionOptimize = QAction("&Run Optimization",self)
@@ -130,7 +130,29 @@ class MainWindow(QMainWindow):
     def build_core(self):
       pluginDir = os.path.join(os.path.join(sys.path[0],"plugins"),"reactor")
       form = PluginControl(self.model,pluginDir,self)
-      form.set_help("""Build Core Help""")
+      form.set_help("""<html>
+<head>
+<title>       </title>
+<style type="text/css">
+<!--
+h1	{text-align:center;
+	font-family:Arial, Helvetica, Sans-Serif;
+	}
+
+p	{text-indent:20px;
+	}
+-->
+</style>
+</head>
+<body bgcolor = "#ffffcc" text = "#000000">
+<h1>Hello, World!</h1>
+
+<p>All of these descriptions are fed to a QTextEdit
+(http://qt-project.org/doc/qt-4.8/qtextedit.html#setText), which supports some
+simple HTML and CSS.</p>
+
+</body>
+</html>""")
       form.show()
     
     def evaluator_settings(self):
@@ -144,6 +166,22 @@ class MainWindow(QMainWindow):
       form = PluginControl(self.model,pluginDir,self)
       form.set_help("""Evaluator Settings Help""")
       form.show()
+    
+    def core_display_settings(self):
+    
+      choices = ["Burnup","Enrichment","Power Peaking"]
+      choice,ok = QInputDialog.getItem(self,"Core Display Coloring",
+                                       "Choose how to display core",
+                                       choices,0,False)
+      if ok:
+        if choice == "Burnup":
+          self.coreDisplay.set_coloring(widgets.CoreDisplay.COLOR_BURNUP)
+        elif choice == "Enrichment":
+          self.coreDisplay.set_coloring(widgets.CoreDisplay.COLOR_ENRICHMENT)
+        elif choice == "Power Peaking":
+          self.coreDisplay.set_coloring(widgets.CoreDisplay.COLOR_POWER)
+        self.coreDisplay.pattern_updated()
+
 
     def run_optimization(self):
       pluginDir = os.path.join(os.path.join(sys.path[0],"plugins"),"optimizer")

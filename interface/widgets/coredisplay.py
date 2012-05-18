@@ -7,6 +7,10 @@ L = 100 # default pixel width of assembly displays
 
 class CoreDisplay(QGraphicsView):
 
+    COLOR_BURNUP = 0
+    COLOR_ENRICHMENT = 1
+    COLOR_POWER = 2
+
     def __init__(self,reactor,parent=None):
         QGraphicsView.__init__(self,parent)
         
@@ -14,6 +18,8 @@ class CoreDisplay(QGraphicsView):
           self.core = None
         else:
           self.core = reactor.core
+
+        self.coloring = CoreDisplay.COLOR_BURNUP
 
         self.needsRefresh = True
 
@@ -34,6 +40,8 @@ class CoreDisplay(QGraphicsView):
 
         timer.start(10)
 
+    def set_coloring(self,coloring):
+        self.coloring = coloring
 
     def set_core(self,core):
         self.core = core
@@ -81,6 +89,8 @@ class CoreDisplay(QGraphicsView):
         numRows = len(self.core.stencil)
         numCols = len(self.core.stencil[0])
 
+        peaks = []
+
         i = 0
         for r,row in enumerate(self.core.stencil):
             for c,assType in enumerate(row):
@@ -93,22 +103,33 @@ class CoreDisplay(QGraphicsView):
                     else:
                         a.name = patt_id
                         type_ = "reflected surface"
-                    ass = AssemblyDisplay(r,c,a,type_,self,scene=self.scene)
+                    ass = AssemblyDisplay(r,c,a,type_,self,scene=self.scene,
+                                          coloring=self.coloring)
+                    peaks.append((a.peak,ass))
 
                 else:
 
                     if patt_id == -1:
                         a = self.core.reflector
                         a.name = "R"
-                        ass = AssemblyDisplay(r,c,a,"reflector",self,scene=self.scene)
+                        ass = AssemblyDisplay(r,c,a,"reflector",self,
+                                              scene=self.scene,
+                                              coloring=self.coloring)
+                        peaks.append((a.peak,ass))
                     else:
                         a = self.core.assemblies[patt_id]
                         a.name = patt_id
-                        ass = AssemblyDisplay(r,c,a,"fuel",self,scene=self.scene)
+                        ass = AssemblyDisplay(r,c,a,"fuel",self,
+                                              scene=self.scene,
+                                              coloring=self.coloring)
+                        peaks.append((a.peak,ass))
                         i += 1
 
-                self.connect(ass.sigFire,SIGNAL("assemblySwapped"),self.assembly_swap)
+                self.connect(ass.sigFire,SIGNAL("assemblySwapped"),
+                             self.assembly_swap)
 
+        maxPeaker = max(peaks)[1]
+        maxPeaker.set_coloring(max_peak=True)
 
         m = 20 # pixel margin
         self.scene.setSceneRect(-m,-m,numCols*L+2*m,numRows*L+2*m)
@@ -123,10 +144,9 @@ class CoreDisplay(QGraphicsView):
         self.emit(SIGNAL("assemblySwapped"),toFrom)
 
 
-
-
 class AssemblyDisplay(QGraphicsItem):
-    def __init__(self,r,c,ass,type_,view,parent=None,scene=None):
+    def __init__(self,r,c,ass,type_,view,parent=None,scene=None,coloring=None,
+                 max_peak=False):
         QGraphicsItem.__init__(self,parent,scene)
 
         self.loc = [r,c]
@@ -136,24 +156,44 @@ class AssemblyDisplay(QGraphicsItem):
 
         self.sigFire = SignalFire()
 
-        bc = 50.0
-        if self.type == "fuel":
-            b = self.assembly.burnup
-            if b <= bc: self.defaultColor = QColor(b/bc*255,(bc-b)/bc*255,0)
-            else: self.defaultColor = Qt.lightGray
-            self.setFlags(QGraphicsItem.ItemIsSelectable)
-            self.setAcceptHoverEvents(True)
-            self.setAcceptDrops(True)
-        elif self.type == "reflector":
-            self.defaultColor = Qt.cyan
-        elif self.type == "reflected surface":
-            b = self.assembly.burnup
-            if b <= bc: self.defaultColor = QColor(b/bc*255,(bc-b)/bc*255,0)
-            else: self.defaultColor = Qt.lightGray
-        else:
-            self.defaultColor = Qt.white
+        self.coloring=coloring
+
+        self.set_coloring(max_peak=max_peak)
 
         self.draw_item()
+
+
+    def set_coloring(self,max_peak=False):
+    
+        if self.type == "fuel" or self.type == "reflected surface":
+        
+            if self.coloring == CoreDisplay.COLOR_ENRICHMENT:
+                r = self.assembly.enrichment
+                rc = 6.0
+            elif self.coloring == CoreDisplay.COLOR_POWER:
+                if max_peak:
+                    self.defaultColor = Qt.magenta
+                    return
+                r = self.assembly.peak
+                rc = 2.0
+            elif self.coloring == CoreDisplay.COLOR_BURNUP:
+                r = self.assembly.burnup
+                rc = 50.0
+
+            if r >= rc:
+                self.defaultColor = Qt.red
+            else:
+                self.defaultColor = QColor(r/rc*255,(rc-r)/rc*255,0)
+
+            if self.type == "fuel":
+                self.setFlags(QGraphicsItem.ItemIsSelectable)
+                self.setAcceptHoverEvents(True)
+                self.setAcceptDrops(True)
+
+        elif self.type == "reflector":
+            self.defaultColor = Qt.cyan
+        else:
+            self.defaultColor = Qt.white
 
 
     def draw_item(self):
@@ -179,18 +219,16 @@ class AssemblyDisplay(QGraphicsItem):
         id_ = QGraphicsTextItem(parent=self)
 
         f1 = self.assembly.name
-        if self.type == "fuel":
+        f2 = ""
+        f3 = ""
+        if self.type == "fuel" or self.type == "reflected surface":
             f2 = self.assembly.model
-            f3 = self.assembly.burnup
-        elif self.type == "reflector":
-            f2 = ""
-            f3 = ""
-        elif self.type == "reflected surface":
-            f2 = self.assembly.model
-            f3 = self.assembly.burnup
-        else:
-            f2 = ""
-            f3 = ""
+            if self.coloring == CoreDisplay.COLOR_BURNUP:
+                f3 = self.assembly.burnup
+            elif self.coloring == CoreDisplay.COLOR_ENRICHMENT:
+                f3 = self.assembly.enrichment
+            elif self.coloring == CoreDisplay.COLOR_POWER:
+                f3 = self.assembly.peak
 
         text = ""
         text += "<center>{0}<\center>".format(f1)
