@@ -4,8 +4,18 @@ Created on Feb 17, 2012
 @author: robertsj
 '''
 from optimizer import Optimizer
-from pypgapack import PGA
-from mpi4py import MPI
+
+try :
+  from pypgapack import PGA
+except ImportError :
+  print "PGA could not be loaded; GA unavailable."
+  exit()
+
+try :
+  from mpi4py import MPI
+except ImportError :
+  print "MPI could not be loaded"
+  pass
 import numpy as np
 
 class OptimizerGA(Optimizer, PGA) :

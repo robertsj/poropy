@@ -229,6 +229,7 @@ class AssemblyDisplay(QGraphicsItem):
                 f3 = self.assembly.enrichment
             elif self.coloring == CoreDisplay.COLOR_POWER:
                 f3 = self.assembly.peak
+            f3 = "%.4f" % f3
 
         text = ""
         text += "<center>{0}<\center>".format(f1)
