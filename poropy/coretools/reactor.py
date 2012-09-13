@@ -88,7 +88,14 @@ class Reactor(object) :
         """
         # currently returns only keff and maxpeaking
         self.number_evaluations = self.number_evaluations + 1
-        return self.evaluator.evaluate()
+            
+        k, p = self.evaluator.evaluate()
+
+        # Update assembly peaking
+        for a in range(0, len(self.core.assemblies)) :
+          self.core.assemblies[self.core.pattern[a]].peak = self.evaluator.peaking[a]
+      
+        return k, p
     
     def number_bundles(self) :
         """  Return the number of fuel bundles.
