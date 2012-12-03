@@ -19,7 +19,14 @@
 from reactor import *
 from assembly import *
 from evaluator import *
-from flare import *
+try :
+  from flare import *
+except :
+  print "Note: flare could not be loaded.  Check pyflare installation."
+
 from laban import *
 from optimizer import *
-from optimizer_ga import *
+try :
+  from optimizer_ga import *
+except :
+  print "Note: OptimizerGA could not be loaded.  Check pypgapack installation."
