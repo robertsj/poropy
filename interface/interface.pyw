@@ -169,7 +169,7 @@ simple HTML and CSS.</p>
     
     def core_display_settings(self):
     
-      choices = ["Burnup","Enrichment","Power Peaking"]
+      choices = ["Burnup","Enrichment","Power Peaking","K-Infinity"]
       choice,ok = QInputDialog.getItem(self,"Core Display Coloring",
                                        "Choose how to display core",
                                        choices,0,False)
@@ -180,6 +180,8 @@ simple HTML and CSS.</p>
           self.coreDisplay.set_coloring(widgets.CoreDisplay.COLOR_ENRICHMENT)
         elif choice == "Power Peaking":
           self.coreDisplay.set_coloring(widgets.CoreDisplay.COLOR_POWER)
+        elif choice == "K-Infinity":
+          self.coreDisplay.set_coloring(widgets.CoreDisplay.COLOR_KINF)
         self.coreDisplay.pattern_updated()
 
 
@@ -259,7 +261,7 @@ simple HTML and CSS.</p>
     def about(self):
         QMessageBox.about(self, "About Poropy PWR Core Optimization Interface",
                           """<b>Py-Image PWR Core Optimization Interface</b> v %s
-                          <p>Copyright &copy; 2012 Nick Horelik, Jeremey Roberts, 
+                          <p>Copyright &copy; 2012 Nick Horelik, Jeremy Roberts, 
                           All Rights Reserved.
                           <p>Python %s -- Qt %s -- PyQt %s on %s""" %
                           (__version__, platform.python_version(),

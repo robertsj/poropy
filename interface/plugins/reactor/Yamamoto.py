@@ -142,9 +142,19 @@ class Yamamoto(plugin.Plugin):
         # Assemblies are built with the following signature:
         #   ('type', enrichment, burnup, array([D1,D2,A1,A2,F1,F2,S12]))
      
+        # Poison
+        poison = np.array(['GAD',  'GAD',  'GAD',  'GAD',  'GAD', 'None', 'None', 'None',  \
+                                   'GAD',  'GAD', 'None',  'GAD',  'GAD',  'GAD', 'None',  \
+                                   'GAD', 'None',  'GAD', 'None',  'GAD', 'None',          \
+                                  'None',  'GAD',  'GAD',  'GAD', 'None', 'None',          \
+                                   'GAD', 'None',  'GAD',  'GAD', 'None',                  \
+                                   'GAD',  'GAD', 'None', 'None',                          \
+                                   'GAD', 'None', 'None',                                  \
+                                  'None'], dtype='S')
+
         # Loop through and assign assemblies to each fuel location in the pattern.
         for i in range(0, len(burnups)) :
-            assemblies.append(Assembly('IFBA', 4.25, burnups[i]))
+            assemblies.append(Assembly(poison[i], 4.10, burnups[i]))
 
         # Use the Biblis reflector material (the only one for now).  This is
         # only of use for Laban.

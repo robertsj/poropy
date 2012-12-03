@@ -10,6 +10,7 @@ class CoreDisplay(QGraphicsView):
     COLOR_BURNUP = 0
     COLOR_ENRICHMENT = 1
     COLOR_POWER = 2
+    COLOR_KINF = 3
 
     def __init__(self,reactor,parent=None):
         QGraphicsView.__init__(self,parent)
@@ -179,6 +180,9 @@ class AssemblyDisplay(QGraphicsItem):
             elif self.coloring == CoreDisplay.COLOR_BURNUP:
                 r = self.assembly.burnup
                 rc = 50.0
+            elif self.coloring == CoreDisplay.COLOR_KINF:
+                r = self.assembly.KINF
+                rc = 1.35
 
             if r >= rc:
                 self.defaultColor = Qt.red
@@ -221,20 +225,30 @@ class AssemblyDisplay(QGraphicsItem):
         f1 = self.assembly.name
         f2 = ""
         f3 = ""
+        f4 = ""
+        f5 = ""
+        f6 = ""
         if self.type == "fuel" or self.type == "reflected surface":
             f2 = self.assembly.model
-            if self.coloring == CoreDisplay.COLOR_BURNUP:
-                f3 = self.assembly.burnup
-            elif self.coloring == CoreDisplay.COLOR_ENRICHMENT:
-                f3 = self.assembly.enrichment
-            elif self.coloring == CoreDisplay.COLOR_POWER:
-                f3 = self.assembly.peak
-            f3 = "%.4f" % f3
-
-        text = ""
+#            if self.coloring == CoreDisplay.COLOR_BURNUP:
+#                f3 = self.assembly.burnup
+#            elif self.coloring == CoreDisplay.COLOR_ENRICHMENT:
+#                f3 = self.assembly.enrichment
+#            elif self.coloring == CoreDisplay.COLOR_POWER:
+#                f3 = self.assembly.peak
+#            f3 = "%.4f" % f3
+            f3 = "%.4f" % self.assembly.enrichment
+            f4 = "%.4f" % self.assembly.burnup
+            f5 = "%.4f" % self.assembly.peak
+            f6 = "%.4f" % self.assembly.KINF
+        text = '<p style="font-size:12px">'
         text += "<center>{0}<\center>".format(f1)
-        text += "<center>{0}<\center>".format(f2)
-        text += "<center>{0}<\center>".format(f3)
+        text += "<center>{0}</center>".format(f2)
+        text += "<center>{0}</center>".format(f3)
+        text += "<center>{0}</center>".format(f4)
+        text += "<center>{0}</center>".format(f5)
+        text += "<center>{0}</center>".format(f6)
+        text += '</p>'
         id_.setHtml(text)
         id_.setTextWidth(L)
 

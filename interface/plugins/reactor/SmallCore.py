@@ -11,6 +11,7 @@ from poropy.coretools import Reactor, Assembly, Reflector, Laban, Flare
 
 import plugin
 
+import copy
 
 class SmallCore(plugin.Plugin):
     """  Defines metadata for OptimizerGA
@@ -169,7 +170,7 @@ class SmallCore(plugin.Plugin):
 
         # Loop through and assign assemblies to each fuel location in the pattern.
         for i in range(0, len(pattern)) :
-            assemblies.append(unique_assemblies[pattern[i]])
+            assemblies.append(copy.copy(unique_assemblies[pattern[i]]))
 
         # Use the Biblis reflector material (the only one for now)
         reflector = Reflector('biblis')
