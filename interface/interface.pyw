@@ -38,9 +38,11 @@ class MainWindow(QMainWindow):
         self.menuFile = QMenu("&File",self.menubar)
         self.actionBuild = QAction("Build &Core",self)
         self.connect(self.actionBuild, SIGNAL("triggered()"), self.build_core)
+        self.actionSaveImg = QAction("Save Core &Image",self)
+        self.connect(self.actionSaveImg, SIGNAL("triggered()"), self.save_img)
         self.actionExit = QAction("E&xit",self)
         self.connect(self.actionExit, SIGNAL("triggered()"), self.close)
-        self.menuFile.addActions([self.actionBuild,self.actionExit])
+        self.menuFile.addActions([self.actionBuild,self.actionSaveImg,self.actionExit])
         self.menuFile.insertSeparator(self.actionExit)
 
         self.menuSettings = QMenu("&Settings",self.menubar)
@@ -154,6 +156,14 @@ simple HTML and CSS.</p>
 </body>
 </html>""")
       form.show()
+    
+    def save_img(self):
+      filename = QFileDialog.getSaveFileName(self, "Save Core Image", "./",
+                                               "PNG Files (*.png)")
+      if filename:
+        if not str(filename[-4:]).lower() == '.png':
+          filename = str(filename) + ".png"
+        self.coreDisplay.save_image(filename)
     
     def evaluator_settings(self):
       pluginDir = os.path.join(os.path.join(sys.path[0],"plugins"),"evaluator")

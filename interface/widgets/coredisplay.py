@@ -145,6 +145,13 @@ class CoreDisplay(QGraphicsView):
         self.emit(SIGNAL("assemblySwapped"),toFrom)
 
 
+    def save_image(self,fname):
+      img = QImage(self.scene.width(),self.scene.height(),QImage.Format_ARGB32_Premultiplied)
+      p = QPainter(img)
+      self.scene.render(p)
+      p.end()
+      img.save(fname)
+
 class AssemblyDisplay(QGraphicsItem):
     def __init__(self,r,c,ass,type_,view,parent=None,scene=None,coloring=None,
                  max_peak=False):
