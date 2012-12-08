@@ -188,8 +188,8 @@ class AssemblyDisplay(QGraphicsItem):
                 r = self.assembly.burnup
                 rc = 50.0
             elif self.coloring == CoreDisplay.COLOR_KINF:
-                r = self.assembly.KINF
-                rc = 1.35
+                r = 2.0*(self.assembly.KINF - 0.75)
+                rc = 1.5
 
             if r >= rc:
                 self.defaultColor = Qt.red
